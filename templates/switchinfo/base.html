@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{ title|default:"" }}</title>
+<link href="{% static "switchinfo/switchinfo.css" %}" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<ul class="toc">
+	<li><a href="{% url 'switchinfo:switches' %}">Switches</a></li>
+	<li><a href="{% url 'switchinfo:vlans' %}">Vlans</a></li>
+</ul>
+<br>
+<hr>
+{% block content %} {% endblock %}
+</body>
+</html>

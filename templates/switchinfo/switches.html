@@ -1,0 +1,9 @@
+{% extends 'switchinfo/base.html' %}
+
+{% block content %}
+<ul class="SwitchList">
+{% for switch in switches %}
+<li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch.name}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

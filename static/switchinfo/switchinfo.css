@@ -1,0 +1,89 @@
+@charset "utf-8";
+/* CSS Document */
+
+table {
+	max-width: 95%;
+}
+td {
+	white-space: nowrap;
+	overflow: hidden;
+}
+/* SwitchMap */
+body { font-family: Times, serif; }
+
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.small { font-style: oblique; font-size: 0.8em; display: block; padding-bottom: 5px; }
+
+/* Table Attributes */
+table                { font-family: Arial, Helvetica, sans-serif; }
+table.Module         { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.Modules        { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.Modules td     { border: 1px solid black; text-align: center; }
+table.Port           { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.Port td        { border: 1px solid black; text-align: center; }
+table.Stats          { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.Stats td       { border: 1px solid black; }
+table.Switch         { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.UnusedPorts    { font-size: small; border-collapse: collapse; border: 2px solid #000000; }
+table.UnusedPorts td { border: 1px solid black; text-align: center; }
+
+/* Table captions */
+caption       { font-size: large; }
+caption.stats { font-size: x-large; font-weight: bold; }
+
+th {  padding-left: 5px; padding-right: 5px; }
+
+/* Table Colors */
+td.cellDisabled     {background: #ff4444;} /* Disabled Port Color */
+td.cellEtherChannel {background: #ffff55;} /* EtherChannel Color */
+td.cellUnused       {background: #dddddd;} /* Unused Port Color */
+td.cellWarning      {background: #ffcccc;} /* Warning Color */
+td.tblHead          {background: #ccccff;} /* Table Header Color */
+tr.cellActive       {background: #ccffcc;} /* Active Port Color  */
+tr.cellDefault      {background: #ffffff;} /* Default Table Color */
+tr.cellUnused       {background: #dddddd;} /* Unused Port Color */
+tr.tblHead          {background: #ccccff;} /* Table Header Color */
+
+td {  padding-left: 5px; padding-right: 5px; }
+
+table.SwitchList {
+    font-size: medium;
+    margin-left:auto;
+    margin-right:auto;
+}
+table.SwitchList td {
+    background-color: #f0f0f0;
+    text-align: left;
+}
+table.SwitchList td:hover {
+    background-color: #B0C6D7;
+}
+table.SwitchList td a:hover {
+    text-decoration: none;
+}
+table.SwitchList td a .small {
+    font-weight: normal;
+}
+
+span.searchresult { background-color: cyan; }
+
+div.trailer {  font-size: x-small; }
+
+/* Navigation bar at the top of each page */
+ul.toc li {
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: palegoldenrod;
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    font-weight: bold;
+}
+ul.toc a {  padding-left: 10px; padding-right: 10px;}
+ul.toc a:hover {  background-color: #FFFFE0; text-decoration: none; }

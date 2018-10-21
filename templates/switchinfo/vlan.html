@@ -1,0 +1,10 @@
+{% extends 'switchinfo/base.html' %}
+
+{% block content %}
+{% for switch, interfaces in switches %}
+    {% if interfaces %}
+	<h2><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></h2>
+	{% include 'switchinfo/switch_table.html' %}
+    {% endif %}
+{% endfor %}
+{% endblock %}

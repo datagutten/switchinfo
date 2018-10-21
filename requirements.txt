@@ -1,0 +1,4 @@
+django>=2.1
+requests
+mysqlclient
+easysnmp
