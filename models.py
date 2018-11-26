@@ -66,6 +66,10 @@ class Interface(models.Model):
                                  blank=True, null=True,
                                  related_name='neighbor')
     neighbor_string = models.CharField(max_length=500, blank=True, null=True)
+    neighbor_set_by = models.ForeignKey(Switch, on_delete=models.SET_NULL,
+                                        related_name='neighbor_set_by', blank=True, null=True)
+    skip_mac = models.BooleanField(help_text='Do not load MAC-addresses for this interface', default=False)
+    force_mac = models.BooleanField(help_text='Load MAC addresses even if the interface is trunk', default=False)
 
     class Meta:
         unique_together = (('switch', 'interface'),)
