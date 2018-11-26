@@ -53,15 +53,16 @@ class Interface(models.Model):
     switch = models.ForeignKey(Switch, on_delete=models.CASCADE,
                                related_name='switch')
     interface = models.CharField(max_length=50)
-    vlan = models.ForeignKey(Vlan, on_delete=models.CASCADE,
-                             blank=True, null=True)
+    vlan = models.ForeignKey(Vlan, on_delete=models.SET_NULL,
+                             blank=True, null=True,
+                             related_name='untagged_vlan')
     description = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(null=True)
     admin_status = models.CharField(max_length=50, blank=True, null=True)
     speed = models.BigIntegerField(blank=True, null=True)
     poe_status = models.CharField(max_length=50, blank=True, null=True)
-    link_status_changed = models.DateField(null=True)
-    neighbor = models.ForeignKey(Switch, on_delete=models.CASCADE,
+    link_status_changed = models.DateField(null=True, blank=True)
+    neighbor = models.ForeignKey(Switch, on_delete=models.SET_NULL,
                                  blank=True, null=True,
                                  related_name='neighbor')
     neighbor_string = models.CharField(max_length=500, blank=True, null=True)
