@@ -38,16 +38,20 @@ class Vlan(models.Model):
 
 class Interface(models.Model):
     index = models.IntegerField()
-    switch = models.ForeignKey(Switch, on_delete=models.CASCADE, related_name='switch')
+    switch = models.ForeignKey(Switch, on_delete=models.CASCADE,
+                               related_name='switch')
     interface = models.CharField(max_length=50)
-    vlan = models.ForeignKey(Vlan, on_delete=models.CASCADE, blank=True, null=True)
+    vlan = models.ForeignKey(Vlan, on_delete=models.CASCADE,
+                             blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(null=True)
     admin_status = models.CharField(max_length=50, blank=True, null=True)
     speed = models.BigIntegerField(blank=True, null=True)
     poe_status = models.CharField(max_length=50, blank=True, null=True)
     link_status_changed = models.DateField(null=True)
-    neighbor = models.ForeignKey(Switch, on_delete=models.CASCADE, blank=True, null=True, related_name='neighbor')
+    neighbor = models.ForeignKey(Switch, on_delete=models.CASCADE,
+                                 blank=True, null=True,
+                                 related_name='neighbor')
     neighbor_string = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
@@ -71,7 +75,14 @@ class Interface(models.Model):
         return ip
 
     def status_format(self):
-        status = {1: 'up', 2: 'down', 3: 'testing', 4: 'unknown', 5: 'dormant', 6: 'notPresent', 7: 'lowerLayerDown' }
+        status = {1: 'up',
+                  2: 'down',
+                  3: 'testing',
+                  4: 'unknown',
+                  5: 'dormant',
+                  6: 'notPresent',
+                  7: 'lowerLayerDown'}
+
         if self.status in status:
             return status[self.status]
 
@@ -125,7 +136,7 @@ class Mac(models.Model):
         prefix = self.mac[0:6]
         prefix = prefix.upper()
 
-        prefix_info = Oui.objects.filter(prefix = prefix)
+        prefix_info = Oui.objects.filter(prefix=prefix)
         if prefix_info.count() > 0:
             print(prefix_info)
             return prefix_info.first().vendor
