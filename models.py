@@ -5,9 +5,10 @@ class Switch(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
     ip = models.GenericIPAddressField()
     has_poe = models.BooleanField(default=False)
-    type = models.CharField(max_length=50, default='Unknown')
+    type = models.CharField(max_length=50, blank=True, null=True)
     community = models.CharField(max_length=50, default='Public')
     model = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(max_length=500, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
