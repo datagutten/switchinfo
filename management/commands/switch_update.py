@@ -1,12 +1,13 @@
 from django.core.management.base import BaseCommand  # , CommandError
-
+# from django.utils import timezone
+import switchinfo.load_info.switch_info as switch_info
+from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Switch
-from switchinfo.load_info.load_vlan import load_vlan
 from easysnmp.exceptions import EasySNMPTimeoutError
 
 
 class Command(BaseCommand):
-    help = 'Import vlans from switches'
+    help = 'Update info about a switch'
 
     def add_arguments(self, parser):
         parser.add_argument('switch', nargs='+', type=str)
@@ -19,7 +20,8 @@ class Command(BaseCommand):
         for switch in switches:
             print(switch)
             try:
-                load_vlan(switch)
+                device = get_switch(switch)
+                print(switch_info.switch_info(device=device))
             except EasySNMPTimeoutError:
                 print('Timeout connecting to %s' % switch)
                 continue
