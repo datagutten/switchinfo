@@ -19,6 +19,17 @@ class Switch(models.Model):
     def interfaces_in_vlan(self, vlan):
         return Interface.objects.filter(switch=self, vlan=vlan)
 
+    def shorten_interface_name(self, interface_name):
+        import re
+        if self.type == 'Cisco':
+            return re.sub(r'([A-Z][a-z]).+?([0-9\/]+)', r'\1\2',
+                          interface_name)
+        elif self.type == 'Extreme':
+            return re.sub(r'Slot:\s+([0-9]+), Port:\s([0-9]+)', r'\1:\2',
+                          interface_name)
+        else:
+            return interface_name
+
 
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)
