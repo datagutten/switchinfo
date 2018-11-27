@@ -39,6 +39,7 @@ class Vlan(models.Model):
 
     class Meta:
         ordering = ['vlan']
+
     #    unique_together = (('switch', 'vlan'),)
 
     def __str__(self):
@@ -50,26 +51,40 @@ class Vlan(models.Model):
 
 class Interface(models.Model):
     index = models.IntegerField()
-    switch = models.ForeignKey(Switch, on_delete=models.CASCADE,
-                               related_name='switch')
+    switch = models.ForeignKey(
+        Switch,
+        on_delete=models.CASCADE,
+        related_name='switch')
     interface = models.CharField(max_length=50)
-    vlan = models.ForeignKey(Vlan, on_delete=models.SET_NULL,
-                             blank=True, null=True,
-                             related_name='untagged_vlan')
+    vlan = models.ForeignKey(
+        Vlan,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='untagged_vlan')
     description = models.CharField(max_length=200, blank=True, null=True)
     status = models.IntegerField(null=True)
     admin_status = models.CharField(max_length=50, blank=True, null=True)
     speed = models.BigIntegerField(blank=True, null=True)
     poe_status = models.CharField(max_length=50, blank=True, null=True)
     link_status_changed = models.DateField(null=True, blank=True)
-    neighbor = models.ForeignKey(Switch, on_delete=models.SET_NULL,
-                                 blank=True, null=True,
-                                 related_name='neighbor')
-    neighbor_string = models.CharField(max_length=500, blank=True, null=True)
-    neighbor_set_by = models.ForeignKey(Switch, on_delete=models.SET_NULL,
-                                        related_name='neighbor_set_by', blank=True, null=True)
-    skip_mac = models.BooleanField(help_text='Do not load MAC-addresses for this interface', default=False)
-    force_mac = models.BooleanField(help_text='Load MAC addresses even if the interface is trunk', default=False)
+    neighbor = models.ForeignKey(
+        Switch, on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='neighbor')
+    neighbor_string = models.CharField(
+        max_length=500,
+        blank=True, null=True)
+    neighbor_set_by = models.ForeignKey(
+        Switch,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='neighbor_set_by')
+    skip_mac = models.BooleanField(
+        help_text='Do not load MAC-addresses for this interface',
+        default=False)
+    force_mac = models.BooleanField(
+        help_text='Load MAC addresses even if the interface is trunk',
+        default=False)
 
     class Meta:
         unique_together = (('switch', 'interface'),)
@@ -88,7 +103,6 @@ class Interface(models.Model):
                 continue
 
             ip.append(arp[0].ip)
-            print (arp)
         return ip
 
     def status_format(self):
@@ -111,14 +125,8 @@ class Interface(models.Model):
         if speed < 1000:
             speed = '%dM' % speed
         else:
-            speed = '%dG' % int(speed/1000)
+            speed = '%dG' % int(speed / 1000)
         return speed
-
-    def last_change_format(self):
-        # last_change_seconds = int(self.last_change)/100
-        # last_change_days = last_change_seconds/3600/24
-        last_change_days = self.last_change/8640000
-        return last_change_days
 
     def css(self):
         # if self.link_status_changed # cellUnused
@@ -155,7 +163,6 @@ class Mac(models.Model):
 
         prefix_info = Oui.objects.filter(prefix=prefix)
         if prefix_info.count() > 0:
-            print(prefix_info)
             return prefix_info.first().vendor
         else:
             return ''
