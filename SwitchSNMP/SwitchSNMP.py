@@ -87,11 +87,29 @@ class SwitchSNMP():
         if_alias = self.create_dict(device, oid=oid)
         return if_alias
 
+    # Load core information about a switch
     def switch_info(self, ip=None):
         session = self.get_session(ip)
+        if not session:
+            return
         info = dict()
-        info['name'] = session.get('.1.3.6.1.2.1.1.5.0').value  # sysName.0
-        info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value  # sysDescr.0
+        try:
+            # SNMPv2-MIB::sysName
+            info['name'] = session.get('.1.3.6.1.2.1.1.5.0').value
+            # SNMPv2-MIB::sysDescr
+            info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value
+            # SNMPv2-MIB::sysObjectID
+            info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
+            # ENTITY-MIB::entPhysicalModelName
+            info['model'] =\
+                session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
+        except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
+            info['model'] = ''
+        except easysnmp.exceptions.EasySNMPTimeoutError as exception:
+            print('Timeout connecting to %s: %s' % (ip, exception))
+            return
+        except easysnmp.exceptions.EasySNMPNoSuchObjectError as exception:
+            print('Error device %s: %s' % (ip, exception))
         return info
 
     def uptime(self):
