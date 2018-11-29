@@ -49,28 +49,28 @@ class SwitchSNMP():
                 print('Timeout connecting to %s: %s' % (device, exception))
         return self.sessions[device][vlan]
 
-    def create_dict(self, ip=None, vlan=None, oid=None, int_value=False):
+    def create_dict(self, ip=None, vlan=None, oid=None,
+                    int_value=False, int_index=False):
         if not oid:
             oid = False
         session = self.get_session(ip, vlan)
         if not session:
             return False
         indexes = dict()
-        try:
-            for object in session.walk(oid):
-                index = utils.last_section(object.oid)
-                if not index:
-                    index = object.oid_index
-                if int_value:
-                    value = int(object.value)
-                else:
-                    value = object.value
-                indexes[index] = value
 
-            return indexes
-        except easysnmp.exceptions.EasySNMPTimeoutError as exception:
-            print(exception)
-            return False
+        for item in session.walk(oid):
+            index = utils.last_section(item.oid)
+            if not index:
+                index = item.oid_index
+            if int_value:
+                value = int(item.value)
+            else:
+                value = item.value
+            if int_index:
+                index = int(index)
+            indexes[index] = value
+
+        return indexes
 
     def create_list(self, ip, vlan=None, oid=False):
         session = self.get_session(ip, vlan)
