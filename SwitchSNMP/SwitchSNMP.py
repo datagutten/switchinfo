@@ -221,38 +221,54 @@ class SwitchSNMP():
 
     def egress_ports(self):
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
-        oid = '.1.3.6.1.2.1.17.7.1.4.2.1.4'
-        return self.create_dict(oid=oid)
+        values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4')
+        if not values:
+            # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2')
+        return values
 
     def untagged_ports(self):
         # Q-BRIDGE-MIB::dot1qVlanCurrentUntaggedPorts
-        oid = '.1.3.6.1.2.1.17.7.1.4.2.1.5'
-        return self.create_dict(oid=oid)
+        values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5')
+        if not values:
+            # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2')
+        return values
 
-    def trunk_status(self, limit=None):
-        # limit = 24
-        # from pprint import pprint
-        # If a port has egress vlan, but not untagged the port is a trunk port
+    # Return vlan number or None if the interface is trunk
+    def vlan_ports(self):
+        # If a port has egress vlan, but not untagged, the port is a trunk port
+        # If a port has egress multiple vlans, the port is a trunk port
         egress = self.egress_ports()
-        if not egress:
-            return False
         untagged = self.untagged_ports()
-        # pprint(egress)
-        trunk = dict()
-        for vlan, ports in egress.items():
-            # print('Vlan %s' % vlan)
-            egress_ports = utils.parse_port_list(ports, limit)
-            untagged_ports = utils.parse_port_list(untagged[vlan], limit)
-            for index, port in egress_ports.items():
-                # print('Vlan %s port %d untagged: %s' % (vlan, index, untagged_ports[index]))
-                # print('Vlan %s port %d egress: %s' % (vlan, index, egress_ports[index]))
-                # Port has egress, but not untagged
-                if egress_ports[index] and not untagged_ports[index]:
-                    trunk[index] = True
 
-        # pprint(egress_ports)
-        # pprint(untagged_ports)
-        return trunk
+        port_vlan = dict()
+        tagged_ports = dict()
+
+        for vlan, ports in egress.items():
+            egress_ports = utils.parse_port_list(ports)
+            untagged_ports = utils.parse_port_list(untagged[vlan])
+
+            for index, port in egress_ports.items():
+                # Port has egress, but not untagged
+                tagged_ports[index] = []
+                # vlan is tagged
+                if egress_ports[index] and not untagged_ports[index]:
+                    port_vlan[index] = None
+                    tagged_ports[index].append(vlan)
+                # vlan in untagged
+                elif egress_ports[index] and index not in port_vlan:
+                    port_vlan[index] = vlan
+                # port has egress in multiple vlans, must be tagged
+                elif egress_ports[index] and index in port_vlan:
+                    port_vlan[index] = None
+
+        return port_vlan
+
+    def vlan_ports_pvid(self, device=None):
+        # Q-BRIDGE-MIB::dot1qPvid
+        oid = '.1.3.6.1.2.1.17.7.1.4.5.1.1'
+        return self.create_dict(device, oid=oid, int_index=True)
 
     def vlans(self, device=None):
         # Q-BRIDGE-MIB::dot1qVlanFdbId
