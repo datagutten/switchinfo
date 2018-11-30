@@ -1,11 +1,14 @@
+from switchinfo.SwitchSNMP.Cisco import Cisco
+from switchinfo.SwitchSNMP.Extreme import Extreme
+from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
+
+
 def get_switch(switch):
-        if switch.type=='Cisco':
-            from switchinfo.SwitchSNMP.Cisco import Cisco as snmp
-        elif switch.type=='Extreme':
-            from switchinfo.SwitchSNMP.Extreme import Extreme as snmp
-        else:
-            from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP as snmp
-        if snmp:
-            return snmp(community=switch.community, device=switch.ip)
-        else:
-            return False
+    if switch.type == 'Cisco':
+        snmp = Cisco
+    elif switch.type == 'Extreme':
+        snmp = Extreme
+    else:
+        snmp = SwitchSNMP
+
+    return snmp(community=switch.community, device=switch.ip)
