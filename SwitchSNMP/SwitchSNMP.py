@@ -43,10 +43,9 @@ class SwitchSNMP():
                     version=2,
                     abort_on_nonexistent=True,)
             except easysnmp.exceptions.EasySNMPConnectionError as exception:
-                print('Unable to open session with %s vlan %s: %s' % (device, vlan, exception))
-                return
+                raise ValueError('Unable to open session with %s vlan %s: %s' % (device, vlan, exception))
             except easysnmp.exceptions.EasySNMPTimeoutError as exception:
-                print('Timeout connecting to %s: %s' % (device, exception))
+                raise ValueError('Timeout connecting to %s: %s' % (device, exception))
         return self.sessions[device][vlan]
 
     def create_dict(self, ip=None, vlan=None, oid=None,
