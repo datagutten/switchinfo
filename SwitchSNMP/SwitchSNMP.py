@@ -1,16 +1,12 @@
+import easysnmp
 import re
 
-# from easysnmp import Session
-import easysnmp
-
-# from switchinfo.SwitchSNMP.utils import last_section
 import switchinfo.SwitchSNMP.utils as utils
-from switchinfo.SwitchSNMP.utils import mac_string, check_and_set
 
 Session = easysnmp.Session
 
 
-class SwitchSNMP():
+class SwitchSNMP:
 
     sessions = dict()
     session = None
@@ -30,8 +26,10 @@ class SwitchSNMP():
             vlan = int(vlan)
             community = self.community + '@' + str(vlan)
         if not device:
+            if not self.device:
+                raise ValueError('No device specified')
             device = self.device
-        if device not in self.sessions:
+        if device not in self.sessions or self.sessions[device] is None:
             self.sessions[device] = dict()
         if vlan not in self.sessions[device]:
             # print('Creating session for %s vlan %s community %s' %
@@ -71,11 +69,11 @@ class SwitchSNMP():
 
         return indexes
 
-    def create_list(self, ip, vlan=None, oid=False):
+    def create_list(self, ip=None, vlan=None, oid=False):
         session = self.get_session(ip, vlan)
         values = []
-        for object in session.walk(oid):
-            value = object.value
+        for item in session.walk(oid):
+            value = item.value
             values.append(value)
 
         return values
@@ -315,13 +313,13 @@ class SwitchSNMP():
 
             # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.8') >= 0:
             #    cdp[if_index][device_index]['remote_port'] = entry.value
-            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.8', 'remote_port')
-            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.9', 'device_id')
+            utils.check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.8', 'remote_port')
+            utils.check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.9', 'device_id')
             # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.9') >= 0:
             #    cdp[if_index][device_index]['device_id'] = entry.value
             # elif entry.oid.find('.0.8802.1.1.2.1.4.1.1.10') >= 0:
             #    cdp[if_index][device_index]['platform'] = entry.value
-            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.10', 'platform')
+            utils.check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.10', 'platform')
 
         return cdp
 
@@ -331,13 +329,13 @@ class SwitchSNMP():
 
         ip = []
         mac = []
-        for object in session.walk(oid):
+        for item in session.walk(oid):
 
-            ip_match = re.search('(?:[0-9]{1,3}\.?){4}$', object.oid)
+            ip_match = re.search('(?:[0-9]{1,3}\.?){4}$', item.oid)
             if ip_match:
                 ip.append(ip_match.group(0))
-                mac.append(mac_string(object.value))
+                mac.append(utils.mac_string(item.value))
             else:
-                print('No match: ' + object.oid)
+                print('No match: ' + item.oid)
 
         return dict(zip(mac, ip))
