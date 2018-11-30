@@ -175,6 +175,14 @@ class Arp(models.Model):
     def __str__(self):
         return '%s %s' % (self.mac, self.ip)
 
+    def vlan(self):
+        mac_obj = Mac.objects.get(mac=self.mac)
+        return mac_obj.interface.vlan
+
+    def cnet(self):
+        import re
+        return re.sub(r'([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\.[0-9]{1,3}', r'\1', self.ip)
+
 
 class Oui(models.Model):
     prefix = models.CharField(max_length=6)
