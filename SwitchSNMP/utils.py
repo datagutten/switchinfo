@@ -65,3 +65,8 @@ def name_string(name):
     for char in name:
         string += '%s.' % ord(char)
     return string
+
+
+def check_and_set(data, snmp_object, oid, key):
+    if snmp_object.oid.find(oid) >= 0 and snmp_object.value:
+        data.update({key: snmp_object.value})

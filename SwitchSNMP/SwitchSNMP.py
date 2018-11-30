@@ -5,7 +5,7 @@ import easysnmp
 
 # from switchinfo.SwitchSNMP.utils import last_section
 import switchinfo.SwitchSNMP.utils as utils
-from switchinfo.SwitchSNMP.utils import mac_string, ip_string
+from switchinfo.SwitchSNMP.utils import mac_string, check_and_set
 
 Session = easysnmp.Session
 
@@ -260,71 +260,68 @@ class SwitchSNMP():
                 vlan_list.append(int(vlan))
         return vlan_list
 
-    def cdp(self):
-        # CISCO-CDP-MIB::cdpCacheAddress
-        oid = '.1.3.6.1.4.1.9.9.23.1.2.1.1'
-        # return self.create_dict(oid=oid)
-        session = self.get_session()
-        if not session:
-            return False
-        platform = dict()
-        ip = dict()
-        device_id = dict()
-        remote_port = dict()
-
-        for object in session.walk(oid):
-            match = re.match(r'.+\.([0-9]+)\.[0-9]+', object.oid)
-            index = match.group(1)
-
-            if object.oid.find('.9.9.23.1.2.1.1.4') >= 0:
-                ip_temp = utils.ip_string(object.value)
-                if not ip_temp == '0.0.0.0':
-                    ip[index] = ip_temp
-            #  cdpCacheDeviceId
-            elif object.oid.find('.9.9.23.1.2.1.1.6') >= 0:
-                device_id[index] = object.value
-            elif object.oid.find('.9.9.23.1.2.1.1.8') >= 0:
-                platform[index] = object.value
-                # Aruba got a weird deviceId
-                if object.value.find('Aruba') >= 0:
-                    device_id[index] = None
-            elif object.oid.find('.9.9.23.1.2.1.1.7') >= 0 and index not in remote_port:
-                remote_port[index] = object.value
-
-        return [ip, platform, device_id, remote_port]
-
+    # TODO: Rename to something including LLDP
     def cdp_multi(self):
-
         session = self.get_session()
-        if not session:
-            return False
 
         cdp = dict()
+        cdp_high_index = False
         # CISCO-CDP-MIB::cdpCacheAddress
         oid = '.1.3.6.1.4.1.9.9.23.1.2.1.1'
-        for object in session.walk(oid):
-            match = re.match(r'.+\.([0-9]+)\.([0-9]+)', object.oid)
-            if_index = match.group(1)  # cdpCacheIfIndex
-            device_index = match.group(2)  # cdpCacheDeviceIndex
+
+        for item in session.walk(oid):
+            match = re.match(r'.+\.([0-9]+)\.([0-9]+)', item.oid)
+            if_index = int(match.group(1))  # cdpCacheIfIndex
+            device_index = int(match.group(2))  # cdpCacheDeviceIndex
+            if if_index > 10000:
+                cdp_high_index = True
+
+            if if_index not in cdp or not cdp[if_index]:
+                cdp[if_index] = dict()
+            if device_index not in cdp[if_index]:
+                cdp[if_index][device_index] = dict()
+
+            if item.oid.find('.9.9.23.1.2.1.1.4') >= 0:
+                ip_temp = utils.ip_string(item.value)
+                if not ip_temp == '0.0.0.0':
+                    cdp[if_index][device_index]['ip'] = ip_temp
+            #  cdpCacheDeviceId
+            elif item.oid.find('.9.9.23.1.2.1.1.6') >= 0:  # and object.value.printable:
+                cdp[if_index][device_index]['device_id'] = item.value
+            elif item.oid.find('.9.9.23.1.2.1.1.8') >= 0:
+                cdp[if_index][device_index]['platform'] = item.value
+                # Aruba got a weird deviceId
+                if item.value.find('Aruba') >= 0:
+                    cdp[if_index][device_index]['device_id'] = None
+            elif item.oid.find('.9.9.23.1.2.1.1.7') >= 0:
+                cdp[if_index][device_index]['remote_port'] = item.value
+            if not cdp[if_index][device_index]:
+                cdp[if_index] = None
+
+        oid = '.1.0.8802.1.1.2.1.4.1'
+
+        for entry in session.walk(oid):
+            match = re.match(r'.+\.([0-9]+)\.([0-9]+)', entry.oid)
+            if_index = int(match.group(1))  # cdpCacheIfIndex
+
+            if cdp_high_index and if_index < 10000:
+                if_index = 10100 + if_index
+
+            device_index = int(match.group(2))  # cdpCacheDeviceIndex
             if if_index not in cdp:
                 cdp[if_index] = dict()
             if device_index not in cdp[if_index]:
                 cdp[if_index][device_index] = dict()
 
-            if object.oid.find('.9.9.23.1.2.1.1.4') >= 0:
-                ip_temp = utils.ip_string(object.value)
-                if not ip_temp == '0.0.0.0':
-                    cdp[if_index][device_index]['ip'] = ip_temp
-            #  cdpCacheDeviceId
-            elif object.oid.find('.9.9.23.1.2.1.1.6') >= 0:
-                cdp[if_index][device_index]['device_id'] = object.value
-            elif object.oid.find('.9.9.23.1.2.1.1.8') >= 0:
-                cdp[if_index][device_index]['platform'] = object.value
-                # Aruba got a weird deviceId
-                if object.value.find('Aruba') >= 0:
-                    cdp[if_index][device_index]['device_id'] = None
-            elif object.oid.find('.9.9.23.1.2.1.1.7') >= 0:
-                cdp[if_index][device_index]['remote_port'] = object.value
+            # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.8') >= 0:
+            #    cdp[if_index][device_index]['remote_port'] = entry.value
+            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.8', 'remote_port')
+            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.9', 'device_id')
+            # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.9') >= 0:
+            #    cdp[if_index][device_index]['device_id'] = entry.value
+            # elif entry.oid.find('.0.8802.1.1.2.1.4.1.1.10') >= 0:
+            #    cdp[if_index][device_index]['platform'] = entry.value
+            check_and_set(cdp[if_index][device_index], entry, '.0.8802.1.1.2.1.4.1.1.10', 'platform')
 
         return cdp
 
