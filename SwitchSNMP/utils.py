@@ -31,6 +31,17 @@ def last_section(oid):
         return match.group(1)
 
 
+def mac_parse_oid(oid):
+    octets = oid.split('.')
+    string = ''
+    for octet in octets:
+        octet = int(octet)
+        if octet <= 0x0f:
+            string += '0'
+        string += format(octet, 'x')
+    return string
+
+
 def mac_string(mac_address):
     mac_string = ''
     for octet in mac_address:

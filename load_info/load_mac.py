@@ -23,7 +23,7 @@ def load_mac(switch, vlan=None):
     mac_on_port = None
     for vlan in vlans:
         try:
-            mac_on_port = device.mac_on_port_2(vlan=vlan.vlan)
+            mac_on_port = device.mac_on_port(vlan=vlan.vlan)
             if switch.type == 'Cisco':
                 bridge_port_to_ifindex = device.bridgePort_to_ifIndex(vlan=vlan.vlan)
             else:

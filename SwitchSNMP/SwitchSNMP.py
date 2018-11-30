@@ -140,42 +140,22 @@ class SwitchSNMP():
         info['duplex'] = self.create_dict(oid='.1.3.6.1.2.1.10.7.2.1.19')
         return info
 
-    # BRIDGE-MIB
-    def mac_on_port(self, device=None, vlan=None):
-        # https://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/44800-mactoport44800.html
-        # Step 2: Mac to bridge port number
-        oid = '.1.3.6.1.2.1.17.4.3.1.1'
-        macId_to_macAddress = self.create_dict(device, vlan, oid)
-
-        # Step 3: bridge port number
-        oid = '.1.3.6.1.2.1.17.4.3.1.2' # BRIDGE-MIB::dot1dTpFdbAddress
-        macId_to_bridgePort = self.create_dict(device, vlan, oid)
-
-        # Step 4: bridge port to ifIndex
-        oid = '.1.3.6.1.2.1.17.1.4.1.2' # BRIDGE-MIB::dot1dBasePortIfIndex
-        bridgePort_to_ifIndex = self.create_dict(device, vlan, oid)
-        # pprint(bridgePort_to_ifIndex)
-        # ifName to ifIndex
-        oid = '.1.3.6.1.2.1.31.1.1.1.1'
-        ifIndex_to_ifName = self.create_dict(device, vlan, oid)
-        if not ifIndex_to_ifName:
-            return
-        ifName_to_macAddress = dict()
-        for macId, macAddress in macId_to_macAddress.items():
-            if macId not in macId_to_bridgePort:
-                print('macId %s not in macId_to_bridgePort' % macId)
+    # return value: bridgePort
+    def mac_on_port(self, vlan=None):
+        session = self.get_session(vlan=vlan)
+        oid = '.1.3.6.1.2.1.17.4.3.1.2'  # BRIDGE-MIB::dot1dTpFdbPort
+        port = dict()
+        for entry in session.walk(oid):
+            matches = re.match(r'(?:mib-2|iso\.3\.6\.1\.2\.1)\.17\.4\.3\.1\.([0-9])\.([0-9\.]+)', entry.oid)
+            if not matches:
+                print('oid %s not parsed' % entry.oid)
                 continue
-            bridgePort = macId_to_bridgePort[macId]
-            if bridgePort not in bridgePort_to_ifIndex:
+            mac = utils.mac_parse_oid(matches.group(2))
+            if not len(mac) == 12:
+                print('Invalid MAC %s' % mac)
                 continue
-
-            ifIndex = bridgePort_to_ifIndex[bridgePort]
-            ifName = ifIndex_to_ifName[ifIndex]
-            if not ifName in ifName_to_macAddress:
-                ifName_to_macAddress[ifName] = []
-            ifName_to_macAddress[ifName].append(macAddress)
-
-        return ifName_to_macAddress        
+            port[mac] = entry.value
+        return port
 
     def ifIndex_to_ifName(self, device=None, vlan=None):
         oid = '.1.3.6.1.2.1.31.1.1.1.1'  # ifName
