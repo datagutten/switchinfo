@@ -4,15 +4,42 @@ from django.contrib import admin
 from .models import *
 
 
+class CNetFilter(admin.SimpleListFilter):
+    title = 'C-net'
+    parameter_name = 'cnet'
+
+    def lookups(self, request, model_admin):
+        cnets = []
+        for vlan in Vlan.objects.all():
+            mac = Mac.objects.filter(interface__vlan=vlan).first()
+            if not mac:
+                continue
+            arp = Arp.objects.filter(mac=mac.mac).first()
+            if not arp:
+                continue
+            cnet = arp.cnet()
+            if cnet in cnets:
+                continue
+            cnets.append(cnet)
+        print(cnets)
+        cnets.sort()
+        return zip(cnets, cnets)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(ip__startswith=self.value())
+
+
 class ArpAdmin(admin.ModelAdmin):
-    list_display = ('ip', 'mac')
+    list_display = ('ip', 'mac', 'vlan', 'cnet')
+    list_filter = (CNetFilter,)
 
 
 admin.site.register(Arp, ArpAdmin)
 
 
 class SwitchAdmin(admin.ModelAdmin):
-    list_display = ('name', 'ip')
+    list_display = ('name', 'ip', 'type', 'model')
 
 
 admin.site.register(Switch, SwitchAdmin)
@@ -27,6 +54,8 @@ admin.site.register(Vlan, VlanAdmin)
 
 class InterfaceAdmin(admin.ModelAdmin):
     list_display = ('switch', 'interface', 'vlan', 'description', 'poe_status')
+    readonly_fields = (['switch'])
+    list_filter = ('switch', 'vlan')
 
 
 admin.site.register(Interface, InterfaceAdmin)
