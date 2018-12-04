@@ -1,6 +1,30 @@
 {% extends 'switchinfo/base.html' %}
 
 {% block content %}
-<h2><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></h2>
-{% include 'switchinfo/switch_table.html' %}
+    <h2><a href="{% url 'switchinfo:switch' name=switch.name %}">{{ switch }}</a></h2>
+    {% if switch.image %}
+        <img src="{{ switch.image }}" />
+    {% endif %}
+    <table border="1">
+        <tr>
+            <th>Model</th>
+            {% if switch.model %}
+            <td>{{ switch.type|default:"" }}&nbsp;<a href="{% url 'switchinfo:switch_model' model=switch.model %}">{{ switch.model }}</a></td>
+            {% else %}
+            <td>{{ switch.type|default:"" }}&nbsp;{{ switch.model|default:"" }}</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ switch.description|default:""|linebreaksbr }}</td>
+        </tr>
+
+    </table>
+    <p>
+    {% include 'switchinfo/switch_table.html' %}
+    </p>
+    <p>
+        <a href="{% url 'switchinfo:switch_load_interfaces' switch_name=switch.name %}">Update interfaces</a>
+        <br /><a href="{% url 'switchinfo:switch_load_mac' switch_name=switch.name %}">Update MAC</a>
+    </p>
 {% endblock %}

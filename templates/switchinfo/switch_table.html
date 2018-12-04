@@ -31,17 +31,17 @@
 			<td>{{interface.neighbor_string|default:""|linebreaksbr}}</td>
 			{% endif %}
             {% if interface.vlan %}
-			<td>
+			<td style="font-family: monospace;">
                 {% for mac in interface.mac %}
                 {{mac}}<br />
                 {% endfor %}
 			</td>
-			<td>
+			<td style="font-family: monospace;">
                 {% for mac in interface.mac %}
                 {{mac.oui}}<br />
                 {% endfor %}
 			</td>
-			<td>
+			<td style="font-family: monospace;">
                 {% for ip in interface.ip %}
 			    {{ip|default:""}}<br />
 			    {% endfor %}

@@ -3,7 +3,7 @@
 {% block content %}
 <ul class="SwitchList">
 {% for switch in switches %}
-<li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch.name}}</a></li>
+<li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

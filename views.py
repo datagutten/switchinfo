@@ -1,13 +1,15 @@
-from django.shortcuts import get_object_or_404, redirect, render
-
-# Create your views here.
-from django.http import HttpResponse
-from .models import Switch, Interface, Vlan
+import re
 from pprint import pprint
 
+from django.shortcuts import get_object_or_404, redirect, render
 
-def switch(request, name):
-    switch = Switch.objects.get(name=name)
+from .forms import SearchForm
+from .models import Arp, Switch, Interface, Vlan, Mac
+
+
+def show_switch(request, name):
+    # switch = Switch.objects.get(name=name)
+    switch = get_object_or_404(Switch, name=name)
     interfaces = Interface.objects.filter(switch=switch)
     context = {
         'switch': switch,
@@ -18,12 +20,32 @@ def switch(request, name):
 
 
 def switches(request):
-    switches = Switch.objects.all()
     context = {
-        'switches': switches,
+        'switches': Switch.objects.all(),
         'title': 'Switches',
     }
     return render(request, 'switchinfo/switches.html', context)
+
+
+def switches_group(request):
+    devices = Switch.objects.all()
+    groups = dict()
+    groups[None] = []
+    for switch in devices:
+        # group = re.match(r'(\S+?)\-[A-Z0-9\-]+$', switch.name)
+        group = re.match(r'(\S+?)\-[A-Z0-9\-]+$', switch.name)
+        if group:
+            group_name = group.group(1)
+            if group_name not in groups:
+                groups[group_name] = []
+            groups[group_name].append(switch)
+        else:
+            groups[None].append(switch)
+    context = {
+        'groups': groups.items(),
+        'title': 'Switches',
+    }
+    return render(request, 'switchinfo/switches_group.html', context)
 
 
 def vlan(request, vlan):
@@ -39,7 +61,56 @@ def vlan(request, vlan):
         'title': str(vlan_object),
     }
     return render(request, 'switchinfo/vlan.html', context)
-    #switches = Switch.objects.filter(has_vlan)
+
+
+def search_form(request):
+    form = SearchForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        if form.cleaned_data['mac']:
+            # return mac_search(request, )
+            return redirect('switchinfo:mac', mac=form.cleaned_data['mac'])
+        elif form.cleaned_data['ip']:
+            return redirect('switchinfo:ip', ip=form.cleaned_data['ip'])
+            # return ip_search(request, form.cleaned_data['ip'])
+    else:
+        return render(request, 'switchinfo/search.html', {'form': form})
+
+
+def mac_search(request, mac):
+    from pprint import pprint
+    # interfaces = Interface.objects.filter()
+    mac = mac.lower()
+    macs = Mac.objects.filter(mac__startswith=mac).\
+        order_by('interface__switch').order_by('interface__index')
+    mac_switch = dict()
+    pprint(macs)
+    for mac in macs:
+        switch = mac.interface.switch
+        if switch not in mac_switch:
+            mac_switch[switch] = []
+        mac_switch[switch].append(mac.interface)
+    pprint(mac_switch)
+    return render(request, 'switchinfo/vlan.html',
+                  context={'switches': mac_switch.items()})
+
+
+def ip_search(request, ip):
+    results = Arp.objects.filter(ip__startswith=ip).order_by('ip')
+    mac_switch = dict()
+    for result in results:
+        try:
+            pprint(result)
+            mac = Mac.objects.get(mac=result.mac)
+            switch = mac.interface.switch
+            if switch not in mac_switch:
+                mac_switch[switch] = []
+            mac_switch[switch].append(mac.interface)
+        except Mac.DoesNotExist:
+            continue
+            # ('MAC %s not found on any switch' % result.mac)
+    context = {'switches': mac_switch.items(),
+               'title': 'IP addresses starting with %s' % ip}
+    return render(request, 'switchinfo/vlan.html', context)
 
 
 def vlans(request):
@@ -51,3 +122,44 @@ def vlans(request):
         'title': 'Vlans',
     }
     return render(request, 'switchinfo/vlans.html', context)
+
+
+def load_interfaces(request, switch_name):
+    from switchinfo.load_info.load_interfaces import load_interfaces
+    switch_obj = get_object_or_404(Switch, name=switch_name)
+    load_interfaces(switch_obj)
+    return redirect('switchinfo:switch', name=switch_name)
+
+
+def load_mac(request, switch_name):
+    from django.core.management import call_command
+    output = ''
+    call_command('load_mac', switch_name, stdout=output)
+    # return HttpResponse(output)
+    return redirect('switchinfo:switch', name=switch_name)
+
+
+def models(request):
+    from pprint import pprint
+    # count = Switch.objects.values_list('model', flat=True).order_by('model'
+
+    model_count = dict()
+    for switch in Switch.objects.exclude(model__isnull=True).order_by('model'):
+        model = '%s %s' % (switch.type, switch.model)
+        if model not in model_count:
+            model_count[model] = {'type': switch.type,
+                                  'model': switch.model,
+                                  'count': 1}
+        else:
+            model_count[model]['count'] += 1
+    pprint(model_count)
+    # sorted(model_count)
+    # return HttpResponse(model_count)
+    return render(request, 'switchinfo/models.html',
+                  context={'models': model_count.values()})
+
+
+def switch_model(request, model):
+    devices = Switch.objects.filter(model=model)
+    return render(request, 'switchinfo/switches.html',
+                  context={'switches': devices})
