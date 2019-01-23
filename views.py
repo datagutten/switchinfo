@@ -91,7 +91,8 @@ def mac_search(request, mac):
         mac_switch[switch].append(mac.interface)
     pprint(mac_switch)
     return render(request, 'switchinfo/vlan.html',
-                  context={'switches': mac_switch.items()})
+                  context={'switches': mac_switch.items(),
+                           'title': 'MAC addresses starting with %s' % mac})
 
 
 def ip_search(request, ip):
