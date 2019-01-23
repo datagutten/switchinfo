@@ -15,6 +15,14 @@
             {% endif %}
         </tr>
         <tr>
+            <th>Series</th>
+            {% if switch.series %}
+                <td><a href="{% url 'switchinfo:switch_series' series=switch.series %}">{{ switch.series }}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+        </tr>
+        <tr>
             <th>Description</th>
             <td>{{ switch.description|default:""|linebreaksbr }}</td>
         </tr>

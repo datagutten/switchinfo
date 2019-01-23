@@ -7,7 +7,8 @@ class Switch(models.Model):
     has_poe = models.BooleanField(default=False)
     type = models.CharField(max_length=50, blank=True, null=True)
     community = models.CharField(max_length=50, default='Public')
-    model = models.CharField(max_length=50, blank=True, null=True)
+    model = models.CharField(max_length=100, blank=True, null=True)
+    series = models.CharField(max_length=100, blank=True, null=True)
     description = models.TextField(max_length=500, blank=True, null=True)
 
     class Meta:

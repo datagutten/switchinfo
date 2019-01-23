@@ -1,7 +1,9 @@
 import easysnmp
 import re
 
-import switchinfo.SwitchSNMP.utils as utils
+# import switchinfo.SwitchSNMP.utils as utils
+# import .utils
+from . import utils
 
 Session = easysnmp.Session
 
@@ -71,7 +73,7 @@ class SwitchSNMP:
 
         return indexes
 
-    def create_list(self, ip=None, vlan=None, oid=False):
+    def create_list(self, ip=None, vlan=None, oid=None):
         session = self.get_session(ip, vlan)
         values = []
         for item in session.walk(oid):
@@ -100,8 +102,14 @@ class SwitchSNMP:
             # SNMPv2-MIB::sysObjectID
             info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
             # ENTITY-MIB::entPhysicalModelName
-            info['model'] =\
-                session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
+            model_strings = self.create_list(oid='.1.3.6.1.2.1.47.1.1.1.1.13')
+            for model in model_strings:
+                if not model.strip() == '':
+                    info['model'] = model
+                    break
+
+            # info['model'] =\
+            #    session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
         except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
             info['model'] = ''
         except easysnmp.exceptions.EasySNMPTimeoutError as exception:
@@ -142,6 +150,7 @@ class SwitchSNMP:
 
     # return value: bridgePort
     def mac_on_port(self, vlan=None):
+        # TODO: Check if vlan exists on switch
         session = self.get_session(vlan=vlan)
         oid = '.1.3.6.1.2.1.17.4.3.1.2'  # BRIDGE-MIB::dot1dTpFdbPort
         port = dict()

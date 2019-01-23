@@ -17,6 +17,7 @@ urlpatterns = [
     path('vlans', views.vlans, name='vlans'),
     path('models', views.models, name='models'),
     path('model/<str:model>', views.switch_model, name='switch_model'),
+    path('series/<str:series>', views.switch_model, name='switch_series'),
     path('search', views.search_form, name='search'),
     path('mac/<str:mac>', views.mac_search, name='mac'),
     path('ip/<str:ip>', views.ip_search, name='ip'),

@@ -140,9 +140,6 @@ def load_mac(request, switch_name):
 
 
 def models(request):
-    from pprint import pprint
-    # count = Switch.objects.values_list('model', flat=True).order_by('model'
-
     model_count = dict()
     for switch in Switch.objects.exclude(model__isnull=True).order_by('model'):
         model = '%s %s' % (switch.type, switch.model)
@@ -152,14 +149,34 @@ def models(request):
                                   'count': 1}
         else:
             model_count[model]['count'] += 1
-    pprint(model_count)
-    # sorted(model_count)
-    # return HttpResponse(model_count)
+
+    series_count = dict()
+    for switch in \
+            Switch.objects.exclude(series__isnull=True).order_by('series'):
+        series = '%s %s' % (switch.type, switch.series)
+        if series not in series_count:
+            series_count[series] = {'type': switch.type,
+                                    'series': switch.series,
+                                    'count': 1}
+        else:
+            series_count[series]['count'] += 1
+
     return render(request, 'switchinfo/models.html',
-                  context={'models': model_count.values()})
+                  context={'models': model_count.values(),
+                           'series': series_count.values(),
+                           'title': 'Switch models'})
 
 
-def switch_model(request, model):
-    devices = Switch.objects.filter(model=model)
+def switch_model(request, model=None, series=None):
+    if model:
+        devices = Switch.objects.filter(model=model)
+        title = devices.first().model
+    elif series:
+        devices = Switch.objects.filter(series=series)
+        title = devices.first().series
+    else:
+        raise AttributeError('Model or series must be specified')
+
     return render(request, 'switchinfo/switches.html',
-                  context={'switches': devices})
+                  context={'switches': devices,
+                           'title': title})
