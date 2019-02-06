@@ -62,7 +62,9 @@ class Interface(models.Model):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='untagged_vlan')
-    description = models.CharField(max_length=200, blank=True, null=True)
+    description = models.CharField(
+        'User defined description for the interface',
+        max_length=200, blank=True, null=True)
     status = models.IntegerField(null=True)
     admin_status = models.CharField(max_length=50, blank=True, null=True)
     speed = models.BigIntegerField(blank=True, null=True)
