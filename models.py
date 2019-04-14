@@ -57,6 +57,7 @@ class Interface(models.Model):
         on_delete=models.CASCADE,
         related_name='switch')
     interface = models.CharField(max_length=50)
+    type = models.CharField('Interface type', max_length=50)
     vlan = models.ForeignKey(
         Vlan,
         on_delete=models.SET_NULL,
