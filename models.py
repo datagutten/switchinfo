@@ -66,6 +66,9 @@ class Interface(models.Model):
         on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='untagged_vlan')
+    tagged_vlans = models.ManyToManyField(Vlan,
+                                          related_name='tagged_vlans',
+                                          blank=True)
     description = models.CharField(
         'User defined description for the interface',
         max_length=200, blank=True, null=True)
