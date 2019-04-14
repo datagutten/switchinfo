@@ -91,7 +91,7 @@ class Interface(models.Model):
         default=False)
 
     class Meta:
-        unique_together = (('switch', 'interface'),)
+        unique_together = (('switch', 'index'),)
         ordering = ['index']
 
     def mac(self):
