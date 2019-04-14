@@ -31,6 +31,9 @@ class Switch(models.Model):
         else:
             return interface_name
 
+    def vlans(self):
+        return Vlan.objects.filter(on_switch=self, vlan__gt=1)
+
 
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)
