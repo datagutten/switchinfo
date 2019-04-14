@@ -31,7 +31,9 @@
 			<td>{{interface.neighbor_string|default:""|linebreaksbr}}</td>
 			{% endif %}
 
-            {% if interface.vlan or interface.force_mac %}
+            {% if interface.admin_status == 2 %}
+                <td colspan="4" class="cellWarning">Admin disabled</td>
+            {% elif interface.vlan or interface.force_mac %}
 			<td style="font-family: monospace;">
                 {% for mac in interface.mac %}
                 {{mac}}<br />

@@ -110,7 +110,7 @@ def load_interfaces(switch, now=None):
         # print(if_index)
         # print(interfaces['status'][if_index])
         interface.status = int(interfaces['status'][if_index])
-        interface.admin_status = interfaces['admin_status'][if_index]
+        interface.admin_status = int(interfaces['admin_status'][if_index])
 
         if poe_status and bridge_port in poe_status:
             interface.poe_status = poe_status[bridge_port]
