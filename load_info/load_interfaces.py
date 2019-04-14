@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.db.utils import DataError
-
 from easysnmp.exceptions import EasySNMPTimeoutError
 
 from switchinfo.SwitchSNMP.select import get_switch
@@ -45,6 +44,8 @@ def load_interfaces(switch, now=None):
                 pass
     else:
         ports = device.bridgePort_to_ifIndex()
+        for bridge_port, if_index in ports.items():
+            ports_rev[if_index] = bridge_port
 
     if not ports:
         raise ValueError('bridgePort to ifIndex conversion table not found')
@@ -63,10 +64,27 @@ def load_interfaces(switch, now=None):
         else:
             bridge_port = ports_rev[if_index]
 
-        name = interfaces['name'][if_index]
-        # 117 is gigabitEthernet on HP
-        if not interfaces['type'][if_index] == '6' \
-                and not interfaces['type'][if_index] == '117':
+        if if_index in interfaces['name']:
+            name = interfaces['name'][if_index]
+        elif if_index in interfaces['descr']:
+            name = switch.shorten_interface_name(interfaces['descr'][if_index])
+        else:
+            name = ''
+
+        # Interface naming for Westermo DSL modems
+        if switch.type == 'Westermo':
+            if interfaces['type'][if_index] == '6':
+                name = '10/100TX Eth %s' % name
+            elif interfaces['type'][if_index] == '169':
+                name = 'SHDSL DSL %s' % name
+
+        """
+        117 is gigabitEthernet on HP
+        169 is DSL
+        """
+        allowed_types = ['6', '117', '169']
+
+        if not interfaces['type'][if_index] in allowed_types:
             # print('Interface type %s' % interfaces['type'][if_index])
             continue
         if name == 'Fa0':
@@ -75,12 +93,15 @@ def load_interfaces(switch, now=None):
         interface, new = Interface.objects.get_or_create(
             switch=switch,
             index=if_index,
-            interface=interfaces['name'][if_index],
+            interface=name,
+            type=interfaces['type'][if_index],
         )
+
         if not new:
             if not interface.status == int(interfaces['status'][if_index]):
                 interface.link_status_changed = datetime.now()
-        interface.description = interfaces['alias'][if_index]
+        if if_index in interfaces['alias']:
+            interface.description = interfaces['alias'][if_index]
 
         if if_index in interfaces['high_speed']:
             interface.speed = interfaces['high_speed'][if_index]
@@ -95,10 +116,11 @@ def load_interfaces(switch, now=None):
             interface.poe_status = poe_status[bridge_port]
         else:
             interface.poe_status = None
-        # print('cdp')
-        # pprint(cdp_multi)
 
-        neighbor = get_neighbors(interface.index, cdp_multi, switch)
+        if switch.type == 'Westermo':
+            neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
+        else:
+            neighbor = get_neighbors(interface.index, cdp_multi, switch)
 
         if not neighbor and interface.neighbor:
                 if interface.neighbor_set_by == switch:
@@ -116,18 +138,23 @@ def load_interfaces(switch, now=None):
         elif isinstance(neighbor, Switch):
             interface.neighbor = neighbor
             interface.neighbor_set_by = switch
+            # Interfaces with CDP or LDDP is a link,
+            # skip loading of MAC addresses
+            interface.skip_mac = True
         else:
             interface.neighbor_string = neighbor
+            # Mitel IP Phones have lldp, but we want to load their MAC
+            if neighbor in ['Mitel IP Phone']:
+                interface.force_mac = True
 
         if not switch.type == 'Cisco' and not switch.type == 'CiscoSB' and not switch.type == 'Aruba':
             key = int(bridge_port)
         else:
             key = int(if_index)
 
-        if key not in interface_vlan:
-            # print('%d not in interface_vlan' % key)
-            continue
-        if not interface_vlan[key]:
+        # print('Key: %s bridge_port: %s if_index: %s' % (key, bridge_port, if_index))
+        if key not in interface_vlan or not interface_vlan[key]:
+            print('%d not in interface_vlan' % key)
             interface.vlan = None
         else:
             vlan = interface_vlan[key]
@@ -181,6 +208,9 @@ def get_neighbors(index, cdp_multi, switch):
                                                    interface=remote_interface)
                     remote.neighbor = switch
                     remote.neighbor_set_by = switch
+                    # Interfaces with CDP or LDDP is a link, skip loading of MAC addresses
+                    # Set skip MAC on remote interface
+                    remote.skip_mac = True
                     remote.save()
                 except Interface.DoesNotExist:
                     print('No interface named %s on %s' % (remote_interface, neighbor_switch))
@@ -188,6 +218,9 @@ def get_neighbors(index, cdp_multi, switch):
                 # break  # Valid neighbor found, break loop
             else:
                 print('Unknown neighbor: ' + (neighbor['ip'] or neighbor['device_id']))
+
+        if neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']:
+            return neighbor['device_id']
         return '%s\n%s\n%s' % (
             neighbor['device_id'],
             neighbor['ip'],
