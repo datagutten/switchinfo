@@ -93,8 +93,8 @@ def load_interfaces(switch, now=None):
         interface, new = Interface.objects.get_or_create(
             switch=switch,
             index=if_index,
-            interface=name,
             type=interfaces['type'][if_index],
+            defaults={'interface': name}
         )
 
         if not new:
@@ -111,6 +111,7 @@ def load_interfaces(switch, now=None):
         # print(interfaces['status'][if_index])
         interface.status = int(interfaces['status'][if_index])
         interface.admin_status = int(interfaces['admin_status'][if_index])
+        interface.interface = name
 
         if poe_status and bridge_port in poe_status:
             interface.poe_status = poe_status[bridge_port]
