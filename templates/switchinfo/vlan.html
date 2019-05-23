@@ -6,6 +6,8 @@
     {% if interfaces %}
 	<h2><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></h2>
 	{% include 'switchinfo/switch_table.html' %}
+    {% else %}
+        Vlan exists on <a href="{% url 'switchinfo:switch' name=switch.name %}">{{ switch }}</a> without ports<br />
     {% endif %}
 {% endfor %}
 {% endblock %}
