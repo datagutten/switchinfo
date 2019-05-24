@@ -93,8 +93,7 @@ def load_interfaces(switch, now=None):
         interface, new = Interface.objects.get_or_create(
             switch=switch,
             index=if_index,
-            type=interfaces['type'][if_index],
-            defaults={'interface': name}
+            defaults={'interface': name, 'type': interfaces['type'][if_index]}
         )
 
         if not new:
@@ -112,6 +111,7 @@ def load_interfaces(switch, now=None):
         interface.status = int(interfaces['status'][if_index])
         interface.admin_status = int(interfaces['admin_status'][if_index])
         interface.interface = name
+        interface.type = interfaces['type'][if_index]
 
         if poe_status and bridge_port in poe_status:
             interface.poe_status = poe_status[bridge_port]
@@ -153,7 +153,6 @@ def load_interfaces(switch, now=None):
         else:
             key = int(if_index)
 
-        # print('Key: %s bridge_port: %s if_index: %s' % (key, bridge_port, if_index))
         if key not in interface_vlan or not interface_vlan[key]:
             print('%d not in interface_vlan' % key)
             interface.vlan = None
