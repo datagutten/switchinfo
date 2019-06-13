@@ -16,8 +16,10 @@
 	{% for interface in interfaces %}
 		<tr class="{{interface.css}}">
 			<td>{{interface.interface}}</td>
-			{% if interface.vlan %}
-			<td><a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{interface.vlan|default:"trunk"}}</a></td>
+			{% if not interface.is_trunk %}
+			<td><a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{interface.vlan}}</a></td>
+            {% elif interface.is_trunk and interface.vlan %}
+                <td>trunk (<a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{interface.vlan}}</a>)</td>
 			{% else %}
 			<td>{{interface.vlan|default:"trunk"}}</td>
 			{% endif %}
