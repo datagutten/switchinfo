@@ -40,6 +40,15 @@ class Switch(models.Model):
             from switch_backup.backup import has_backup
             return has_backup(self)
 
+    def has_tree(self):
+        if apps.is_installed('switch_tree'):
+            from switch_tree.models import Tree
+            try:
+                Tree.objects.get(switch=self)
+                return True
+            except Tree.DoesNotExist:
+                return False
+
 
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)

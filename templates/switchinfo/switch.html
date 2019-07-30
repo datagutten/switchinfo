@@ -37,5 +37,6 @@
     {% if switch.has_backup %}
         <br /><a href="/gitlist/configs/blob/master/{{ switch.name }}">Show config backup</a>
     {% endif %}
+        <br /><a href="{% url 'switchinfo:switch_vlans' switch_name=switch.name %}">Show vlans on switch</a>
     </p>
 {% endblock %}

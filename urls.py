@@ -9,6 +9,7 @@ urlpatterns = [
     path('switch/<str:switch_name>/load_mac', views.load_mac,
          name='switch_load_mac'),
     path('switch/<str:name>', views.show_switch, name='switch'),
+    path('switch/<str:switch_name>/vlans', views.vlans_on_switch, name='switch_vlans'),
     path('', views.switches, name='switches_index'),
     path('switch', views.switches, name='switches'),
     path('switches', views.switches, name='switches2'),

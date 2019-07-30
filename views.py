@@ -181,3 +181,15 @@ def switch_model(request, model=None, series=None):
     return render(request, 'switchinfo/switches.html',
                   context={'switches': devices,
                            'title': title})
+
+
+def vlans_on_switch(request, switch_name):
+    switch = Switch.objects.get(name=switch_name)
+    context = {
+        'vlans': Vlan.objects.filter(on_switch=switch),
+        'title': 'Vlans on %s' % switch_name,
+        'switch_name': switch_name,
+        'switch': switch,
+    }
+
+    return render(request, 'switchinfo/vlans_on_switch.html', context)

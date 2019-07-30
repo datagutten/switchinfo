@@ -1,0 +1,15 @@
+{% extends 'switchinfo/base.html' %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+<pre>
+{% for vlan in vlans %}
+    vlan {{vlan.vlan}}
+    name "{{ vlan.name }}"
+    exit
+{% endfor %}
+</pre>
+    {% if switch.has_tree %}
+    <a href="{% url 'switchinfo:backtrace' name=switch_name %}">Show upstream switches and missing vlans</a>
+    {% endif %}
+{% endblock %}
