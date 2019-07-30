@@ -1,0 +1,10 @@
+{% extends 'switchinfo/base.html' %}
+
+{% block content %}
+<form action="{% url 'switchinfo:search' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Search">
+</form>
+
+{% endblock %}
