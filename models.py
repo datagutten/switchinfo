@@ -152,6 +152,12 @@ class Interface(models.Model):
     def switch_string(self):
         return '%s on %s' % (self.interface, self.switch)
 
+    def is_trunk(self):
+        if self.tagged_vlans.count() > 0 or self.vlan is None:
+            return True
+        else:
+            return False
+
     def __str__(self):
         return self.interface
 
