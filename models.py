@@ -1,4 +1,5 @@
 from django.db import models
+from django.apps import apps
 
 
 class Switch(models.Model):
@@ -33,6 +34,11 @@ class Switch(models.Model):
 
     def vlans(self):
         return Vlan.objects.filter(on_switch=self, vlan__gt=1)
+
+    def has_backup(self):
+        if apps.is_installed('switch_backup'):
+            from switch_backup.backup import has_backup
+            return has_backup(self)
 
 
 class Vlan(models.Model):
