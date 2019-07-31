@@ -1,15 +1,9 @@
-# from datetime import datetime
-from pprint import pprint
-import requests
 import json
-from pprint import pprint
+
+import requests
 from django.core.management.base import BaseCommand  # , CommandError
-# from django.utils import timezone
 
 from switchinfo.models import Arp
-
-from .cisco import Cisco
-cisco = Cisco()
 
 
 class Command(BaseCommand):
@@ -22,4 +16,5 @@ class Command(BaseCommand):
         r = requests.get('http://%s/arp_json.php' % options['ip'][0])
         arp = json.loads(r.text)
         for host in arp:
-            obj, new = Arp.objects.get_or_create(ip=host['ip'], mac=host['mac'].replace(':',''))
+            arp_db = Arp(mac=host['mac'].replace(':', ''), ip=host['ip'])
+            arp_db.save()

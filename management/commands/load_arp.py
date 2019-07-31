@@ -27,15 +27,8 @@ class Command(BaseCommand):
             if not len(mac) == 12:
                 mac = utils.mac_string(mac)
             try:
-                arp_db, new = Arp.objects.get_or_create(
-                    mac=mac,
-                    defaults={'ip': ip},
-                    )
-                if not new:
-                    arp_db.ip = ip
-                    arp_db.save()
-            except Arp.MultipleObjectsReturned:
-                print('Duplicate: ' + utils.mac_string(mac))
+                arp_db = Arp(mac=mac, ip=ip)
+                arp_db.save()
             except DataError as error:
                 print(error)
                 print(mac)
