@@ -3,7 +3,10 @@ import re
 
 # import switchinfo.SwitchSNMP.utils as utils
 # import .utils
-from . import utils
+try:
+    from . import utils
+except ImportError:
+    import utils
 
 Session = easysnmp.Session
 
