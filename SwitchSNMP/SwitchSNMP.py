@@ -230,29 +230,34 @@ class SwitchSNMP:
         # If a port has egress multiple vlans, the port is a trunk port
         egress = self.egress_ports()
         untagged = self.untagged_ports()
-
         port_vlan = dict()
-        tagged_ports = dict()
+        tagged_vlans = dict()
+        untagged_vlan = dict()
 
         for vlan, ports in egress.items():
             egress_ports = utils.parse_port_list(ports)
-            untagged_ports = utils.parse_port_list(untagged[vlan])
+            # Is the port untagged in the current vlan
+            is_untagged = utils.parse_port_list(untagged[vlan])
 
             for index, port in egress_ports.items():
                 # Port has egress, but not untagged
-                tagged_ports[index] = []
+                if index not in tagged_vlans:
+                    tagged_vlans[index] = []
+
                 # vlan is tagged
-                if egress_ports[index] and not untagged_ports[index]:
+                if egress_ports[index] and not is_untagged[index]:
                     port_vlan[index] = None
-                    tagged_ports[index].append(vlan)
+                    tagged_vlans[index].append(vlan)
                 # vlan in untagged
                 elif egress_ports[index] and index not in port_vlan:
                     port_vlan[index] = vlan
+                if is_untagged[index]:
+                    untagged_vlan[index] = vlan
                 # port has egress in multiple vlans, must be tagged
                 elif egress_ports[index] and index in port_vlan:
                     port_vlan[index] = None
 
-        return port_vlan
+        return [port_vlan, tagged_vlans, untagged_vlan]
 
     def vlan_ports_pvid(self, device=None):
         # Q-BRIDGE-MIB::dot1qPvid

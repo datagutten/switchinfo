@@ -45,4 +45,4 @@ class Cisco(SwitchSNMP):
                 port_vlan[key] = None
             else:
                 port_vlan[key] = vlans[ifindex]
-        return port_vlan
+        return port_vlan, None, None

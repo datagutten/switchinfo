@@ -13,11 +13,13 @@ def load_interfaces(switch, now=None):
     device = get_switch(switch)
     interfaces = device.interfaces_rfc()
     try:
-        interface_vlan = device.vlan_ports()
+        interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
     except ValueError as exception:
         print(exception)
         print('Using pvid')
         interface_vlan = device.vlan_ports_pvid()
+        tagged_vlans = None
+        untagged_vlan = None
 
     uptime = device.uptime()
     if not interfaces:
@@ -164,6 +166,24 @@ def load_interfaces(switch, now=None):
                 interface.vlan.save()
             except Vlan.DoesNotExist:
                 print('Missing vlan %s, run load_vlans' % vlan)
+        if tagged_vlans and key in tagged_vlans:
+
+            for tagged_vlan in tagged_vlans[key]:
+                interface.tagged_vlans.add(Vlan.objects.get(vlan=tagged_vlan))
+        if untagged_vlan and key in untagged_vlan:
+            try:
+                interface.vlan = Vlan.objects.get(vlan=untagged_vlan[key])
+                interface.vlan.has_ports = True
+                interface.vlan.save()
+            except Vlan.DoesNotExist:
+                print('Missing vlan %s, run load_vlans' % untagged_vlan[key])
+        if interface.index in stack:
+            print('Interface %s in stack' % interface)
+            interface.neighbor_string = stack[interface.index]
+        else:
+            print(interface.index)
+
+
         try:
             interface.save()
         except DataError as error:
