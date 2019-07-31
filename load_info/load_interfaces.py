@@ -59,6 +59,11 @@ def load_interfaces(switch, now=None):
         switch.has_poe = True
         switch.save()
 
+    if switch.type == 'Aruba':
+        stack = device.stack_ports()
+    else:
+        stack = []
+
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():
         if if_index not in ports_rev:
