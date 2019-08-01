@@ -200,7 +200,7 @@ class Mac(models.Model):
 
 
 class Arp(models.Model):
-    mac = models.CharField(max_length=12, unique=True)
+    mac = models.CharField(max_length=12, unique=True, primary_key=True)
     ip = models.GenericIPAddressField()
 
     def __str__(self):
