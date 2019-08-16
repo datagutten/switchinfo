@@ -161,7 +161,7 @@ def load_interfaces(switch, now=None):
             key = int(if_index)
 
         if key not in interface_vlan or not interface_vlan[key]:
-            print('%d not in interface_vlan' % key)
+            # print('%d not in interface_vlan' % key)
             interface.vlan = None
         else:
             vlan = interface_vlan[key]
