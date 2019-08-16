@@ -1,15 +1,25 @@
 import re
 
 
-def parse_port_list(string, limit=None):
+def parse_port_list(string, limit=None, zero_count=False):
+    """
+    Parse a binary port list
+    :param string:
+    :param limit:
+    :param zero_count: Count index from zero
+    :return:
+    """
     ports = dict()
     for pos, byte in enumerate(string):
-        binary = format(ord(byte),'08b')
+        binary = format(ord(byte), '08b')
         offset = 8 * pos
         for binpos, binbyte in enumerate(binary):
-            index = binpos+offset+1
+            if not zero_count:
+                index = binpos+offset+1
+            else:
+                index = binpos + offset
             # print('Port: %d Byte: %s' % (index, binbyte))
-            if binbyte=='1':
+            if binbyte == '1':
                 ports[index] = True
             else:
                 ports[index] = False
