@@ -1,7 +1,7 @@
 import re
 from pprint import pprint
 
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
 
 from .forms import SearchForm
 from .models import Arp, Switch, Interface, Vlan, Mac
@@ -193,3 +193,10 @@ def vlans_on_switch(request, switch_name):
     }
 
     return render(request, 'switchinfo/vlans_on_switch.html', context)
+
+
+def hosts(request):
+    switches_string = ''
+    for switch in Switch.objects.all():
+        switches_string += '%s %s\n' % (switch.ip, switch.name)
+    return HttpResponse(switches_string)

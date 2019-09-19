@@ -22,4 +22,5 @@ urlpatterns = [
     path('search', views.search_form, name='search'),
     path('mac/<str:mac>', views.mac_search, name='mac'),
     path('ip/<str:ip>', views.ip_search, name='ip'),
+    path('hosts', views.hosts, name='hosts'),
 ]
