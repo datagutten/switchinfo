@@ -1,6 +1,7 @@
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.SwitchSNMP import utils
 
+
 class Cisco(SwitchSNMP):
 
     def vlans(self, device=None):
@@ -80,7 +81,6 @@ class Cisco(SwitchSNMP):
                     tagged_vlans[index].append(vlan_id)
                     if native_vlan[index] == 1:
                         port_vlan[index] = None
-                        untagged_vlan[index] = None
                     else:
                         port_vlan[index] = native_vlan[index]
                         untagged_vlan[index] = native_vlan[index]
