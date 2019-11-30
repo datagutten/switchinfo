@@ -53,14 +53,14 @@ def mac_parse_oid(oid):
 
 
 def mac_string(mac_address):
-    mac_string = ''
+    string = ''
     for octet in mac_address:
         octet = ord(octet)
         if octet <= 0x0f:
-            mac_string += '0'
+            string += '0'
         # Format as lower case hex digit without prefix
-        mac_string += format(octet, 'x')
-    return mac_string
+        string += format(octet, 'x')
+    return string
 
 
 def ip_string(ip):
