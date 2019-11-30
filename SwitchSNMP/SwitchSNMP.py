@@ -1,5 +1,9 @@
 import easysnmp
 import re
+try:
+    import netsnmp
+except ModuleNotFoundError:
+    pass
 
 # import switchinfo.SwitchSNMP.utils as utils
 # import .utils
@@ -23,7 +27,7 @@ class SwitchSNMP:
         self.community = community
         self.device = device
 
-    def get_session(self, device=None, vlan=None):
+    def get_session(self, device=None, vlan=None, use_easysnmp=True):
         if not vlan:
             vlan = 0
             community = self.community
@@ -39,18 +43,21 @@ class SwitchSNMP:
         if vlan not in self.sessions[device]:
             # print('Creating session for %s vlan %s community %s' %
             #        (device, vlan, community))
-            try:
-                self.sessions[device][vlan] = Session(
-                    hostname=device,
-                    community=community,
-                    version=2,
-                    abort_on_nonexistent=True,)
-            except easysnmp.exceptions.EasySNMPConnectionError as exception:
-                raise ValueError('Unable to open session with %s vlan %s: %s'
-                                 % (device, vlan, exception))
-            except easysnmp.exceptions.EasySNMPTimeoutError as exception:
-                raise ValueError('Timeout connecting to %s: %s'
-                                 % (device, exception))
+            if use_easysnmp:
+                try:
+                    self.sessions[device][vlan] = Session(
+                        hostname=device,
+                        community=community,
+                        version=2,
+                        abort_on_nonexistent=True,)
+                except easysnmp.exceptions.EasySNMPConnectionError as exception:
+                    raise ValueError('Unable to open session with %s vlan %s: %s'
+                                     % (device, vlan, exception))
+                except easysnmp.exceptions.EasySNMPTimeoutError as exception:
+                    raise ValueError('Timeout connecting to %s: %s'
+                                     % (device, exception))
+            else:
+                self.sessions[device][vlan] = netsnmp.SNMPSession(device, community, version=0)
         return self.sessions[device][vlan]
 
     def create_dict(self, ip=None, vlan=None, oid=None,
