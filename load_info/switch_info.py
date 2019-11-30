@@ -39,8 +39,11 @@ def switch_type(descr):
         return 'Extreme'
     elif descr.find('Aruba') == 0:
         return 'Aruba'
-    elif descr.find('Hewlett-Packard'):
+    elif descr.find('Hewlett-Packard') == 0:
         return 'HP'
+    elif descr.find('Westermo') == 0:
+        return 'Westermo'
+
 
 
 def model_from_description(device, switch_type):
