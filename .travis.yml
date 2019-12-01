@@ -1,0 +1,17 @@
+language: python
+addons:
+ apt:
+  packages:
+   - python3-pip
+   - python3-mysqldb
+before_script:
+  - sudo snmpsimd.py --data-dir=tests/snmp_data --process-user=nobody --process-group=nogroup --agent-udpv4-endpoint=127.0.0.1:161 --logging-method=null &
+script:
+  - python3 runtests.py
+deploy:
+  provider: pypi
+  user: __token__
+  password:
+    secure: pVMLp0Np7j3HZNxKoKCA92vUzRZGIKou80BQSEA371diXUQ7Q8B0dmnKYSaJCjjz8zaaYvnrmiSq5YA98IpVg1gvE3gMpEdYqix40yPfM/LvWwFqPKf5e047pwjuVWvI4syMxhs92/x7S4Xt+5Mz6Uy3ExlCVdB8muucPHhNjiSno/UuWo93X2M78q8jYCM/q0HdCzMZR7JcrWbLZjygE/em3ohMaIzmkdA9IDyjhLk3Tf9iRLe8QPhI/NHqM7A9PHY6D8EAZXwboUae6e0lb7hymAJY2u9paC6rcmLKCrSGdiojUUNk/m82kGTWdYyWu1cIaKnK8VipolLWms0SYaZCmAhc82LGVloI8cHeenDNwDk+27H2kvYWMpcI1etYo3J1Ddz0EPeo9R86H8rARlCNwcn7OYzDg8u83EET+BtK6VCSHdhLOQJn7XtSnO9ukLJl9Jo8/EWxiiBPDft3fAjVcX5Oq+72GJAk8owud3H0Vc/Er+fyJhMh2nJmOwzHLlIqmkZOeQD+NbvSg9WCWaaTI45upF9Yk8c4XlMSylkCyseXcAWumbgZiUdvxiXWL535YcHNv/dgDXVR7sbOuqzoKYsLR0ohulMZFQbRtQrtBkoBa3sXCOnKktZKSg1UTzigg0oxL2HmZ+DlfBw6PRXElroZx/5ej6az4T4F5Ds=
+  on:
+    tags: true
