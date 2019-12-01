@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include switchinfo/static *
+recursive-include switchinfo/templates *
+recursive-include switchinfo/management *
