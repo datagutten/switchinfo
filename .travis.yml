@@ -3,13 +3,17 @@ python: 3.6
 addons:
  apt:
   packages:
-   - python3-pip
    - python3-mysqldb
    - libsnmp-dev
-before_script:
-  - sudo -H pip3 install snmpsim
-  - sudo snmpsimd.py --data-dir=test_data/snmp_data --process-user=nobody --process-group=nogroup --agent-udpv4-endpoint=127.0.0.1:161 &
-  # - cat /tmp/snmpsimd.log
+
+services:
+ - docker
+
+before_install:
+ - WORK_DIR=$(pwd)
+ - docker pull tandrup/snmpsim
+ - docker run -d -v $WORK_DIR/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
+
 script:
   - python3 runtests.py
 deploy:
