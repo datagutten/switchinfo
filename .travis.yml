@@ -4,6 +4,7 @@ addons:
   packages:
    - python3-pip
    - python3-mysqldb
+   - libsnmp-dev
 before_script:
   - sudo snmpsimd.py --data-dir=tests/snmp_data --process-user=nobody --process-group=nogroup --agent-udpv4-endpoint=127.0.0.1:161 --logging-method=null &
 script:
