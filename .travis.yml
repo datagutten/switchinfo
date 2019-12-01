@@ -8,8 +8,8 @@ addons:
    - libsnmp-dev
 before_script:
   - sudo -H pip3 install snmpsim
-  - sudo snmpsimd.py --data-dir=tests/snmp_data --process-user=nobody --process-group=nogroup --agent-udpv4-endpoint=127.0.0.1:161 --logging-method=file:/tmp/snmpsimd.log &
-  - cat /tmp/snmpsimd.log
+  - sudo snmpsimd.py --data-dir=test_data/snmp_data --process-user=nobody --process-group=nogroup --agent-udpv4-endpoint=127.0.0.1:161 &
+  # - cat /tmp/snmpsimd.log
 script:
   - python3 runtests.py
 deploy:
