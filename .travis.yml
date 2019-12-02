@@ -3,7 +3,6 @@ python: 3.6
 addons:
  apt:
   packages:
-   - python3-mysqldb
    - libsnmp-dev
 
 services:
