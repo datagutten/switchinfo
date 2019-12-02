@@ -15,7 +15,7 @@ before_install:
  - docker run -d -v $WORK_DIR/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
 
 script:
-  - python3 runtests.py
+  - coverage runtests.py
 deploy:
   provider: pypi
   user: __token__
