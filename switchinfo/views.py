@@ -43,7 +43,7 @@ def switches_group(request):
             groups[None].append(switch)
     context = {
         'groups': groups.items(),
-        'title': 'Switches',
+        'title': 'Switch groups',
     }
     return render(request, 'switchinfo/switches_group.html', context)
 

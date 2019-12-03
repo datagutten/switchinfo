@@ -1,9 +1,9 @@
 {% extends 'switchinfo/base.html' %}
 
 {% block content %}
-
+    <h1>{{ title }}</h1>
     {% for group_name, group in groups %}
-        <h2>{{ group_name }}</h2>
+        <h2>{{ group_name|default:"No group" }}</h2>
         <ul class="SwitchList">
             {% for switch in group %}
                 <li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{ switch }}</a></li>
