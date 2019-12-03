@@ -5,7 +5,7 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.models import Switch
 
 
-def switch_info(ip=None, community=None, device=None):
+def switch_info(ip=None, community=None, device=None, silent=True):
     if not device:
         device = SwitchSNMP(community=community, device=ip)
     else:
@@ -14,12 +14,10 @@ def switch_info(ip=None, community=None, device=None):
     info = device.switch_info()
     if not info:
         return
-    switch, new = Switch.objects.get_or_create(ip=ip)
 
-    pprint(info)
+    switch, new = Switch.objects.get_or_create(ip=ip)
     switch.community = community
     switch.type = switch_type(info['descr'])
-    print('Type: %s' % switch.type)
     switch.name = info['name'].split('.')[0]
     switch.description = info['descr']
 
@@ -30,8 +28,12 @@ def switch_info(ip=None, community=None, device=None):
 
     switch.series = switch_series(switch)
 
-    print('Series: %s' % switch.series)
-    print(switch.model)
+    if not silent:
+        pprint(info)
+        print('Type: %s' % switch.type)
+        print('Series: %s' % switch.series)
+        print(switch.model)
+
     switch.save()
     return switch
 

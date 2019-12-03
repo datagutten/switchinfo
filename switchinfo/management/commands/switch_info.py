@@ -15,4 +15,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ip = options['switch'][0]
         community = options['switch'][1]
-        print(switch_info.switch_info(ip, community))
+        print(switch_info.switch_info(ip, community, silent=False))
