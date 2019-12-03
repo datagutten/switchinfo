@@ -73,7 +73,7 @@ def search_form(request):
             return redirect('switchinfo:ip', ip=form.cleaned_data['ip'])
             # return ip_search(request, form.cleaned_data['ip'])
     else:
-        return render(request, 'switchinfo/search.html', {'form': form})
+        return render(request, 'switchinfo/search.html', {'form': form, 'title': 'Search switches'})
 
 
 def mac_search(request, mac):
