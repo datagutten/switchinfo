@@ -85,5 +85,10 @@ ul.toc li {
     list-style-type: none;
     font-weight: bold;
 }
+
+ul.toc li:last-of-type {
+    border-right: 1px solid black;
+}
+
 ul.toc a {  padding-left: 10px; padding-right: 10px;}
 ul.toc a:hover {  background-color: #FFFFE0; text-decoration: none; }
