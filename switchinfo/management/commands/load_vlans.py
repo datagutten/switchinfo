@@ -19,7 +19,7 @@ class Command(BaseCommand):
         for switch in switches:
             print(switch)
             try:
-                load_vlan(switch)
+                load_vlan(switch, silent=False)
             except EasySNMPTimeoutError:
                 print('Timeout connecting to %s' % switch)
                 continue
