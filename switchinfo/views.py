@@ -48,16 +48,16 @@ def switches_group(request):
     return render(request, 'switchinfo/switches_group.html', context)
 
 
-def vlan(request, vlan):
-    vlan_object = get_object_or_404(Vlan, vlan=vlan)
-    switches = []
+def vlan(request, vlan_num):
+    vlan_object = get_object_or_404(Vlan, vlan=vlan_num)
+    switches_with_vlan = []
     for switch_object in vlan_object.on_switch.all():
         interfaces = switch_object.interfaces_in_vlan(vlan_object)
-        switches.append([switch_object, interfaces])
+        switches_with_vlan.append([switch_object, interfaces])
 
     context = {
         'vlans': vlan_object,
-        'switches': switches,
+        'switches': switches_with_vlan,
         'title': str(vlan_object),
     }
     return render(request, 'switchinfo/vlan.html', context)
