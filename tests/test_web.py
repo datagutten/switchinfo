@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test import Client
 
 from switchinfo.load_info import switch_info
+from switchinfo.models import Switch, Vlan
 
 c = Client()
 
@@ -9,6 +10,7 @@ c = Client()
 class WebTestCase(TestCase):
     def setUp(self):
         switch_info.switch_info('127.0.0.1', 'cisco')
+        # load_interfaces(switch)
         # switch_info.switch_info('127.0.0.1', 'cisco_16_switch')
 
     def test_frontPage(self):
@@ -21,18 +23,35 @@ class WebTestCase(TestCase):
         self.assertContains(response, '2960')
 
     def test_vlans(self):
+        switch = Switch.objects.get(ip='127.0.0.1')
+        vl = Vlan(vlan=12, name='PC', has_ports=True)
+        vl.save()
+        vl.on_switch.add(switch)
         response = c.get('/vlans')
-        self.assertContains(response, 'Vlans')
+
+        self.assertContains(response, '<h1>Vlans</h1>')
+        self.assertContains(response,
+                            '<a href="/vlan/12">PC (12)</a>')
+
+    def test_vlan(self):
+        switch = Switch.objects.get(ip='127.0.0.1')
+        vl = Vlan(vlan=12, name='PC', has_ports=True)
+        vl.save()
+        vl.on_switch.add(switch)
+        response = c.get('/vlan/12')
+        self.assertContains(response, '<h1>PC (12)</h1>')
+        self.assertContains(response, '<a href="/switch/ROV-SW-01">ROV-SW-01 (127.0.0.1)</a>')
 
     def test_models(self):
         response = c.get('/models')
-        self.assertContains(response, 'Switch models')
+        self.assertContains(response, '<h1>Switch models</h1>')
         self.assertContains(response, 'Cisco&nbsp;WS-C2960S-24PS-L')
 
     def test_switch_groups(self):
         response = c.get('/switches/group')
-        self.assertContains(response, 'Switch groups')
+        self.assertContains(response, '<h1>Switch groups</h1>')
+        self.assertContains(response, '<h2>No group</h2>')
 
     def test_search(self):
         response = c.get('/search')
-        self.assertContains(response, 'Search switches')
+        self.assertContains(response, '<h1>Search switches</h1>')
