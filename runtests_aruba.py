@@ -11,7 +11,5 @@ if __name__ == "__main__":
     django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-    failures = test_runner.run_tests(["tests.tests_cisco_snmp",
-                                      "tests.tests_utils", "tests.test_web",
-                                      "tests.test_load_info"])
+    failures = test_runner.run_tests(["tests.tests_aruba"])
     sys.exit(bool(failures))

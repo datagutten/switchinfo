@@ -18,7 +18,9 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - coverage run runtests.py
+  - coverage run -p runtests.py
+  - coverage run -p runtests_aruba.py
+  - coverage combine
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
