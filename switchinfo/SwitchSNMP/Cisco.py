@@ -64,17 +64,17 @@ class Cisco(SwitchSNMP):
 
         for index, vlans in self.tagged_vlans().items():
             if trunk_status[index] == 2:
-                if debug:
+                if debug:  # pragma: no cover
                     print('%s is not trunk' % index)
                 continue
             if vlans == all_tagged:
-                if debug:
+                if debug:  # pragma: no cover
                     print('All vlans are tagged on port %s' % index)
                 continue
 
             for vlan_id, tagged in utils.parse_port_list(vlans, zero_count=True).items():
                 if tagged:
-                    if debug:
+                    if debug:  # pragma: no cover
                         print('Vlan %s is tagged on port %s' % (vlan_id, index))
                     if index not in tagged_vlans:
                         tagged_vlans[index] = []
@@ -89,7 +89,7 @@ class Cisco(SwitchSNMP):
             if index not in untagged_vlan:
                 untagged_vlan[index] = vlan
 
-        if debug:
+        if debug:  # pragma: no cover
             print('Vlan: ', port_vlan)
             print('Tagged: ')
             pprint(tagged_vlans)
