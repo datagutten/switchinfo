@@ -30,7 +30,7 @@
 			{% if interface.neighbor %}
 			<td><a href="{% url 'switchinfo:switch' name=interface.neighbor.name %}">{{interface.neighbor.name}}</a><br />{{ interface.neighbor.ip }}</td>
 			{% else %}
-			<td>{{interface.neighbor_string|default:""|linebreaksbr}}</td>
+			<td class="port_neighbor">{{interface.neighbor_string|default:""|linebreaksbr}}</td>
 			{% endif %}
 
             {% if interface.admin_status == 2 %}

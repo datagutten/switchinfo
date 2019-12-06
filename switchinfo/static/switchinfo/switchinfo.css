@@ -92,3 +92,9 @@ ul.toc li:last-of-type {
 
 ul.toc a {  padding-left: 10px; padding-right: 10px;}
 ul.toc a:hover {  background-color: #FFFFE0; text-decoration: none; }
+
+.port_neighbor {
+    max-width: 20em;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+}
