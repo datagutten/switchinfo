@@ -120,6 +120,7 @@ class SwitchSNMP:
 
             # info['model'] =\
             #    session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
+            info['location'] = session.get('1.3.6.1.2.1.1.6.0').value
         except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
             info['model'] = ''
         except easysnmp.exceptions.EasySNMPTimeoutError as exception:

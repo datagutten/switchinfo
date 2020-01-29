@@ -7,6 +7,10 @@
     {% endif %}
     <table border="1">
         <tr>
+            <th>Location</th>
+            <td>{{ switch.location|default:"" }}</td>
+        </tr>
+        <tr>
             <th>Model</th>
             {% if switch.model %}
             <td>{{ switch.type|default:"" }}&nbsp;<a href="{% url 'switchinfo:switch_model' model=switch.model %}">{{ switch.model }}</a></td>

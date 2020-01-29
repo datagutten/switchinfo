@@ -4,6 +4,7 @@ from django.apps import apps
 
 class Switch(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
     ip = models.GenericIPAddressField()
     has_poe = models.BooleanField(default=False)
     type = models.CharField(max_length=50, blank=True, null=True)

@@ -39,7 +39,7 @@ admin.site.register(Arp, ArpAdmin)
 
 
 class SwitchAdmin(admin.ModelAdmin):
-    list_display = ('name', 'ip', 'type', 'model')
+    list_display = ('name', 'location', 'ip', 'type', 'model')
 
 
 admin.site.register(Switch, SwitchAdmin)
