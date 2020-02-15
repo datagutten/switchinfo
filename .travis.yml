@@ -25,7 +25,11 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
+before_deploy:
+- git stash --all
+- sed -i "s/@@version@@/${TRAVIS_TAG}/g" setup.py
 deploy:
+  skip_cleanup: true
   provider: pypi
   user: __token__
   password:
