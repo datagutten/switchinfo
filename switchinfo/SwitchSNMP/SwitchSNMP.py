@@ -204,6 +204,9 @@ class SwitchSNMP:
         states['1'] = 'disabled'
         states['2'] = 'searching'
         states['3'] = 'deliveringPower'
+        states['4'] = 'fault'
+        states['5'] = 'test'
+        states['6'] = 'otherFault'
 
         for bridge_port, poe_status in bridge_port_poe.items():
             bridge_port_poe[bridge_port] = states[poe_status]
