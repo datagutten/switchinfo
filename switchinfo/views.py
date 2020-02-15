@@ -7,9 +7,14 @@ from .forms import SearchForm
 from .models import Arp, Switch, Interface, Vlan, Mac
 
 
-def show_switch(request, name):
+def show_switch(request, name=None, ip=None):
     # switch = Switch.objects.get(name=name)
-    switch = get_object_or_404(Switch, name=name)
+    if name:
+        switch = get_object_or_404(Switch, name=name)
+    elif ip:
+        switch = get_object_or_404(Switch, ip=ip)
+    else:
+        return
     interfaces = Interface.objects.filter(switch=switch)
     context = {
         'switch': switch,
