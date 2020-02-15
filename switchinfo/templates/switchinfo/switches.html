@@ -4,7 +4,11 @@
 <h1>{{ title }}</h1>
 <ul class="SwitchList">
 {% for switch in switches %}
-<li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></li>
+    {% if not ip_link %}
+        <li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></li>
+    {% else %}
+        <li><a href="{% url 'switchinfo:switch' ip=switch.ip %}">{{switch}}</a></li>
+    {% endif %}
 {% endfor %}
 </ul>
 {% endblock %}

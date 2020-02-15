@@ -12,7 +12,14 @@ from .models import Arp, Switch, Interface, Vlan, Mac
 def show_switch(request, name=None, ip=None):
     # switch = Switch.objects.get(name=name)
     if name:
-        switch = get_object_or_404(Switch, name=name)
+        try:
+            switch = get_object_or_404(Switch, name=name)
+        except Switch.MultipleObjectsReturned:
+            context = {'switches': Switch.objects.filter(name=name),
+                       'title': name,
+                       'ip_link': True}
+            return render(request, 'switchinfo/switches.html', context)
+
     elif ip:
         switch = get_object_or_404(Switch, ip=ip)
     else:
