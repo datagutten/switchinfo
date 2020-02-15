@@ -282,8 +282,7 @@ class SwitchSNMP:
 
         vlan_list = []
         for vlan in vlans:
-            if int(vlan) < 1000:
-                vlan_list.append(int(vlan))
+            vlan_list.append(int(vlan))
         return vlan_list
 
     # TODO: Rename to something including LLDP
