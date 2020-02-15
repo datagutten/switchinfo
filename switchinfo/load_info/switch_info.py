@@ -43,12 +43,16 @@ def switch_type(descr):
         return 'Cisco'
     elif descr.find('ExtremeXOS') == 0:
         return 'Extreme'
-    elif descr.find('Aruba') == 0:
+    elif descr.find('Aruba') == 0 or descr.find('J9624A') > -1:
         return 'Aruba'
-    elif descr.find('Hewlett-Packard') == 0:
+    elif descr.find('ProCurve') == 0 or descr.find('Formerly ProCurve') > -1:
+        return 'ProCurve'
+    elif descr.find('Hewlett-Packard') == 0 or descr.find('HP') == 0:
         return 'HP'
     elif descr.find('Westermo') == 0:
         return 'Westermo'
+    elif descr.find('3Com') == 0:
+        return '3Com'
 
 
 def switch_series(switch):
