@@ -20,6 +20,7 @@ def switch_info(ip=None, community=None, device=None, silent=True):
     switch.type = switch_type(info['descr'])
     switch.name = info['name'].split('.')[0]
     switch.description = info['descr']
+    switch.location = info['location']
 
     if 'model' in info and not info['model'] == '':
         switch.model = info['model']
