@@ -1,6 +1,8 @@
+import os
 import re
 from pprint import pprint
 
+from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
 
 from .forms import SearchForm
@@ -21,6 +23,9 @@ def show_switch(request, name=None, ip=None):
         'interfaces': interfaces,
         'title': str(switch),
     }
+
+    if switch.has_backup():
+        context['backup_folder'] = os.path.basename(settings.BACKUP_PATH)
     return render(request, 'switchinfo/switch.html', context)
 
 

@@ -39,7 +39,7 @@
         <a href="{% url 'switchinfo:switch_load_interfaces' switch_name=switch.name %}">Update interfaces</a>
         <br /><a href="{% url 'switchinfo:switch_load_mac' switch_name=switch.name %}">Update MAC</a>
     {% if switch.has_backup %}
-        <br /><a href="/gitlist/configs/blob/master/{{ switch.name }}">Show config backup</a>
+        <br /><a href="/gitlist/{{ backup_folder }}/blob/master/{{ switch.name }}">Show config backup</a>
     {% endif %}
         <br /><a href="{% url 'switchinfo:switch_vlans' switch_name=switch.name %}">Show vlans on switch</a>
     </p>
