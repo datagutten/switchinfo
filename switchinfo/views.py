@@ -1,12 +1,11 @@
 import os
-import re
 from pprint import pprint
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
 
 from .forms import SearchForm
-from .models import Arp, Switch, Interface, Vlan, Mac, SwitchGroup
+from .models import Arp, Interface, Mac, Switch, SwitchGroup, Vlan
 
 
 def show_switch(request, name=None, ip=None):
