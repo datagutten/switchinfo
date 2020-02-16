@@ -10,6 +10,11 @@ from switchinfo.SwitchSNMP.SNMPError import SNMPError
 
 class NetSNMPCompat(netsnmp.SNMPSession):
     session = None
+    hostname = None
+
+    def __init__(self, hostname, community, version=0, timeout=0.5, retries=1):
+        self.hostname = hostname
+        super().__init__(peername=hostname, community=community, version=version, timeout=timeout, retries=retries)
 
     def get(self, oids):
         if isinstance(oids, list):

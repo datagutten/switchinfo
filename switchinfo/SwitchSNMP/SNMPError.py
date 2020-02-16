@@ -6,4 +6,4 @@ class SNMPError(ValueError):
         self.e = e
 
     def __str__(self):
-        return 'Unable to connect to %s with community %s: %s' % (self.session.peername, self.session.community, self.e)
+        return 'Unable to connect to %s with community %s: %s' % (self.session.hostname, self.session.community, self.e)

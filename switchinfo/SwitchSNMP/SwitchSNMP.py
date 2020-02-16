@@ -11,10 +11,11 @@ except (ImproperlyConfigured, AttributeError):
     use_easysnmp = False
     pass
 
-if use_easysnmp:
-    import easysnmp
+import easysnmp
+if not use_easysnmp:
+    from .NetSNMPCompat import NetSNMPCompat as SNMPSession
 else:
-    from .NetSNMPCompat import NetSNMPCompat
+    from .EasySNMPCompat import EasySNMPCompat as SNMPSession
 
 
 class SwitchSNMP:
@@ -48,21 +49,7 @@ class SwitchSNMP:
         if vlan not in self.sessions[device]:
             # print('Creating session for %s vlan %s community %s' %
             #        (device, vlan, community))
-            if use_easysnmp:
-                try:
-                    self.sessions[device][vlan] = easysnmp.Session(
-                        hostname=device,
-                        community=community,
-                        version=2,
-                        abort_on_nonexistent=True,)
-                except easysnmp.exceptions.EasySNMPConnectionError as exception:
-                    raise ValueError('Unable to open session with %s vlan %s: %s'
-                                     % (device, vlan, exception))
-                except easysnmp.exceptions.EasySNMPTimeoutError as exception:
-                    raise ValueError('Timeout connecting to %s: %s'
-                                     % (device, exception))
-            else:
-                self.sessions[device][vlan] = NetSNMPCompat(device, community, version=0)
+            self.sessions[device][vlan] = SNMPSession(device, community)
         return self.sessions[device][vlan]
 
     def create_dict(self, ip=None, vlan=None, oid=None,
