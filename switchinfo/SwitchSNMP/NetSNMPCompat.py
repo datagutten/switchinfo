@@ -2,6 +2,10 @@ from datetime import timedelta
 
 import netsnmp
 from easysnmp import SNMPVariable
+# noinspection PyProtectedMember,PyUnresolvedReferences
+from netsnmp._api import SNMPError as EasySNMPError
+
+from switchinfo.SwitchSNMP.SNMPError import SNMPError
 
 
 class NetSNMPCompat(netsnmp.SNMPSession):
@@ -12,15 +16,22 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             is_list = True
         else:
             is_list = False
-        return convert_response(super().get(oids), is_list)
+        try:
+            data = super().get(oids)
+        except EasySNMPError as e:
+            raise SNMPError(e, self)
+
+        return convert_response(data, is_list)
 
     def walk(self, oids):
         elements = []
-        data = super().walk(oids)
-
-        for element in data:
-            elements.append(convert_response(element))
-        return elements
+        try:
+            data = super().walk(oids)
+            for element in data:
+                elements.append(convert_response(element))
+            return elements
+        except EasySNMPError as e:
+            raise SNMPError(e, self)
 
 
 def convert_response(response, is_list=False):
