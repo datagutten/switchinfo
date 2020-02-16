@@ -1,18 +1,20 @@
-import easysnmp
 import re
+
+from django.core.exceptions import ImproperlyConfigured
+
+from . import utils
+
 try:
-    import netsnmp
-except ModuleNotFoundError:
+    from django.conf import settings
+    use_easysnmp = not settings.USE_NETSNMP
+except (ImproperlyConfigured, AttributeError):
+    use_easysnmp = False
     pass
 
-# import switchinfo.SwitchSNMP.utils as utils
-# import .utils
-try:
-    from . import utils
-except ImportError:
-    import utils
-
-Session = easysnmp.Session
+if use_easysnmp:
+    import easysnmp
+else:
+    from .NetSNMPCompat import NetSNMPCompat
 
 
 class SwitchSNMP:
@@ -27,7 +29,10 @@ class SwitchSNMP:
         self.community = community
         self.device = device
 
-    def get_session(self, device=None, vlan=None, use_easysnmp=True):
+    def __del__(self):
+        self.sessions = None
+
+    def get_session(self, device=None, vlan=None):
         if not vlan:
             vlan = 0
             community = self.community
@@ -45,7 +50,7 @@ class SwitchSNMP:
             #        (device, vlan, community))
             if use_easysnmp:
                 try:
-                    self.sessions[device][vlan] = Session(
+                    self.sessions[device][vlan] = easysnmp.Session(
                         hostname=device,
                         community=community,
                         version=2,
@@ -57,7 +62,7 @@ class SwitchSNMP:
                     raise ValueError('Timeout connecting to %s: %s'
                                      % (device, exception))
             else:
-                self.sessions[device][vlan] = netsnmp.SNMPSession(device, community, version=0)
+                self.sessions[device][vlan] = NetSNMPCompat(device, community, version=0)
         return self.sessions[device][vlan]
 
     def create_dict(self, ip=None, vlan=None, oid=None,
