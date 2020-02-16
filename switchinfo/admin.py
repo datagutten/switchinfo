@@ -45,6 +45,13 @@ class SwitchAdmin(admin.ModelAdmin):
 admin.site.register(Switch, SwitchAdmin)
 
 
+class SwitchGroupAdmin(admin.ModelAdmin):
+    list_display = ('grouping_key', 'name')
+
+
+admin.site.register(SwitchGroup, SwitchGroupAdmin)
+
+
 class VlanAdmin(admin.ModelAdmin):
     list_display = ('vlan', 'name')
 

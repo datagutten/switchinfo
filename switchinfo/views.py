@@ -6,7 +6,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
 
 from .forms import SearchForm
-from .models import Arp, Switch, Interface, Vlan, Mac
+from .models import Arp, Switch, Interface, Vlan, Mac, SwitchGroup
 
 
 def show_switch(request, name=None, ip=None):
@@ -45,19 +45,16 @@ def switches(request):
 
 
 def switches_group(request):
-    devices = Switch.objects.all()
     groups = dict()
-    groups[None] = []
-    for switch in devices:
-        # group = re.match(r'(\S+?)\-[A-Z0-9\-]+$', switch.name)
-        group = re.match(r'(\S+?)\-[A-Z0-9\-]+$', switch.name)
-        if group:
-            group_name = group.group(1)
-            if group_name not in groups:
-                groups[group_name] = []
-            groups[group_name].append(switch)
-        else:
-            groups[None].append(switch)
+    db_groups = SwitchGroup.objects.all()
+    for group in db_groups:
+        for switch in group.members():
+            if group.name not in groups:
+                groups[group.name] = []
+            groups[group.name].append(switch)
+
+    # groups[None] = []
+
     context = {
         'groups': groups.items(),
         'title': 'Switch groups',

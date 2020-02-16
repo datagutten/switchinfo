@@ -51,6 +51,17 @@ class Switch(models.Model):
                 return False
 
 
+class SwitchGroup(models.Model):
+    grouping_key = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    def members(self):
+        return Switch.objects.filter(name__startswith=self.grouping_key)
+
+
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)
     on_switch = models.ManyToManyField(Switch)
