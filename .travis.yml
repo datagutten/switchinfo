@@ -10,8 +10,8 @@ addons:
    - libczmq-dev
 
 env:
-  - USE_NETSNMP = False
-  - USE_NETSNMP = True
+  - USE_NETSNMP=False
+  - USE_NETSNMP=True
 
 services:
  - docker
