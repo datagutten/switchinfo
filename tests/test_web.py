@@ -9,9 +9,9 @@ c = Client()
 
 class WebTestCase(TestCase):
     def setUp(self):
-        switch_info.switch_info('127.0.0.1', 'cisco')
-        # load_interfaces(switch)
-        # switch_info.switch_info('127.0.0.1', 'cisco_16_switch')
+        Switch(name='ROV-SW-01', ip='127.0.0.1', has_poe=True, type='Cisco',
+               community='public', model='WS-C2960S-24PS-L',
+               description='Cisco IOS Software, C2960S Software (C2960S-UNIVERSALK9-M), Version 15.0(2)SE11, RELEASE SOFTWARE (fc3)').save()
 
     def test_frontPage(self):
         response = c.get('/')
