@@ -1,11 +1,11 @@
 from datetime import timedelta
 
-import netsnmp
-from easysnmp import SNMPVariable
 # noinspection PyProtectedMember,PyUnresolvedReferences
 from netsnmp._api import SNMPError as EasySNMPError
 
-from switchinfo.SwitchSNMP.SNMPError import SNMPError
+import netsnmp
+from easysnmp import SNMPVariable
+from switchinfo.SwitchSNMP import SNMPError
 
 
 class NetSNMPCompat(netsnmp.SNMPSession):
@@ -24,7 +24,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
         try:
             data = super().get(oids)
         except EasySNMPError as e:
-            raise SNMPError(e, self)
+            raise SNMPError.SNMPError(e, self)
 
         return convert_response(data, is_list)
 
@@ -36,7 +36,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
                 elements.append(convert_response(element))
             return elements
         except EasySNMPError as e:
-            raise SNMPError(e, self)
+            raise SNMPError.SNMPError(e, self)
 
 
 def convert_response(response, is_list=False):
@@ -65,6 +65,8 @@ def convert_response(response, is_list=False):
             for byte in matches:
                 byte = int(byte, 16)
                 value += chr(byte)
+        elif response[1] == 'NULL':
+            raise SNMPError.SNMPNoData(response[0])
         else:
             value = response[2]
 

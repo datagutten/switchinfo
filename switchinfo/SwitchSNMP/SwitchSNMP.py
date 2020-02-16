@@ -2,7 +2,7 @@ import re
 
 from django.core.exceptions import ImproperlyConfigured
 
-from . import utils
+from . import SNMPError, utils
 
 try:
     from django.conf import settings
@@ -11,7 +11,6 @@ except (ImproperlyConfigured, AttributeError):
     use_easysnmp = False
     pass
 
-import easysnmp
 if not use_easysnmp:
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
 else:
@@ -84,12 +83,6 @@ class SwitchSNMP:
 
         return values
 
-    # Return key: interfaceIndex
-    def interface_alias(self, device=None):
-        oid = '.1.3.6.1.2.1.31.1.1.1.18'  # IF-MIB::ifAlias
-        if_alias = self.create_dict(device, oid=oid)
-        return if_alias
-
     # Load core information about a switch
     def switch_info(self, ip=None):
         session = self.get_session(ip)
@@ -103,23 +96,25 @@ class SwitchSNMP:
             info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value
             # SNMPv2-MIB::sysObjectID
             info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
+        except (SNMPError.SNMPNoData, SNMPError.SNMPError) as e:
+            print(e)
+            return
+        try:
             # ENTITY-MIB::entPhysicalModelName
             model_strings = self.create_list(oid='.1.3.6.1.2.1.47.1.1.1.1.13')
             for model in model_strings:
                 if not model.strip() == '':
                     info['model'] = model
                     break
-
             # info['model'] =\
             #    session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
-            info['location'] = session.get('1.3.6.1.2.1.1.6.0').value
-        except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
+        except SNMPError.SNMPNoData:
             info['model'] = ''
-        except easysnmp.exceptions.EasySNMPTimeoutError as exception:
-            print('Timeout connecting to %s: %s' % (ip, exception))
-            return
-        except easysnmp.exceptions.EasySNMPNoSuchObjectError as exception:
-            print('Error device %s: %s' % (ip, exception))
+        try:
+            info['location'] = session.get('1.3.6.1.2.1.1.6.0').value
+        except SNMPError.SNMPNoData:
+            info['location'] = ''
+
         return info
 
     def uptime(self):
@@ -169,10 +164,6 @@ class SwitchSNMP:
             port[mac] = entry.value
         return port
 
-    def ifIndex_to_ifName(self, device=None, vlan=None):
-        oid = '.1.3.6.1.2.1.31.1.1.1.1'  # ifName
-        return self.create_dict(device, vlan, oid)
-
     def bridgePort_to_ifIndex(self, device=None, vlan=None):
         oid = '.1.3.6.1.2.1.17.1.4.1.2'  # dot1dBasePortIfIndex
         info = dict()
@@ -203,11 +194,6 @@ class SwitchSNMP:
         for bridge_port, poe_status in bridge_port_poe.items():
             bridge_port_poe[bridge_port] = states[poe_status]
         return bridge_port_poe
-
-    def port_vlan(self, device=None):
-        # Q-BRIDGE-MIB::dot1qPvid
-        oid = '.1.3.6.1.2.1.17.7.1.4.5.1.1'
-        return self.create_dict(device, oid=oid)
 
     def vlan_names(self):
         # Q-BRIDGE-MIB::dot1qVlanStaticName
