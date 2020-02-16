@@ -28,6 +28,7 @@ install:
 script:
   - coverage run -p runtests.py
   - coverage run -p runtests_aruba.py
+  - coverage run -p runtests_connect.py
   - coverage combine
 
 after_success:
