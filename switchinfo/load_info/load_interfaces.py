@@ -60,7 +60,10 @@ def load_interfaces(switch, now=None):
         switch.save()
 
     if switch.type == 'Aruba':
-        stack = device.stack_ports()
+        try:
+            stack = device.stack_ports()
+        except ValueError:
+            stack = []
     else:
         stack = []
 
