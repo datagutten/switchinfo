@@ -5,7 +5,8 @@ from netsnmp._api import SNMPError as EasySNMPError
 
 import netsnmp
 from easysnmp import SNMPVariable
-from switchinfo.SwitchSNMP import SNMPError
+from easysnmp.exceptions import EasySNMPNoSuchNameError
+from . import exceptions
 
 
 class NetSNMPCompat(netsnmp.SNMPSession):
@@ -23,8 +24,13 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             is_list = False
         try:
             data = super().get(oids)
+        except EasySNMPNoSuchNameError as e:
+            raise exceptions.SNMPNoData(e)
         except EasySNMPError as e:
-            raise SNMPError.SNMPError(e, self)
+            print(e)
+            if str(e).find('null response') > -1:
+                raise exceptions.SNMPNoData(e)
+            raise exceptions.SNMPError(e, self)
 
         return convert_response(data, is_list)
 
@@ -36,7 +42,10 @@ class NetSNMPCompat(netsnmp.SNMPSession):
                 elements.append(convert_response(element))
             return elements
         except EasySNMPError as e:
-            raise SNMPError.SNMPError(e, self)
+            if str(e).find('null response') > -1:
+                raise exceptions.SNMPNoData(e)
+            else:
+                raise exceptions.SNMPError(e, self)
 
 
 def convert_response(response, is_list=False):
@@ -66,7 +75,7 @@ def convert_response(response, is_list=False):
                 byte = int(byte, 16)
                 value += chr(byte)
         elif response[1] == 'NULL':
-            raise SNMPError.SNMPNoData(response[0])
+            raise exceptions.SNMPNoData(response[0])
         else:
             value = response[2]
 

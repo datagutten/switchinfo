@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand  # , CommandError
 
-from switchinfo.models import Switch
+from switchinfo.SwitchSNMP import exceptions
 from switchinfo.load_info.load_vlan import load_vlan
-from easysnmp.exceptions import EasySNMPTimeoutError
+from switchinfo.models import Switch
 
 
 class Command(BaseCommand):
@@ -20,6 +20,6 @@ class Command(BaseCommand):
             print(switch)
             try:
                 load_vlan(switch, silent=False)
-            except EasySNMPTimeoutError:
+            except exceptions.SNMPError:
                 print('Timeout connecting to %s' % switch)
                 continue

@@ -1,5 +1,5 @@
 import easysnmp
-from switchinfo.SwitchSNMP import SNMPError
+from . import exceptions
 
 
 class EasySNMPCompat(easysnmp.Session):
@@ -9,17 +9,17 @@ class EasySNMPCompat(easysnmp.Session):
                              version=version, timeout=timeout, retries=retries,
                              abort_on_nonexistent=True)
         except easysnmp.exceptions.EasySNMPConnectionError as e:
-            raise SNMPError.SNMPError(e, self)
+            raise exceptions.SNMPError(e, self)
         except SystemError as e:
-            raise SNMPError.SNMPError(e, self)
+            raise exceptions.SNMPError(e, self)
 
     def get(self, oids):
         try:
             return super().get(oids)
         except easysnmp.exceptions.EasySNMPConnectionError as e:
-            raise SNMPError.SNMPError(e, self)
+            raise exceptions.SNMPError(e, self)
         except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
-            raise SNMPError.SNMPNoData(oids)
+            raise exceptions.SNMPNoData(oids)
         except SystemError as e:
-            raise SNMPError.SNMPError(e, self)
+            raise exceptions.SNMPError(e, self)
 
