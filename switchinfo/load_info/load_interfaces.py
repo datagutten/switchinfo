@@ -183,7 +183,7 @@ def load_interfaces(switch, now=None):
                     vlan = Vlan.objects.get(vlan=tagged_vlan)
                     interface.tagged_vlans.add(vlan)
                 except Vlan.DoesNotExist:
-                    print('Missing vlan %s, run load_vlans' % tagged_vlan)
+                    print('Missing tagged vlan %s, run load_vlans' % tagged_vlan)
         if untagged_vlan and key in untagged_vlan:
             try:
                 interface.vlan = Vlan.objects.get(vlan=untagged_vlan[key])
