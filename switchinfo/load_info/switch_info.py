@@ -39,20 +39,20 @@ def switch_info(ip=None, community=None, device=None, silent=True):
     return switch
 
 
-def switch_type(descr):
-    if descr.find('Cisco') == 0:
+def switch_type(description: str) -> str:
+    if description.find('Cisco') == 0:
         return 'Cisco'
-    elif descr.find('ExtremeXOS') == 0:
+    elif description.find('ExtremeXOS') == 0:
         return 'Extreme'
-    elif descr.find('Aruba') == 0 or descr.find('J9624A') > -1:
+    elif description.find('Aruba') == 0 or description.find('J9624A') > -1:
         return 'Aruba'
-    elif descr.find('ProCurve') == 0 or descr.find('Formerly ProCurve') > -1:
+    elif description.find('ProCurve') == 0 or description.find('Formerly ProCurve') > -1:
         return 'ProCurve'
-    elif descr.find('Hewlett-Packard') == 0 or descr.find('HP') == 0:
+    elif description.find('Hewlett-Packard') == 0 or description.find('HP') == 0:
         return 'HP'
-    elif descr.find('Westermo') == 0:
+    elif description.find('Westermo') == 0:
         return 'Westermo'
-    elif descr.find('3Com') == 0:
+    elif description.find('3Com') == 0:
         return '3Com'
 
 
