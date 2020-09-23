@@ -1,13 +1,8 @@
-# from datetime import datetime
+from django.core.management.base import BaseCommand
 
-from django.core.management.base import BaseCommand  # , CommandError
-# from django.utils import timezone
-
-from switchinfo.models import Interface, Switch, Vlan, Mac
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.load_info.load_mac import load_mac
-from easysnmp.exceptions import EasySNMPTimeoutError
-
-# from pprint import pprint
+from switchinfo.models import Switch, Vlan
 
 
 class Command(BaseCommand):
@@ -26,4 +21,8 @@ class Command(BaseCommand):
             switches = Switch.objects.all()
 
         for switch in switches:
-            load_mac(switch)
+            try:
+                load_mac(switch)
+            except SNMPError as e:
+                print(switch, e)
+                continue
