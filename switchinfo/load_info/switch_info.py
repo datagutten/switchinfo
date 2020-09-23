@@ -67,10 +67,8 @@ def switch_series(switch):
         return series.group(1)
 
 
-def model_from_description(description=None, device=None):
-    if not description:
-        description = device.create_list(oid='.1.3.6.1.2.1.47.1.1.1.1.2')  # ENTITY-MIB::entPhysicalDescr
-    sw_type = switch_type(description)
+def model_from_description(device: SwitchSNMP, sw_type: str):
+    description = device.create_list(oid='.1.3.6.1.2.1.47.1.1.1.1.2')  # ENTITY-MIB::entPhysicalDescr
 
     for string in description:
         if sw_type == 'Aruba':
