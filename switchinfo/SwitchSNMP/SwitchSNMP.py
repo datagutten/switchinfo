@@ -2,6 +2,7 @@ import re
 
 from django.core.exceptions import ImproperlyConfigured
 
+from switchinfo.SwitchSNMP.SNMPError import SNMPNoData
 from . import SNMPError, utils
 
 try:
@@ -59,8 +60,10 @@ class SwitchSNMP:
         if not session:
             return False
         indexes = dict()
-
-        for item in session.walk(oid):
+        items = session.walk(oid)
+        if not items:
+            raise SNMPNoData(oid)
+        for item in items:
             index = utils.last_section(item.oid)
             if not index:
                 index = item.oid_index
@@ -180,9 +183,14 @@ class SwitchSNMP:
     # Return key: bridgePort
     def interface_poe_status(self, device=None):
         oid = '.1.3.6.1.2.1.105.1.1.1.6'  # pethPsePortDetectionStatus
-        bridge_port_poe = self.create_dict(device, oid=oid)
-        if not bridge_port_poe:
+        try:
+            bridge_port_poe = self.create_dict(device, oid=oid)
+            if not bridge_port_poe:
+                return None
+        except SNMPNoData:
+            print('Switch has no PoE')
             return None
+
         states = dict()
         states['1'] = 'disabled'
         states['2'] = 'searching'
