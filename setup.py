@@ -8,11 +8,12 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-version = os.getenv('TRAVIS_TAG')
-if not version:
+if not os.path.exists('VERSION'):
     version = '0'
 else:
-    version = version[1:]  # Remove v before version number
+    with open('VERSION', 'r') as fp:
+        version = fp.read().strip()
+        version = version[1:]  # Remove v before version number
 
 setup(
     name='switchinfo',

@@ -47,7 +47,7 @@ after_success:
 
 before_deploy:
 - git stash --all
-- sed -i "s/@@version@@/${TRAVIS_TAG}/g" setup.py
+- echo "$TRAVIS_TAG">VERSION
 deploy:
   skip_cleanup: true
   provider: pypi
