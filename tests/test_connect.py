@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from switchinfo.SwitchSNMP.SNMPError import SNMPError
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 
 
