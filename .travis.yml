@@ -2,16 +2,16 @@ language: python
 jobs:
   include:
     - python: "3.6"
-      name: "EasySNMP"
+      name: "EasySNMP (Python 3.6)"
       env:
         - USE_NETSNMP=False
       before_install:
         - pip install -r optional-requirements-easysnmp.txt
     - python: "3.6"
+      name: "NET-SNMP (Python 3.6)"
+    - python: "3.7 (Python 3.7)"
       name: "NET-SNMP"
-    - python: "3.7"
-      name: "NET-SNMP"
-    - python: "3.8"
+    - python: "3.8 (Python 3.8)"
       name: "NET-SNMP"
 
 addons:
