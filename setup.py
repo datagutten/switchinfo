@@ -16,7 +16,7 @@ else:
 
 setup(
     name='switchinfo',
-    version=readme,
+    version=version,
     packages=find_packages(),
     include_package_data=True,
     license='GPL',
