@@ -1,5 +1,0 @@
-django>=2.1
-requests
-easysnmp
-pyzmq
-netsnmp-py

@@ -12,3 +12,6 @@ The following brands are tested:
 * Extreme Networks
 * Korenix
 * Westermo SDSL modems
+
+Requirements:
+https://github.com/xstaticxgpx/netsnmp-py3/

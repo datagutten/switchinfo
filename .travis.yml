@@ -1,8 +1,15 @@
 language: python
-python:
-  - "3.6"
-  - "3.7"
-  - "3.8"
+jobs:
+  include:
+    - python: "3.6"
+      env:
+        - USE_NETSNMP=False
+      before_install:
+        - pip install -r optional-requirements-easysnmp.txt
+    - python: "3.6"
+    - python: "3.7"
+    - python: "3.8"
+
 addons:
  apt:
   packages:
@@ -10,20 +17,20 @@ addons:
    - libczmq-dev
 
 env:
-  - USE_NETSNMP=False
   - USE_NETSNMP=True
 
 services:
  - docker
 
 before_install:
- - WORK_DIR=$(pwd)
- - docker pull tandrup/snmpsim
- - docker run -d -v $WORK_DIR/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
+  - pip install -r optional-requirements-netsnmp.txt
 
 install:
+  - WORK_DIR=$(pwd)
+  - docker pull tandrup/snmpsim
+  - docker run -d -v $WORK_DIR/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
   - pip install coverage
-  - pip install -r requirements.txt
+  - python setup.py install
 
 script:
   - coverage run -p runtests.py
