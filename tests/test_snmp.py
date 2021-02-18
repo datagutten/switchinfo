@@ -40,6 +40,14 @@ class SNMPTestCase(unittest.TestCase):
         self.assertIn('Unable to connect to 127.0.0.1 with community ciscobad',
                       str(context.exception))
 
+    def test_null_value(self):
+        session = SNMPSession('127.0.0.1', 'cisco')
+        with self.assertRaises(exceptions.SNMPNoData) as context:
+            session.get('.1.3.6.1.2.1.31.1.1.1.18.1')
+        self.assertEqual(
+            'No data for oid get: null response (.1.3.6.1.2.1.31.1.1.1.18.1)',
+            str(context.exception))
+
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
