@@ -20,6 +20,8 @@ addons:
    - libsnmp-dev
    - libczmq-dev
 
+cache: pip
+
 env:
   - USE_NETSNMP=True
 
@@ -40,6 +42,7 @@ script:
   - coverage run -p runtests.py
   - coverage run -p runtests_aruba.py
   - coverage run -p runtests_connect.py
+  - coverage run -m tests.test_snmp
   - coverage combine
 
 after_success:
