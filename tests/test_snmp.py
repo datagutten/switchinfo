@@ -46,7 +46,7 @@ class SNMPTestCase(unittest.TestCase):
             session.get('.1.3.6.1.2.1.31.1.1.1.18.1')
         self.assertEqual(
             'No data for oid get: null response (.1.3.6.1.2.1.31.1.1.1.18.1)',
-            str(context.exception))
+            str(context.exception).strip())
 
 
 if __name__ == "__main__":
