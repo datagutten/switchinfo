@@ -172,16 +172,16 @@ class SwitchSNMP:
             port[mac] = entry.value
         return port
 
-    def bridgePort_to_ifIndex(self, device=None, vlan=None):
+    def bridgePort_to_ifIndex(self, vlan=None):
         oid = '.1.3.6.1.2.1.17.1.4.1.2'  # dot1dBasePortIfIndex
         info = dict()
         if vlan == 'all':
-            for vlan in self.vlans(device):
-                info_temp = self.create_dict(device, vlan, oid)
+            for vlan in self.vlans():
+                info_temp = self.create_dict(vlan=vlan, oid=oid)
                 info.update(info_temp)
             return info
         else:
-            return self.create_dict(device, vlan, oid)
+            return self.create_dict(vlan=vlan, oid=oid)
 
     # POWER-ETHERNET-MIB
 
@@ -264,15 +264,15 @@ class SwitchSNMP:
 
         return [port_vlan, tagged_vlans, untagged_vlan]
 
-    def vlan_ports_pvid(self, device=None):
+    def vlan_ports_pvid(self):
         # Q-BRIDGE-MIB::dot1qPvid
         oid = '.1.3.6.1.2.1.17.7.1.4.5.1.1'
-        return self.create_dict(device, oid=oid, int_index=True)
+        return self.create_dict(oid=oid, int_index=True)
 
-    def vlans(self, device=None):
+    def vlans(self):
         # Q-BRIDGE-MIB::dot1qVlanFdbId
         oid = '.1.3.6.1.2.1.17.7.1.4.2.1.3'
-        vlans = self.create_dict(device, oid=oid)
+        vlans = self.create_dict(oid=oid)
 
         vlan_list = []
         for vlan in vlans:
