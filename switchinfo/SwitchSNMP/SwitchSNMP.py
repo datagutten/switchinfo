@@ -52,7 +52,8 @@ class SwitchSNMP:
         return self.sessions[device][vlan]
 
     def create_dict(self, ip=None, vlan=None, oid=None,
-                    int_value=False, int_index=False):
+                    int_value=False, int_index=False,
+                    value_translator: callable = None):
         if not oid:
             oid = False
         session = self.get_session(ip, vlan)
@@ -66,7 +67,9 @@ class SwitchSNMP:
             index = utils.last_section(item.oid)
             if not index:
                 index = item.oid_index
-            if int_value:
+            if value_translator:
+                value = value_translator(item.value)
+            elif int_value:
                 value = int(item.value)
             else:
                 value = item.value
@@ -140,10 +143,13 @@ class SwitchSNMP:
         # ifHighSpeed
         info['high_speed'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.15')
         # adminStatus
-        info['admin_status'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.7')
+        info['admin_status'] = \
+            self.create_dict(oid='.1.3.6.1.2.1.2.2.1.7',
+                             value_translator=utils.translate_status)
         # operStatus
-        info['status'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.8',
-                                          int_value=True)
+        info['status'] = \
+            self.create_dict(oid='.1.3.6.1.2.1.2.2.1.8',
+                             value_translator=utils.translate_status)
         # EtherLike-MIB::dot3StatsDuplexStatus
         info['duplex'] = self.create_dict(oid='.1.3.6.1.2.1.10.7.2.1.19')
         return info

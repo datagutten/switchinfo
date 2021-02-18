@@ -92,7 +92,7 @@ def load_interfaces(switch, now=None):
         117 is gigabitEthernet on HP
         169 is DSL
         """
-        allowed_types = ['6', '117', '169']
+        allowed_types = ['6', '117', '169', 'ethernetCsmacd', 'shdsl']
 
         if not interfaces['type'][if_index] in allowed_types:
             # print('Interface type %s' % interfaces['type'][if_index])

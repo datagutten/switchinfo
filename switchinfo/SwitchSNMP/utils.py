@@ -80,3 +80,23 @@ def name_string(name):
 def check_and_set(data, snmp_object, oid, key):
     if snmp_object.oid.find(oid) >= 0 and snmp_object.value:
         data.update({key: snmp_object.value})
+
+
+def translate_status(status: str) -> int:
+    try:
+        return int(status)
+    except ValueError:
+        status_names = {
+            'up': 1,
+            'down': 2,
+            'testing': 3,
+            'unknown': 4,
+            'dormant': 5,
+            'notPresent': 6,
+            'lowerLayerDown': 7,
+        }
+
+        if status not in status_names:
+            return 5
+        else:
+            return status_names[status]
