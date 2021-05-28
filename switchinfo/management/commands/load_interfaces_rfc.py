@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if not options['switch'][0] == 'all':
-            switches = Switch.objects.filter(name=options['switch'][0])
+            switches = Switch.objects.filter(name__startswith=options['switch'][0])
         else:
             switches = Switch.objects.all()
 
