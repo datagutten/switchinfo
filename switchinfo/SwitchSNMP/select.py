@@ -2,6 +2,7 @@ from switchinfo.SwitchSNMP.Cisco import Cisco
 from switchinfo.SwitchSNMP.Extreme import Extreme
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.SwitchSNMP.ArubaVSF import ArubaVSF
+from switchinfo.SwitchSNMP.ArubaCX import ArubaCX
 
 
 def get_switch(switch):
@@ -11,6 +12,8 @@ def get_switch(switch):
         snmp = Extreme
     elif switch.type == 'Aruba':
         snmp = ArubaVSF
+    elif switch.type == 'Aruba CX':
+        snmp = ArubaCX
     else:
         snmp = SwitchSNMP
 
