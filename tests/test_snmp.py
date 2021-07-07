@@ -3,10 +3,10 @@ import unittest
 # python3 -m tests.test_snmp
 from switchinfo.SwitchSNMP import exceptions
 
-if os.environ['USE_NETSNMP'] == 'False':
-    use_netsnmp = False
-else:
+if 'USE_NETSNMP' not in os.environ or os.environ['USE_NETSNMP'] == 'True':
     use_netsnmp = True
+else:
+    use_netsnmp = False
 
 if use_netsnmp:
     from switchinfo.SwitchSNMP.NetSNMPCompat import NetSNMPCompat \
