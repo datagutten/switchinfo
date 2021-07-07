@@ -25,14 +25,15 @@ class SwitchSNMP:
     info_dicts = dict()
     community = None
 
-    def __init__(self, community=None, device=None):
+    # TODO: Make arguments mandatory?
+    def __init__(self, community: str = None, device: str = None):
         self.community = community
         self.device = device
 
     def __del__(self):
         self.sessions = None
 
-    def get_session(self, device=None, vlan=None):
+    def get_session(self, device: str = None, vlan: int = None):
         if not vlan:
             vlan = 0
             community = self.community
@@ -79,7 +80,7 @@ class SwitchSNMP:
 
         return indexes
 
-    def create_list(self, ip=None, vlan=None, oid=None):
+    def create_list(self, ip: str = None, vlan=None, oid=None):
         session = self.get_session(ip, vlan)
         values = []
         for item in session.walk(oid):
