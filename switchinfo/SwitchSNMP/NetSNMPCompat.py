@@ -1,11 +1,10 @@
 from datetime import timedelta
 
 # noinspection PyProtectedMember,PyUnresolvedReferences
-from netsnmp._api import SNMPError as EasySNMPError
+from netsnmp._api import SNMPError
 
 import netsnmp
 from easysnmp import SNMPVariable
-from easysnmp.exceptions import EasySNMPNoSuchNameError
 from . import exceptions
 
 
@@ -24,9 +23,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             is_list = False
         try:
             data = super().get(oids)
-        except EasySNMPNoSuchNameError as e:
-            raise exceptions.SNMPNoData(e, self, oids)
-        except EasySNMPError as e:
+        except SNMPError as e:
             print(e)
             if str(e).find('null response') > -1:
                 raise exceptions.SNMPNoData(e, self, oids)
@@ -41,9 +38,11 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             for element in data:
                 elements.append(convert_response(element))
             return elements
-        except EasySNMPError as e:
+        except SNMPError as e:
             if str(e).find('null response') > -1:
                 raise exceptions.SNMPNoData(e, self, oids)
+            if str(e).find('Timeout') > -1:
+                raise exceptions.SNMPTimeout(e, self, oids)
             else:
                 raise exceptions.SNMPError(e, self, oids)
 
@@ -75,7 +74,7 @@ def convert_response(response, is_list=False):
                 byte = int(byte, 16)
                 value += chr(byte)
         elif response[1] == 'NULL':
-            raise exceptions.SNMPNoData(response[0])
+            raise exceptions.SNMPNoData(oid=response[0])
         else:
             value = response[2]
 
