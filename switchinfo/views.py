@@ -1,5 +1,6 @@
 import os
 from pprint import pprint
+from urllib.parse import unquote
 
 from django.conf import settings
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
@@ -12,7 +13,7 @@ def show_switch(request, name=None, ip=None):
     # switch = Switch.objects.get(name=name)
     if name:
         try:
-            switch = get_object_or_404(Switch, name=name)
+            switch = get_object_or_404(Switch, name=unquote(name))
         except Switch.MultipleObjectsReturned:
             context = {'switches': Switch.objects.filter(name=name),
                        'title': name,
