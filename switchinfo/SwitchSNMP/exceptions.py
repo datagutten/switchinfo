@@ -17,3 +17,13 @@ class SNMPNoData(ValueError):
 
     def __str__(self):
         return 'No data for oid %s' % self.oid
+
+
+class SNMPTimeout(ValueError):
+    oid = None
+
+    def __init__(self, oid):
+        self.oid = oid
+
+    def __str__(self):
+        return 'Timeout for oid %s' % self.oid
