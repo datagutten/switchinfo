@@ -194,9 +194,6 @@ def load_interfaces(switch, now=None):
         if interface.index in stack:
             print('Interface %s in stack' % interface)
             interface.neighbor_string = stack[interface.index]
-        else:
-            print(interface.index)
-
 
         try:
             interface.save()
