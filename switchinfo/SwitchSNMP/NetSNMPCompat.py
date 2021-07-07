@@ -25,12 +25,12 @@ class NetSNMPCompat(netsnmp.SNMPSession):
         try:
             data = super().get(oids)
         except EasySNMPNoSuchNameError as e:
-            raise exceptions.SNMPNoData(e)
+            raise exceptions.SNMPNoData(e, self, oids)
         except EasySNMPError as e:
             print(e)
             if str(e).find('null response') > -1:
-                raise exceptions.SNMPNoData(e)
-            raise exceptions.SNMPError(e, self)
+                raise exceptions.SNMPNoData(e, self, oids)
+            raise exceptions.SNMPError(e, self, oids)
 
         return convert_response(data, is_list)
 
@@ -43,9 +43,9 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             return elements
         except EasySNMPError as e:
             if str(e).find('null response') > -1:
-                raise exceptions.SNMPNoData(e)
+                raise exceptions.SNMPNoData(e, self, oids)
             else:
-                raise exceptions.SNMPError(e, self)
+                raise exceptions.SNMPError(e, self, oids)
 
 
 def convert_response(response, is_list=False):

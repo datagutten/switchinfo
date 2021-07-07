@@ -9,7 +9,7 @@ class EasySNMPCompat(easysnmp.Session):
                              version=version, timeout=timeout, retries=retries,
                              abort_on_nonexistent=True)
         except easysnmp.exceptions.EasySNMPConnectionError as e:
-            raise exceptions.SNMPError(e, self)
+            raise exceptions.SNMPConnectionError(e, self)
         except SystemError as e:
             raise exceptions.SNMPError(e, self)
 
@@ -17,9 +17,9 @@ class EasySNMPCompat(easysnmp.Session):
         try:
             return super().get(oids)
         except easysnmp.exceptions.EasySNMPConnectionError as e:
-            raise exceptions.SNMPError(e, self)
-        except easysnmp.exceptions.EasySNMPNoSuchInstanceError:
-            raise exceptions.SNMPNoData(oids)
+            raise exceptions.SNMPConnectionError(e, self, oids)
+        except easysnmp.exceptions.EasySNMPNoSuchInstanceError as e:
+            raise exceptions.SNMPNoData(e, self, oids)
         except SystemError as e:
-            raise exceptions.SNMPError(e, self)
+            raise exceptions.SNMPError(e, self, oids)
 

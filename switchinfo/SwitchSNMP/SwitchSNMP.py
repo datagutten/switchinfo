@@ -63,7 +63,7 @@ class SwitchSNMP:
         indexes = dict()
         items = session.walk(oid)
         if not items:
-            raise exceptions.SNMPNoData(oid)
+            raise exceptions.SNMPNoData(session=session, oid=oid)
         for item in items:
             index = utils.last_section(item.oid)
             if not index:
@@ -102,7 +102,7 @@ class SwitchSNMP:
             info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value
             # SNMPv2-MIB::sysObjectID
             info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
-        except (exceptions.SNMPNoData, exceptions.SNMPError) as e:
+        except exceptions.SNMPError as e:
             print(e)
             return
         try:
