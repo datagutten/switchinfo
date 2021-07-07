@@ -1,27 +1,19 @@
-from django.core.management.base import BaseCommand  # , CommandError
-# from django.utils import timezone
 import switchinfo.load_info.switch_info as switch_info
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.SwitchSNMP.select import get_switch
-from switchinfo.models import Switch
-from easysnmp.exceptions import EasySNMPTimeoutError
+from switchinfo.management.commands import SwitchBaseCommand
 
 
-class Command(BaseCommand):
+class Command(SwitchBaseCommand):
     help = 'Update info about a switch'
 
-    def add_arguments(self, parser):
-        parser.add_argument('switch', nargs='+', type=str)
-
     def handle(self, *args, **options):
-        if not options['switch'][0] == 'all':
-            switches = Switch.objects.filter(name=options['switch'][0])
-        else:
-            switches = Switch.objects.all()
-        for switch in switches:
+
+        for switch in self.handle_arguments(options):
             print(switch)
             try:
                 device = get_switch(switch)
                 print(switch_info.switch_info(device=device))
-            except EasySNMPTimeoutError:
-                print('Timeout connecting to %s' % switch)
+            except SNMPError as e:
+                print(switch, e)
                 continue

@@ -1,29 +1,17 @@
-from django.core.management.base import BaseCommand  # , CommandError
-from easysnmp.exceptions import EasySNMPTimeoutError
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 
 from switchinfo.load_info.load_interfaces import load_interfaces
-from switchinfo.models import Switch
+from switchinfo.management.commands import SwitchBaseCommand
 
 
-class Command(BaseCommand):
+class Command(SwitchBaseCommand):
     help = 'Import ports from switches'
 
-    def add_arguments(self, parser):
-        parser.add_argument('switch', nargs='+', type=str)
-
     def handle(self, *args, **options):
-        if not options['switch'][0] == 'all':
-            switches = Switch.objects.filter(name__startswith=options['switch'][0])
-        else:
-            switches = Switch.objects.all()
-
-        for switch in switches:
+        for switch in self.handle_arguments(options):
             print(switch.name)
             try:
                 load_interfaces(switch)
-            except ValueError as error:
-                print(error)
-                continue
-            except EasySNMPTimeoutError:
-                print('Timeout connecting to %s' % switch)
+            except SNMPError as e:
+                print(switch, e)
                 continue

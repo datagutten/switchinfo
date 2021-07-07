@@ -1,9 +1,7 @@
-# from datetime import datetime
-from pprint import pprint
+from django.core.management.base import BaseCommand
 
-from django.core.management.base import BaseCommand  # , CommandError
-# from django.utils import timezone
 import switchinfo.load_info.switch_info as switch_info
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 
 
 class Command(BaseCommand):
@@ -15,4 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ip = options['switch'][0]
         community = options['switch'][1]
-        print(switch_info.switch_info(ip, community, silent=False))
+        try:
+            print(switch_info.switch_info(ip, community, silent=False))
+        except SNMPError as e:
+            print(e)

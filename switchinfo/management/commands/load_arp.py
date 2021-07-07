@@ -1,19 +1,13 @@
-# from datetime import datetime
-
-from django.core.management.base import BaseCommand  # , CommandError
-# from django.utils import timezone
 from django.db.utils import DataError
 
 import switchinfo.SwitchSNMP.utils as utils
+from switchinfo.management.commands import SwitchBaseCommand
 from switchinfo.models import Arp, Switch
 from switchinfo.SwitchSNMP.select import get_switch
 
 
-class Command(BaseCommand):
+class Command(SwitchBaseCommand):
     help = 'Import ARP from switches'
-
-    def add_arguments(self, parser):
-        parser.add_argument('switch', nargs='+', type=str)
 
     def handle(self, *args, **options):
         switch = Switch.objects.get(name=options['switch'][0])
