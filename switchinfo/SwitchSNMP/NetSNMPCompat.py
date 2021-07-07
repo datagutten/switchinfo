@@ -8,6 +8,15 @@ from easysnmp import SNMPVariable
 from . import exceptions
 
 
+def get_exception(message: str):
+    if message.find('null response') > -1:
+        return exceptions.SNMPNoData
+    if message.find('Timeout') > -1:
+        return exceptions.SNMPTimeout
+    else:
+        return exceptions.SNMPError
+
+
 class NetSNMPCompat(netsnmp.SNMPSession):
     session = None
     hostname = None
@@ -24,10 +33,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
         try:
             data = super().get(oids)
         except SNMPError as e:
-            print(e)
-            if str(e).find('null response') > -1:
-                raise exceptions.SNMPNoData(e, self, oids)
-            raise exceptions.SNMPError(e, self, oids)
+            raise get_exception(str(e))(e, self.session, oids)
 
         return convert_response(data, is_list)
 
@@ -39,12 +45,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
                 elements.append(convert_response(element))
             return elements
         except SNMPError as e:
-            if str(e).find('null response') > -1:
-                raise exceptions.SNMPNoData(e, self, oids)
-            if str(e).find('Timeout') > -1:
-                raise exceptions.SNMPTimeout(e, self, oids)
-            else:
-                raise exceptions.SNMPError(e, self, oids)
+            raise get_exception(str(e))(e, self.session, oids)
 
 
 def convert_response(response, is_list=False):
