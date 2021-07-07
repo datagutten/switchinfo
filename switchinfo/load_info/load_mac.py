@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from easysnmp.exceptions import EasySNMPTimeoutError
-
+from switchinfo.SwitchSNMP import exceptions
 from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.SwitchSNMP.utils import mac_string
 from switchinfo.models import Interface, Mac, Vlan
@@ -31,7 +30,7 @@ def load_mac(switch, vlan=None):
             else:
                 bridge_port_to_ifindex = None
 
-        except EasySNMPTimeoutError:
+        except exceptions.SNMPTimeout:
             print('Timeout connecting to %s vlan %s' % (switch, vlan))
             continue
         if not mac_on_port:
