@@ -1,17 +1,10 @@
 import re
 
-from django.core.exceptions import ImproperlyConfigured
+from django.conf import settings
 
 from . import exceptions, utils
 
-try:
-    from django.conf import settings
-    use_easysnmp = not settings.USE_NETSNMP
-except (ImproperlyConfigured, AttributeError):
-    use_easysnmp = False
-    pass
-
-if not use_easysnmp:
+if settings.USE_NETSNMP:
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
 else:
     from .EasySNMPCompat import EasySNMPCompat as SNMPSession
