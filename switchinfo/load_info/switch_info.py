@@ -1,11 +1,12 @@
 import re
 from pprint import pprint
+from typing import Optional
 
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.models import Switch
 
 
-def switch_info(ip=None, community=None, device=None, silent=True):
+def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None, silent=True) -> Optional[Switch]:
     if not device:
         device = SwitchSNMP(community=community, device=ip)
     else:
@@ -45,7 +46,10 @@ def switch_type(description: str) -> str:
     elif description.find('ExtremeXOS') == 0:
         return 'Extreme'
     elif description.find('Aruba') == 0 or description.find('J9624A') > -1:
-        return 'Aruba'
+        if description.find('6100') > -1 or description.find('6200') > -1:
+            return 'Aruba CX'
+        else:
+            return 'Aruba'
     elif description.find('ProCurve') == 0 or description.find('Formerly ProCurve') > -1:
         return 'ProCurve'
     elif description.find('Hewlett-Packard') == 0 or description.find('HP') == 0:
@@ -56,7 +60,7 @@ def switch_type(description: str) -> str:
         return '3Com'
 
 
-def switch_series(switch):
+def switch_series(switch: Switch) -> str:
     series = None
     if switch.type == 'Cisco':
         series = re.match(r'((?:WS|IE)-[A-Z0-9]+).*?$', switch.model)
