@@ -16,11 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.7, 3.8, 3.9]
-        netsnmp: [ True ]
+        netsnmp: [ true ]
         include:
           - python-version: 3.6
-            netsnmp: False
-            run: pip install easysnmp
+            netsnmp: false
 
     steps:
     - uses: actions/checkout@v2
@@ -38,12 +37,12 @@ jobs:
         python -m pip install flake8 coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install netsnmp
-      if: ${{matrix.netsnmp == 'True'}}
+      if: ${{matrix.netsnmp == 'true'}}
       run: |
         sudo apt-get install libsnmp-dev libczmq-dev
         pip install -r optional-requirements-netsnmp.txt
     - name: Install easysnmp
-      if: ${{matrix.netsnmp == 'False'}}
+      if: ${{matrix.netsnmp == 'false'}}
       run: |
         pip install -r optional-requirements-easysnmp.txt
 

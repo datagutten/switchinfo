@@ -3,7 +3,7 @@ import unittest
 # python3 -m tests.test_snmp
 from switchinfo.SwitchSNMP import exceptions
 
-if 'USE_NETSNMP' not in os.environ or os.environ['USE_NETSNMP'] == 'True':
+if 'USE_NETSNMP' not in os.environ or os.environ['USE_NETSNMP'] == 'true':
     use_netsnmp = True
 else:
     use_netsnmp = False

@@ -106,4 +106,4 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-USE_NETSNMP = False
+USE_NETSNMP = os.environ['USE_NETSNMP'] == 'true'
