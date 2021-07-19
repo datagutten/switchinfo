@@ -39,11 +39,12 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install netsnmp
       if: ${{matrix.netsnmp == 'True'}}
+      run: |
         sudo apt-get install libsnmp-dev libczmq-dev
         pip install -r optional-requirements-netsnmp.txt
     - name: Install easysnmp
       if: ${{matrix.netsnmp == 'False'}}
-        pip install -r optional-requirements-easysnmp.txt
+        run: pip install -r optional-requirements-easysnmp.txt
 
     - name: Run tests
       env:
