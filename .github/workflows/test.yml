@@ -2,9 +2,6 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
 name: Python package
-env:
-  USE_NETSNMP: True
-
 on:
   push:
     branches: [ master ]
@@ -19,10 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.7, 3.8, 3.9]
+        netsnmp: [ True ]
         include:
           - python-version: 3.6
-            env:
-              USE_NETSNMP: False
+            netsnmp: False
             run: pip install easysnmp
 
     steps:
@@ -37,12 +34,20 @@ jobs:
         docker run -d -v $(pwd)/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
     - name: Install dependencies
       run: |
-        sudo apt-get install libsnmp-dev libczmq-dev
         python -m pip install --upgrade pip
         python -m pip install flake8 coverage
-        pip install -r optional-requirements-netsnmp.txt
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install netsnmp
+      if: ${{matrix.netsnmp == 'True'}}
+        sudo apt-get install libsnmp-dev libczmq-dev
+        pip install -r optional-requirements-netsnmp.txt
+    - name: Install easysnmp
+      if: ${{matrix.netsnmp == 'False'}}
+        pip install -r optional-requirements-easysnmp.txt
+
     - name: Run tests
+      env:
+        USE_NETSNMP: ${{ matrix.netsnmp }}
       run: |
         coverage run -p runtests.py
         coverage run -p runtests_aruba.py
