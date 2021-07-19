@@ -44,7 +44,8 @@ jobs:
         pip install -r optional-requirements-netsnmp.txt
     - name: Install easysnmp
       if: ${{matrix.netsnmp == 'False'}}
-        run: pip install -r optional-requirements-easysnmp.txt
+      run: |
+        pip install -r optional-requirements-easysnmp.txt
 
     - name: Run tests
       env:
