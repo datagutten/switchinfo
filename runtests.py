@@ -9,10 +9,6 @@ from django.test.utils import get_runner
 if __name__ == "__main__":
     os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
     django.setup()
-    if 'USE_NETSNMP' not in os.environ or os.environ['USE_NETSNMP'] == 'True':
-        settings.USE_NETSNMP = True
-    else:
-        settings.USE_NETSNMP = False
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
