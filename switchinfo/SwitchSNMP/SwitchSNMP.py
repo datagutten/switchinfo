@@ -1,10 +1,18 @@
+import os
 import re
-
-from django.conf import settings
 
 from . import exceptions, utils
 
-if settings.USE_NETSNMP:
+try:
+    # noinspection PyUnresolvedReferences
+    from django.conf import settings
+    from django.core.exceptions import ImproperlyConfigured
+    use_netsnmp = settings.USE_NETSNMP
+except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
+    use_netsnmp = os.environ['USE_NETSNMP'] == 'true'
+
+
+if use_netsnmp:
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
 else:
     from .EasySNMPCompat import EasySNMPCompat as SNMPSession
