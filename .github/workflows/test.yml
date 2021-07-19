@@ -37,12 +37,12 @@ jobs:
         python -m pip install flake8 coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install netsnmp
-      if: ${{matrix.netsnmp == 'true'}}
+      if: ${{matrix.netsnmp == true}}
       run: |
         sudo apt-get install libsnmp-dev libczmq-dev
         pip install -r optional-requirements-netsnmp.txt
     - name: Install easysnmp
-      if: ${{matrix.netsnmp == 'false'}}
+      if: ${{matrix.netsnmp == false}}
       run: |
         pip install -r optional-requirements-easysnmp.txt
 
