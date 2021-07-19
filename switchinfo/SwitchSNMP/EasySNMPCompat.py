@@ -16,6 +16,8 @@ class EasySNMPCompat(easysnmp.Session):
     def get(self, oids):
         try:
             return super().get(oids)
+        except easysnmp.exceptions.EasySNMPTimeoutError as e:
+            raise exceptions.SNMPTimeout(e, self, oids)
         except easysnmp.exceptions.EasySNMPConnectionError as e:
             raise exceptions.SNMPConnectionError(e, self, oids)
         except easysnmp.exceptions.EasySNMPNoSuchInstanceError as e:
