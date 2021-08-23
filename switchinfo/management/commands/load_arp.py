@@ -10,20 +10,19 @@ class Command(SwitchBaseCommand):
     help = 'Import ARP from switches'
 
     def handle(self, *args, **options):
-        switch = Switch.objects.get(name=options['switch'][0])
-        device = get_switch(switch)
+        switch: Switch
+        for switch in self.handle_arguments(options):
+            device = get_switch(switch)
 
-        arp = device.arp()
-        # pprint(arp)
-        # return
+            arp = device.arp()
 
-        for mac, ip in arp.items():
-            if not len(mac) == 12:
-                mac = utils.mac_string(mac)
-            try:
-                arp_db = Arp(mac=mac, ip=ip)
-                arp_db.save()
-            except DataError as error:
-                print(error)
-                print(mac)
-                print(utils.mac_string(mac))
+            for mac, ip in arp.items():
+                if not len(mac) == 12:
+                    mac = utils.mac_string(mac)
+                try:
+                    arp_db = Arp(mac=mac, ip=ip)
+                    arp_db.save()
+                except DataError as error:
+                    print(error)
+                    print(mac)
+                    print(utils.mac_string(mac))
