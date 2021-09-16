@@ -12,7 +12,7 @@ class Cisco(SwitchSNMP):
             return False
         vlan_list = []
         for vlan in vlans:
-            if int(vlan) < 1000:
+            if int(vlan) not in [1002, 1003, 1004, 1005, 4095]:
                 vlan_list.append(int(vlan))
         return vlan_list
 
