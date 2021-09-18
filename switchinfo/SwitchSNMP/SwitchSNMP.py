@@ -9,7 +9,12 @@ try:
     from django.core.exceptions import ImproperlyConfigured
     use_netsnmp = settings.USE_NETSNMP
 except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
-    use_netsnmp = os.environ['USE_NETSNMP'] == 'true'
+    if 'USE_NETSNMP' in os.environ:
+        use_netsnmp = os.environ['USE_NETSNMP'] == 'true'
+    else:
+        use_netsnmp = True
+except AttributeError:
+    use_netsnmp = True
 
 
 if use_netsnmp:
@@ -52,6 +57,19 @@ class SwitchSNMP:
             #        (device, vlan, community))
             self.sessions[device][vlan] = SNMPSession(device, community)
         return self.sessions[device][vlan]
+
+    def walk_keys(self, oid: str, keys: list):
+        session = self.get_session()
+        if oid[-1] != '.':
+            oid = oid + '.'
+        values = {}
+        for key in keys:
+            try:
+                alias = session.get(oid + key)
+                values[key] = alias.value
+            except exceptions.SNMPNoData:
+                values[key] = None
+        return values
 
     def create_dict(self, ip=None, vlan=None, oid=None,
                     int_value=False, int_index=False,
@@ -130,10 +148,11 @@ class SwitchSNMP:
         info = dict()
         # IF-MIB::ifName
         info['name'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.1')
+        keys = list(info['name'].keys())
         # IF-MIB::ifAlias
-        info['alias'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.18')
+        info['alias'] = self.walk_keys(oid='.1.3.6.1.2.1.31.1.1.1.18', keys=keys)
         # RFC1213-MIB::ifdescr
-        info['descr'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.2')
+        info['descr'] = self.walk_keys(oid='.1.3.6.1.2.1.2.2.1.2', keys=keys)
         # RFC1213-MIB::ifType
         info['type'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.3')
         # ifLastChange
