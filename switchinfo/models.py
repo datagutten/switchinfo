@@ -197,6 +197,9 @@ class Mac(models.Model):
     def switch(self):
         return self.interface.switch
 
+    def ip(self):
+        return Arp.objects.get(mac=self.mac)
+
     def __str__(self):
         return self.mac
 
