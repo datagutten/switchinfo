@@ -203,8 +203,10 @@ class SwitchSNMP:
             try:
                 return self.create_dict(vlan=vlan, oid=oid)
             except exceptions.SNMPError as e:
+                if not vlan:
+                    vlan = 0
                 e.message = 'Unable to get bridgePort to ' \
-                            'ifIndex conversion table for vlan %d' % vlan or 0
+                            'ifIndex conversion table for vlan %d' % vlan
                 raise e
 
     # POWER-ETHERNET-MIB
