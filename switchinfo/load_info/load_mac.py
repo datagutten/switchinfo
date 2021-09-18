@@ -57,7 +57,8 @@ def load_mac(switch, vlan=None):
             # if not interface_obj.vlan:  # Do not find mac for trunk ports
             #    continue
             if (not interface_obj.vlan and not interface_obj.force_mac) or interface_obj.skip_mac:
-                print('mac: %s trunk interface: %s %s' % (mac, interface_obj.switch, interface_obj))
+                # print('mac: %s trunk interface: %s %s' % (
+                #     mac, interface_obj.switch, interface_obj))
                 continue
             # print('mac: %s interface: %s' % (mac, interface))
             try:
