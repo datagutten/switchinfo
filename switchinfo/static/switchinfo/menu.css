@@ -1,0 +1,51 @@
+.top_menu {
+    background-color: #333;
+    font-family: Verdana, sans-serif;
+}
+
+ul.top_menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    width: 100%;
+}
+
+ul.top_menu li {
+    float: left;
+}
+
+ul.top_menu li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+ul.top_menu li a:hover {
+    background-color: #111;
+}
+
+ul.top_menu .active {
+    background-color: #4CAF50;
+}
+
+/* Add a gray right border to all list items, except the last item (last-child) */
+ul.top_menu li {
+    border-right: 1px solid #bbb;
+}
+
+ul.top_menu li:last-child {
+    border-right: none;
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    z-index: 9999;
+    width: 100%;
+    margin-top: 0px;
+}
