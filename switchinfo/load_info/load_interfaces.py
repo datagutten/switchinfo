@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from django.db.utils import DataError
-from easysnmp.exceptions import EasySNMPTimeoutError
 
+from switchinfo.SwitchSNMP.exceptions import SNMPError, SNMPNoData
 from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Interface, Switch, Vlan
 
@@ -14,16 +14,12 @@ def load_interfaces(switch: Switch, now=None):
     interfaces = device.interfaces_rfc()
     try:
         interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
-    except ValueError as exception:
-        print(exception)
-        print('Using pvid')
+    except SNMPNoData:  # HP 1910
         interface_vlan = device.vlan_ports_pvid()
         tagged_vlans = None
         untagged_vlan = None
 
     uptime = device.uptime()
-    if not interfaces:
-        raise ValueError('No interfaces found on switch')
 
     ports_rev = dict()
     if switch.type == 'Cisco':
@@ -35,22 +31,20 @@ def load_interfaces(switch: Switch, now=None):
 
         for vlan in vlans:
             try:
-                ports_temp = device.bridgePort_to_ifIndex(vlan=vlan.vlan)
-                if not ports_temp:
+                try:
+                    ports_temp = device.bridgePort_to_ifIndex(vlan=vlan.vlan)
+                except SNMPNoData:
                     print('No ports found in vlan %d' % vlan.vlan)
                     continue
                 for bridge_port, if_index in ports_temp.items():
                     ports[bridge_port] = if_index
                     ports_rev[if_index] = bridge_port
-            except EasySNMPTimeoutError:
+            except SNMPError:
                 pass
     else:
         ports = device.bridgePort_to_ifIndex()
         for bridge_port, if_index in ports.items():
             ports_rev[if_index] = bridge_port
-
-    if not ports:
-        raise ValueError('bridgePort to ifIndex conversion table not found')
 
     cdp_multi = device.cdp_multi()
 
@@ -62,7 +56,7 @@ def load_interfaces(switch: Switch, now=None):
     if switch.type == 'Aruba':
         try:
             stack = device.stack_ports()
-        except ValueError:
+        except SNMPNoData:
             stack = []
     else:
         stack = []
