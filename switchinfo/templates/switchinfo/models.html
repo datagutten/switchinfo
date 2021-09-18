@@ -1,7 +1,10 @@
 {% extends 'switchinfo/base.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'switchinfo/switchinfo_fancy.css' %}" type="text/css">
+{% endblock %}
 {% block content %}
-    <table border="1">
+    <table>
         <tr>
             <th>Series</th>
             <th>Count</th>
@@ -16,7 +19,7 @@
         {% endfor %}
     </table>
     <br />
-    <table border="1">
+    <table>
         <tr>
             <th>Model</th>
             <th>Count</th>

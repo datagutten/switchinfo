@@ -1,13 +1,8 @@
 {% extends 'switchinfo/base.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'switchinfo/switchinfo_fancy.css' %}" type="text/css">
+{% endblock %}
 {% block content %}
-<ul class="SwitchList">
-{% for switch in switches %}
-    {% if not ip_link %}
-        <li><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></li>
-    {% else %}
-        <li><a href="{% url 'switchinfo:switch' ip=switch.ip %}">{{switch}}</a></li>
-    {% endif %}
-{% endfor %}
-</ul>
+    {% include 'switchinfo/switch_list.html' %}
 {% endblock %}
