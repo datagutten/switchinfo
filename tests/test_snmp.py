@@ -33,6 +33,13 @@ class SNMPTestCase(unittest.TestCase):
         self.assertEqual('No data for oid .1.7.7.7.7',
                          str(context.exception))
 
+    def test_connection_error(self):
+        session = SNMPSession('127.0.0.1', 'ciscobad')
+        with self.assertRaises(exceptions.SNMPConnectionError) as context:
+            session.get('.1.3.6.1.2.1.1.6')
+        self.assertIn('Unable to connect to 127.0.0.1 with community ciscobad',
+                      str(context.exception))
+
     def test_timeout(self):
         session = SNMPSession('127.0.0.1', 'ciscobad')
         with self.assertRaises(exceptions.SNMPTimeout) as context:
@@ -41,13 +48,10 @@ class SNMPTestCase(unittest.TestCase):
             'Timeout for oid .1.3.6.1.2.1.1.6',
             str(context.exception))
 
-    def test_null_value(self):
+    def test_empty_string(self):
         session = SNMPSession('127.0.0.1', 'cisco')
-        with self.assertRaises(exceptions.SNMPNoData) as context:
-            session.get('.1.3.6.1.2.1.31.1.1.1.18.1')
-        self.assertEqual(
-            'No data for oid get: null response (.1.3.6.1.2.1.31.1.1.1.18.1)',
-            str(context.exception).strip())
+        response = session.get('.1.3.6.1.2.1.31.1.1.1.18.1')
+        self.assertEqual('', response.value)
 
 
 if __name__ == "__main__":
