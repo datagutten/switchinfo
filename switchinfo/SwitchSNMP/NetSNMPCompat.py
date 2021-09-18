@@ -23,7 +23,11 @@ class NetSNMPCompat(netsnmp.SNMPSession):
 
     def __init__(self, hostname, community, version=0, timeout=0.5, retries=1):
         self.hostname = hostname
-        super().__init__(peername=hostname, community=community, version=version, timeout=timeout, retries=retries)
+        # print('Init NetSNMPCompat', hostname, community, version, timeout, retries)
+        try:
+            super().__init__(peername=hostname, community=community, version=version, timeout=timeout, retries=retries)
+        except SNMPError as e:
+            raise get_exception(str(e))(e)
 
     def get(self, oids):
         if isinstance(oids, list):
