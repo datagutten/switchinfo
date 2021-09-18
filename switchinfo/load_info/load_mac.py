@@ -3,10 +3,10 @@ from datetime import datetime
 from switchinfo.SwitchSNMP import exceptions
 from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.SwitchSNMP.utils import mac_string
-from switchinfo.models import Interface, Mac, Vlan
+from switchinfo.models import Interface, Mac, Switch, Vlan
 
 
-def load_mac(switch, vlan=None):
+def load_mac(switch: Switch, vlan=None):
     print(switch)
     device = get_switch(switch)
     if not switch.type == 'Cisco':

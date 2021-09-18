@@ -212,6 +212,7 @@ def vlans_on_switch(request, switch_name):
 
 def hosts(request):
     switches_string = ''
+    switch: Switch
     for switch in Switch.objects.all():
         switches_string += '%s %s\n' % (switch.ip, switch.name)
     return HttpResponse(switches_string)

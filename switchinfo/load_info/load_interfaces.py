@@ -7,7 +7,7 @@ from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Interface, Switch, Vlan
 
 
-def load_interfaces(switch, now=None):
+def load_interfaces(switch: Switch, now=None):
     if not now:
         now = datetime.now()
     device = get_switch(switch)
