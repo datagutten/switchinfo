@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models import Q
 from django.db.utils import DataError
 
 from switchinfo.SwitchSNMP.exceptions import SNMPError, SNMPNoData
@@ -202,49 +203,56 @@ def load_interfaces(switch: Switch, now=None):
     del device.sessions[switch.ip]
 
 
-def get_neighbors(index, cdp_multi, switch):
+def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
     if index in cdp_multi:
+        neighbor = None
         for neighbor in cdp_multi[index].values():
             if 'ip' not in neighbor:
                 neighbor['ip'] = None
             if 'device_id' not in neighbor:
                 neighbor['device_id'] = None
 
-            if neighbor['ip']:
-                neighbor_switch = Switch.objects.filter(ip=neighbor['ip'])
-            elif neighbor['device_id']:
-                neighbor_switch = Switch.objects.filter(name=neighbor['device_id'].split('.')[0])
-            else:
-                return
-            if neighbor_switch and len(neighbor_switch) > 0:
-                neighbor_switch = neighbor_switch.first()
-                print('%s is a valid neighbor' % neighbor_switch)
-
-                remote_interface = neighbor['remote_port']
-                # if neighbor_switch.type == 'Cisco':
-                #    remote_interface = re.sub(r'([A-Z][a-z]).+?([0-9\/]+)', r'\1\2', remote_interface)
-                # elif neighbor_switch.type == 'Extreme':
-                #    remote_interface = re.sub(r'Slot:\s+([0-9]+), Port:\s([0-9]+)', r'\1:\2', remote_interface)
-                remote_interface = neighbor_switch.shorten_interface_name(remote_interface)
-                # Set neighbor on the remote interface in case the current switch does not broadcast
-                # remote = Interface.objects.filter(switch=neighbor_switch, interface=remote_interface)
+            try:
+                neighbor_switch = Switch.objects.get(
+                    Q(ip=neighbor['ip']) |
+                    Q(name=neighbor['device_id']) |
+                    Q(name=neighbor['device_id'].split('.')[0])
+                )
+            except Switch.DoesNotExist:
+                print('Unknown neighbor: %s' % (neighbor['ip'] or neighbor['device_id']))
+                continue
+            except Switch.MultipleObjectsReturned:
+                print('Multiple switches found with info ', neighbor['ip'], neighbor['device_id'])
                 try:
-                    remote = Interface.objects.get(switch=neighbor_switch,
-                                                   interface=remote_interface)
-                    remote.neighbor = switch
-                    remote.neighbor_set_by = switch
-                    # Interfaces with CDP or LDDP is a link, skip loading of MAC addresses
-                    # Set skip MAC on remote interface
-                    remote.skip_mac = True
-                    remote.save()
-                except Interface.DoesNotExist:
-                    print('No interface named %s on %s' % (remote_interface, neighbor_switch))
-                return neighbor_switch  # Valid neighbor found
-                # break  # Valid neighbor found, break loop
-            else:
-                print('Unknown neighbor: ' + (neighbor['ip'] or neighbor['device_id']))
+                    neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
+                except Switch.DoesNotExist:
+                    print('Unable to de-duplicate %s using IP %s' % (neighbor['device_id'], neighbor['ip']))
+                    continue
 
-        if neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']:
+            print('%s is a valid neighbor' % neighbor_switch)
+
+            remote_interface_long = neighbor['remote_port']
+            remote_interface_short = neighbor_switch.shorten_interface_name(remote_interface_long)
+            # Set neighbor on the remote interface in case the current switch does not broadcast
+            try:
+                remote = Interface.objects.get(
+                    Q(interface=remote_interface_short) |
+                    Q(interface=remote_interface_long) |
+                    Q(description=remote_interface_short),
+                    switch=neighbor_switch
+                )
+                remote.neighbor = switch
+                remote.neighbor_set_by = switch
+                # Interfaces with CDP or LLDP is a link, skip loading of MAC addresses
+                # Set skip MAC on remote interface
+                remote.skip_mac = True
+                remote.save()
+            except Interface.DoesNotExist:
+                print('No interface named %s on %s' % (remote_interface_short, neighbor_switch))
+            return neighbor_switch  # Valid neighbor found
+
+        # No valid neighbor found
+        if neighbor and (neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']):
             return neighbor['device_id']
         return '%s\n%s\n%s' % (
             neighbor['device_id'],
