@@ -59,7 +59,7 @@ class SwitchGroup(models.Model):
         return self.name
 
     def members(self):
-        return Switch.objects.filter(name__startswith=self.grouping_key)
+        return Switch.objects.filter(name__istartswith=self.grouping_key)
 
 
 class Vlan(models.Model):

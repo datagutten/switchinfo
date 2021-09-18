@@ -48,12 +48,13 @@ def switches_group(request):
     groups = dict()
     switches_nogroup = Switch.objects.all()
     db_groups = SwitchGroup.objects.all()
+    group: SwitchGroup
     for group in db_groups:
         for switch in group.members():
             if group.name not in groups:
                 groups[group.name] = []
             groups[group.name].append(switch)
-        switches_nogroup = switches_nogroup.exclude(name__startswith=group.grouping_key)
+        switches_nogroup = switches_nogroup.exclude(name__istartswith=group.grouping_key)
     groups[None] = switches_nogroup
 
     context = {
