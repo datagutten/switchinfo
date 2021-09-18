@@ -1,6 +1,7 @@
 class SNMPError(ValueError):
     session = None
     oid: str = None
+    message: str = None
 
     def __init__(self, e: Exception = None, session=None, oid: str = None):
         self.session = session
@@ -16,9 +17,9 @@ class SNMPConnectionError(SNMPError):
 
 class SNMPNoData(SNMPError):
     def __str__(self):
-        return 'No data for oid %s' % self.oid
+        return self.message or 'No data for oid %s' % self.oid
 
 
 class SNMPTimeout(SNMPError):
     def __str__(self):
-        return 'Timeout for oid %s' % self.oid
+        return self.message or 'Timeout for oid %s' % self.oid
