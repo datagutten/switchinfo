@@ -1,7 +1,6 @@
 {% extends 'switchinfo/base.html' %}
 
 {% block content %}
-<h1>{{ title }}</h1>
 <ul class="SwitchList">
 {% for switch in switches %}
     {% if not ip_link %}

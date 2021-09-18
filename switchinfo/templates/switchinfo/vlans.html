@@ -1,7 +1,6 @@
 {% extends 'switchinfo/base.html' %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
 <ul class="VlanList">
 {% for vlan in vlans %}
 <li><a href="{% url 'switchinfo:vlan' vlan=vlan.vlan %}">{{vlan}}</a></li>

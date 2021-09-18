@@ -2,21 +2,32 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>{{ title|default:"" }}</title>
-<link href="{% static "switchinfo/switchinfo.css" %}" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+    {% if not title %}
+        <title>Switchinfo</title>
+    {% else %}
+        <title>Switchinfo - {{ title|default:"" }}</title>
+    {% endif %}
+
+    <link href="{% static "switchinfo/switchinfo.css" %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'switchinfo/menu.css' %}" type="text/css">
 </head>
 
 <body>
-<ul class="toc">
-	<li><a href="{% url 'switchinfo:switches' %}">Switches</a></li>
-	<li><a href="{% url 'switchinfo:vlans' %}">Vlans</a></li>
-    <li><a href="{% url 'switchinfo:models' %}">Switch models</a></li>
-    <li><a href="{% url 'switchinfo:groups' %}">Switch groups</a></li>
-    <li><a href="{% url 'switchinfo:search' %}">Search</a></li>
-</ul>
-<br>
-<hr>
-{% block content %} {% endblock %}
+<div class="menu">
+    <ul class="top_menu">
+        <li><a href="{% url 'switchinfo:switches' %}">Switches</a></li>
+        <li><a href="{% url 'switchinfo:vlans' %}">Vlans</a></li>
+        <li><a href="{% url 'switchinfo:models' %}">Switch models</a></li>
+        <li><a href="{% url 'switchinfo:groups' %}">Switch groups</a></li>
+        <li><a href="{% url 'switchinfo:search' %}">Search</a></li>
+    </ul>
+</div>
+
+<div id="content" class="flex">
+    <h1>{{ title|capfirst }}</h1>
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
 </html>

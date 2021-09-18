@@ -1,7 +1,6 @@
 {% extends 'switchinfo/base.html' %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
 {% for switch, interfaces in switches %}
     {% if interfaces %}
 	<h2><a href="{% url 'switchinfo:switch' name=switch.name %}">{{switch}}</a></h2>
