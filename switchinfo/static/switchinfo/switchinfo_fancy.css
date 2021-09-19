@@ -1,0 +1,16 @@
+tr:nth-child(even) {
+    background: #f9f9f9
+}
+
+tr:nth-child(odd) {
+    background: #FFF
+}
+
+thead th, tbody td {
+    font-size: 13px;
+    line-height: 16px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    padding: 8px;
+    font-family: "Roboto", "Lucida Grande", Verdana, Arial, sans-serif;
+}
