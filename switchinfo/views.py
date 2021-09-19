@@ -208,7 +208,10 @@ def vlans_on_switch(request, switch_name):
         'switch': switch,
     }
 
-    return render(request, 'switchinfo/vlans_on_switch.html', context)
+    if request.path[-3:] == 'txt':
+        return render(request, 'switchinfo/vlans_cli.html', context, content_type='text/plain')
+    else:
+        return render(request, 'switchinfo/vlans_on_switch.html', context)
 
 
 def hosts(request):
