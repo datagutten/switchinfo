@@ -11,6 +11,7 @@ urlpatterns = [
     path('switch/ip/<str:ip>', views.show_switch, name='switch'),
     path('switch/<str:name>', views.show_switch, name='switch'),
     path('switch/<str:switch_name>/vlans', views.vlans_on_switch, name='switch_vlans'),
+    path('switch/<str:switch_name>/vlans.txt', views.vlans_on_switch, name='switch_vlans_cli'),
     path('', views.switches, name='switches_index'),
     path('switch', views.switches, name='switches'),
     path('switches', views.switches, name='switches2'),
