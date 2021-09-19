@@ -1,9 +1,9 @@
 {% extends 'switchinfo/base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'switchinfo/switchinfo_fancy.css' %}" type="text/css">
+{% endblock %}
 
 {% block content %}
-<ul class="VlanList">
-{% for vlan in vlans %}
-<li><a href="{% url 'switchinfo:vlan' vlan=vlan.vlan %}">{{vlan}}</a></li>
-{% endfor %}
-</ul>
+    {% include 'switchinfo/vlan_list.html' %}
 {% endblock %}
