@@ -15,7 +15,9 @@ def load_interfaces(switch: Switch, now=None):
     interfaces = device.interfaces_rfc()
     try:
         interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
-    except SNMPNoData:  # HP 1910
+    except SNMPNoData as e:  # HP 1910
+        if switch.type == 'Cisco':
+            raise e
         interface_vlan = device.vlan_ports_pvid()
         tagged_vlans = None
         untagged_vlan = None
