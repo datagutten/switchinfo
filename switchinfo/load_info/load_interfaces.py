@@ -24,22 +24,25 @@ def load_interfaces(switch: Switch, now=None):
 
     ports_rev = dict()
     if switch.type == 'Cisco':
-        vlans = Vlan.objects.filter(on_switch=switch, vlan__gt=0)
-        if not vlans:
-            raise ValueError('No vlans on switch, run load_vlans')
-
-        ports = device.bridgePort_to_ifIndex()
-
-        for vlan in vlans:
+        try:
+            ports = device.bridgePort_to_ifIndex()
+        except SNMPError:
+            ports = {}
+        vlan_check = []
+        for vlan in untagged_vlan.values():
+            if vlan in vlan_check:
+                continue
+            vlan_check.append(vlan)
             try:
                 try:
-                    ports_temp = device.bridgePort_to_ifIndex(vlan=vlan.vlan)
+                    ports_temp = device.bridgePort_to_ifIndex(vlan=vlan)
                 except SNMPNoData:
-                    print('No ports found in vlan %d' % vlan.vlan)
+                    print('No ports found in vlan %d' % vlan)
                     continue
                 for bridge_port, if_index in ports_temp.items():
                     ports[bridge_port] = if_index
                     ports_rev[if_index] = bridge_port
+                device.close_sessions()
             except SNMPError:
                 pass
     else:
