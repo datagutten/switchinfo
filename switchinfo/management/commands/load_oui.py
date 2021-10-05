@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import re
-        response = requests.get('http://standards-oui.ieee.org/oui.txt')
+        response = requests.get('https://linuxnet.ca/ieee/oui.txt')
 
         pattern = r'([A-F0-9]{6})\s+\(.+\)\s+(.+)'
         matches = re.findall(pattern, response.text)
