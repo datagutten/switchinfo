@@ -9,10 +9,14 @@ from django.test.utils import get_runner
 if __name__ == "__main__":
     os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.test_settings'
     django.setup()
+    if len(sys.argv) == 1:
+        tests = ["tests.tests_cisco_snmp",
+                 "tests.tests_utils", "tests.test_web",
+                 "tests.test_load_info"]
+    else:
+        tests = sys.argv[1:]
 
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
-    failures = test_runner.run_tests(["tests.tests_cisco_snmp",
-                                      "tests.tests_utils", "tests.test_web",
-                                      "tests.test_load_info"])
+    failures = test_runner.run_tests(tests)
     sys.exit(bool(failures))
