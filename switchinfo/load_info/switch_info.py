@@ -53,9 +53,10 @@ def switch_type(description: str) -> str:
             return 'Aruba CX'
         else:
             return 'Aruba'
-    elif description.find('ProCurve') == 0 or description.find('Formerly ProCurve') > -1:
+    elif description.find('ProCurve') > -1:
         return 'ProCurve'
-    elif description.find('Hewlett-Packard') == 0 or description.find('HP') == 0:
+    elif description.find('Hewlett-Packard') > -1 or \
+            description.find('HP') == 0:
         return 'HP'
     elif description.find('Westermo') == 0:
         return 'Westermo'
