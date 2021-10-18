@@ -30,8 +30,7 @@ class WebTestCase(TestCase):
         response = c.get('/vlans')
 
         self.assertContains(response, '<h1>Vlans</h1>')
-        self.assertContains(response,
-                            '<a href="/vlan/12">PC (12)</a>')
+        self.assertContains(response, '<td>PC</td>')
 
     def test_vlan(self):
         switch = Switch.objects.get(ip='127.0.0.1')
