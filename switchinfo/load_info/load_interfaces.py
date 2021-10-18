@@ -214,15 +214,17 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
         for neighbor in cdp_multi[index].values():
             if 'ip' not in neighbor:
                 neighbor['ip'] = None
-            if 'device_id' not in neighbor:
-                neighbor['device_id'] = None
 
             try:
-                neighbor_switch = Switch.objects.get(
-                    Q(ip=neighbor['ip']) |
-                    Q(name=neighbor['device_id']) |
-                    Q(name=neighbor['device_id'].split('.')[0])
-                )
+                if 'device_id' in neighbor:
+                    neighbor_switch = Switch.objects.get(
+                        Q(ip=neighbor['ip']) |
+                        Q(name=neighbor['device_id']) |
+                        Q(name=neighbor['device_id'].split('.')[0])
+                    )
+                else:
+                    neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
+
             except Switch.DoesNotExist:
                 print('Unknown neighbor: %s' % (neighbor['ip'] or neighbor['device_id']))
                 continue
