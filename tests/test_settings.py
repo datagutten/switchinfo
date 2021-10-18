@@ -108,4 +108,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 STATIC_URL = '/static/'
 
-USE_NETSNMP = os.environ['USE_NETSNMP'] == 'true'
+try:
+    USE_NETSNMP = os.environ['USE_NETSNMP'] == 'true'
+except KeyError:
+    USE_NETSNMP = True
