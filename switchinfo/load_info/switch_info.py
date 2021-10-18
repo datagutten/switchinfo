@@ -3,6 +3,7 @@ from pprint import pprint
 from typing import Optional
 
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.models import Switch
 
 
@@ -12,9 +13,11 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
     else:
         ip = device.device
         community = device.community
-    info = device.switch_info()
-    if not info:
-        return
+    try:
+        info = device.switch_info()
+    except SNMPError as e:
+        e.message = 'Unable to get switch info: %s' % e
+        raise e
 
     switch, new = Switch.objects.get_or_create(ip=ip)
     switch.community = community
