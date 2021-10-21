@@ -49,10 +49,8 @@ def load_mac(switch: Switch, vlan=None):
                 if_index = bridge_port_to_ifindex[bridge_port]
             try:
                 interface_obj = Interface.objects.get(switch=switch, index=if_index)
-                interface = interface_obj.interface
             except Interface.DoesNotExist:
-                print('Interface with index %s not found' % if_index)
-                # print(exception)
+                # print('Interface with index %s not found' % if_index)
                 continue
             # if not interface_obj.vlan:  # Do not find mac for trunk ports
             #    continue
