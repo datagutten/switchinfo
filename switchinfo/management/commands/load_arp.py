@@ -1,4 +1,5 @@
 from django.db.utils import DataError
+from switchinfo.SwitchSNMP.exceptions import SNMPError
 
 import switchinfo.SwitchSNMP.utils as utils
 from switchinfo.management.commands import SwitchBaseCommand
@@ -13,8 +14,11 @@ class Command(SwitchBaseCommand):
         switch: Switch
         for switch in self.handle_arguments(options):
             device = get_switch(switch)
-
-            arp = device.arp()
+            try:
+                arp = device.arp()
+            except SNMPError as e:
+                print(e)
+                continue
 
             for mac, ip in arp.items():
                 if not len(mac) == 12:

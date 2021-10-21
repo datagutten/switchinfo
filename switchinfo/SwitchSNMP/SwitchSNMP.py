@@ -379,13 +379,16 @@ class SwitchSNMP:
 
         ip = []
         mac = []
-        for item in session.walk(oid):
-
-            ip_match = re.search(r'(?:[0-9]{1,3}\.?){4}$', item.oid)
-            if ip_match:
-                ip.append(ip_match.group(0))
-                mac.append(utils.mac_string(item.value))
-            else:
-                print('No match: ' + item.oid)
+        try:
+            for item in session.walk(oid):
+                ip_match = re.search(r'(?:[0-9]{1,3}\.?){4}$', item.oid)
+                if ip_match:
+                    ip.append(ip_match.group(0))
+                    mac.append(utils.mac_string(item.value))
+                else:
+                    print('No match: ' + item.oid)
+        except exceptions.SNMPError as e:
+            e.message = 'Error fetching ARP'
+            raise e
 
         return dict(zip(mac, ip))
