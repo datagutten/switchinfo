@@ -73,6 +73,9 @@ def load_mac(switch: Switch, vlan=None):
             except Mac.MultipleObjectsReturned:
                 print('Multiple MAC')
                 print(Mac.objects.filter(mac=mac_string(mac)))
+            except exceptions.SNMPError as e:
+                print(e)
+
     if mac_on_port:
         bad_macs = Mac.objects.filter(interface__switch=switch).exclude(last_seen=now)
         bad_macs.delete()
