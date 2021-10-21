@@ -7,7 +7,6 @@ from switchinfo.models import Interface, Mac, Switch, Vlan
 
 
 def load_mac(switch: Switch, vlan=None):
-    print(switch)
     device = get_switch(switch)
     if not switch.type == 'Cisco':
         vlans = Vlan.objects.filter(vlan=0)

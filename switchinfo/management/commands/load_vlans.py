@@ -13,5 +13,5 @@ class Command(SwitchBaseCommand):
             try:
                 load_vlan(switch, silent=False)
             except SNMPError as e:
-                print(switch, e)
+                print(e)
                 continue

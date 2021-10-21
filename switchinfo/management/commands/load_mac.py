@@ -18,8 +18,9 @@ class Command(SwitchBaseCommand):
             switches = self.handle_arguments({'switch': options['switch'][0]})
 
         for switch in switches:
+            print(switch)
             try:
                 load_mac(switch)
             except SNMPError as e:
-                print(switch, e)
+                print(e)
                 continue

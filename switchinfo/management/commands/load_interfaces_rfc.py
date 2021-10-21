@@ -5,13 +5,13 @@ from switchinfo.management.commands import SwitchBaseCommand
 
 
 class Command(SwitchBaseCommand):
-    help = 'Import ports from switches'
+    help = 'Load interfaces from switches'
 
     def handle(self, *args, **options):
         for switch in self.handle_arguments(options):
-            print(switch.name)
+            print(switch)
             try:
                 load_interfaces(switch)
             except SNMPError as e:
-                print(switch, e)
+                print(e)
                 continue
