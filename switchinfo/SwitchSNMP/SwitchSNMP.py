@@ -242,7 +242,11 @@ class SwitchSNMP:
     def vlan_names(self):
         # Q-BRIDGE-MIB::dot1qVlanStaticName
         oid = '.1.3.6.1.2.1.17.7.1.4.3.1.1'
-        return self.create_dict(oid=oid)
+        try:
+            return self.create_dict(oid=oid)
+        except exceptions.SNMPError as e:
+            e.message = 'Unable to get VLAN names'
+            raise e
 
     def egress_ports(self):
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
