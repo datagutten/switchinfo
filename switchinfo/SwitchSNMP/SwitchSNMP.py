@@ -58,6 +58,11 @@ class SwitchSNMP:
             self.sessions[device][vlan] = SNMPSession(device, community)
         return self.sessions[device][vlan]
 
+    def close_sessions(self):
+        for vlan, session in self.sessions[self.device].items():
+            session.close()
+        del self.sessions[self.device]
+
     def walk_keys(self, oid: str, keys: list):
         session = self.get_session()
         if oid[-1] != '.':
