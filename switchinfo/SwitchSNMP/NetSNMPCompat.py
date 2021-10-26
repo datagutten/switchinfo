@@ -4,8 +4,7 @@ from datetime import timedelta
 from netsnmp._api import SNMPError
 
 import netsnmp
-from easysnmp import SNMPVariable
-from . import exceptions
+from . import exceptions, SNMPVariable
 
 
 def get_exception(message: str):

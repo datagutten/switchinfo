@@ -1,3 +1,4 @@
+from .SNMPVariable import SNMPVariable
 from .ArubaVSF import ArubaVSF
 from .Cisco import Cisco
 from .Extreme import Extreme
