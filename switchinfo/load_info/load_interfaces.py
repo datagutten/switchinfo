@@ -212,6 +212,10 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
     if index in cdp_multi:
         neighbor = None
         for neighbor in cdp_multi[index].values():
+            if neighbor == {}:
+                print('Skip unknown neighbor on index %d' % index)
+                neighbor = None
+                continue
             if 'ip' not in neighbor:
                 neighbor['ip'] = None
 
@@ -256,13 +260,16 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
                 remote.save()
             except Interface.DoesNotExist:
                 print('No interface named %s on %s' % (remote_interface_short, neighbor_switch))
+            except Interface.MultipleObjectsReturned:
+                print('Multiple interfaces named %s on %s' % (remote_interface_short, neighbor_switch))
             return neighbor_switch  # Valid neighbor found
 
         # No valid neighbor found
         if neighbor and (neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']):
             return neighbor['device_id']
-        return '%s\n%s\n%s' % (
-            neighbor['device_id'],
-            neighbor['ip'],
-            neighbor['platform'])
+        elif neighbor:
+            return '%s\n%s\n%s' % (
+                neighbor['device_id'],
+                neighbor['ip'],
+                neighbor['platform'])
     return None
