@@ -165,17 +165,18 @@ def load_interfaces(switch: Switch, now=None):
         else:
             key = int(if_index)
 
-        if key not in interface_vlan or not interface_vlan[key]:
-            # print('%d not in interface_vlan' % key)
-            interface.vlan = None
-        else:
-            vlan = interface_vlan[key]
-            try:
-                interface.vlan = Vlan.objects.get(vlan=vlan)
-                interface.vlan.has_ports = True
-                interface.vlan.save()
-            except Vlan.DoesNotExist:
-                print('Missing vlan %s, run load_vlans' % vlan)
+        if interface_vlan:
+            if key not in interface_vlan or not interface_vlan[key]:
+                print('%d not in interface_vlan' % key)
+                interface.vlan = None
+            else:
+                vlan = interface_vlan[key]
+                try:
+                    interface.vlan = Vlan.objects.get(vlan=vlan)
+                    interface.vlan.has_ports = True
+                    interface.vlan.save()
+                except Vlan.DoesNotExist:
+                    print('Missing vlan %s, run load_vlans' % vlan)
         if tagged_vlans and key in tagged_vlans:
 
             for tagged_vlan in tagged_vlans[key]:
