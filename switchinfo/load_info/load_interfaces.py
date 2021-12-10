@@ -160,7 +160,7 @@ def load_interfaces(switch: Switch, now=None):
             if neighbor in ['Mitel IP Phone']:
                 interface.force_mac = True
 
-        if not switch.type == 'Cisco' and not switch.type == 'CiscoSB' and not switch.type == 'Aruba':
+        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Comware']:
             key = int(bridge_port)
         else:
             key = int(if_index)
