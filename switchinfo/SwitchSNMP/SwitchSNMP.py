@@ -182,10 +182,16 @@ class SwitchSNMP:
     def mac_on_port(self, vlan=None):
         # TODO: Check if vlan exists on switch
         session = self.get_session(vlan=vlan)
-        oid = '.1.3.6.1.2.1.17.4.3.1.2'  # BRIDGE-MIB::dot1dTpFdbPort
+        oid_q_bridge = '.1.3.6.1.2.1.17.7.1.2.2.1.2'  # Q-BRIDGE-MIB::dot1qTpFdbPort
+        oid_bridge = '.1.3.6.1.2.1.17.4.3.1.2'  # BRIDGE-MIB::dot1dTpFdbPort
+
         port = dict()
-        for entry in session.walk(oid):
-            matches = re.match(r'(?:mib-2|iso\.3\.6\.1\.2\.1)\.17\.4\.3\.1\.([0-9])\.([0-9\.]+)', entry.oid)
+        macs = session.walk(oid_bridge)
+        if not macs:
+            macs = session.walk(oid_q_bridge)
+
+        for entry in macs:
+            matches = re.match(r'.+\.([0-9]+)\.((?:[0-9]+\.){5}[0-9]+)$', entry.oid)
             if not matches:
                 print('oid %s not parsed' % entry.oid)
                 continue
