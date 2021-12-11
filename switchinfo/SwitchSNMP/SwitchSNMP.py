@@ -179,16 +179,19 @@ class SwitchSNMP:
         return info
 
     # return value: bridgePort
-    def mac_on_port(self, vlan=None):
+    def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
         # TODO: Check if vlan exists on switch
         session = self.get_session(vlan=vlan)
         oid_q_bridge = '.1.3.6.1.2.1.17.7.1.2.2.1.2'  # Q-BRIDGE-MIB::dot1qTpFdbPort
         oid_bridge = '.1.3.6.1.2.1.17.4.3.1.2'  # BRIDGE-MIB::dot1dTpFdbPort
 
         port = dict()
-        macs = session.walk(oid_bridge)
-        if not macs:
+        if use_q_bridge_mib:
             macs = session.walk(oid_q_bridge)
+        else:
+            macs = session.walk(oid_bridge)
+            if not macs:
+                macs = session.walk(oid_q_bridge)
 
         for entry in macs:
             matches = re.match(r'.+\.([0-9]+)\.((?:[0-9]+\.){5}[0-9]+)$', entry.oid)
