@@ -17,7 +17,9 @@
         <tr>
             <th>Model</th>
             {% if switch.model %}
-            <td>{{ switch.type|default:"" }}&nbsp;<a href="{% url 'switchinfo:switch_model' model=switch.model %}">{{ switch.model }}</a></td>
+                <td>{{ switch.type|default:"" }}&nbsp;<a
+                        href="{% url 'switchinfo:switches' %}?model={{ switch.model|urlencode }}">{{ switch.model }}</a>
+                </td>
             {% else %}
             <td>{{ switch.type|default:"" }}&nbsp;{{ switch.model|default:"" }}</td>
             {% endif %}
@@ -25,7 +27,7 @@
         <tr>
             <th>Series</th>
             {% if switch.series %}
-                <td><a href="{% url 'switchinfo:switch_series' series=switch.series %}">{{ switch.series }}</a></td>
+                <td><a href="{% url 'switchinfo:switches' %}?series={{ switch.series|urlencode }}">{{ switch.series }}</a></td>
             {% else %}
                 <td>&nbsp;</td>
             {% endif %}

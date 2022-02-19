@@ -1,9 +1,10 @@
-import os
+import urllib.parse
 from pprint import pprint
 from urllib.parse import unquote
 
 from django.conf import settings
-from django.shortcuts import HttpResponse, get_object_or_404, redirect, render
+from django.http import HttpResponseBadRequest
+from django.shortcuts import HttpResponse, get_object_or_404, redirect, render, resolve_url
 
 from .forms import SearchForm
 from .models import Arp, Interface, Mac, Switch, SwitchGroup, Vlan
@@ -38,9 +39,21 @@ def show_switch(request, name=None, ip=None):
 
 
 def switches(request):
+    switches_obj = Switch.objects.all()
+    model = request.GET.get('model')
+    series = request.GET.get('series')
+
+    title = 'Switches'
+    if model:
+        switches_obj = switches_obj.filter(model__iexact=model)
+        title += ' of type %s' % switches_obj.first().model
+    if series:
+        switches_obj = switches_obj.filter(series__iexact=series)
+        title += ' in series %s' % switches_obj.first().series
+
     context = {
-        'switches': Switch.objects.all(),
-        'title': 'Switches',
+        'switches': switches_obj,
+        'title': title,
     }
     return render(request, 'switchinfo/switches.html', context)
 
@@ -187,17 +200,13 @@ def models(request):
 
 def switch_model(request, model=None, series=None):
     if model:
-        devices = Switch.objects.filter(model=model)
-        title = devices.first().model
+        query = urllib.parse.urlencode({'model': model})
     elif series:
-        devices = Switch.objects.filter(series=series)
-        title = devices.first().series
+        query = urllib.parse.urlencode({'series': series})
     else:
-        raise AttributeError('Model or series must be specified')
-
-    return render(request, 'switchinfo/switches.html',
-                  context={'switches': devices,
-                           'title': title})
+        return HttpResponseBadRequest('Model or series must be specified')
+    url = resolve_url('switchinfo:switches') + '?' + query
+    return redirect(url)
 
 
 def vlans_on_switch(request, switch_name):
