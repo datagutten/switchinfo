@@ -76,3 +76,4 @@ class MacAdmin(admin.ModelAdmin):
 
 admin.site.register(Mac, MacAdmin)
 admin.site.register(Oui)
+admin.site.site_header = 'Switchinfo administration'
