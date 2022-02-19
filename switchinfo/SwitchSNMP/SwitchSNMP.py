@@ -391,6 +391,27 @@ class SwitchSNMP:
 
         return cdp
 
+    def aggregations(self):
+        oid = '.1.2.840.10006.300.43.1.2.1.1.12'  # IEEE8023-LAG-MIB::dot3adAggPortSelectedAggID
+        session = self.get_session()
+        aggregations = {}
+        try:
+            for entry in session.walk(oid):
+                interface = int(utils.last_section(entry.oid))
+                aggregation = int(entry.value)
+                if aggregation == 0:
+                    continue  # Interface is not member of an aggregation
+                pass
+                if aggregation not in aggregations:
+                    aggregations[aggregation] = []
+                aggregations[aggregation].append(interface)
+
+        except exceptions.SNMPError as e:
+            e.message = 'Error fetching aggregations'
+            raise e
+
+        return aggregations
+
     def arp(self, device=None):
         oid = '.1.3.6.1.2.1.3.1.1.2'
         session = self.get_session()
