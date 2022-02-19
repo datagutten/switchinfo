@@ -412,8 +412,8 @@ class SwitchSNMP:
 
         return aggregations
 
-    def arp(self, device=None):
-        oid = '.1.3.6.1.2.1.3.1.1.2'
+    def arp(self):
+        oid = '.1.3.6.1.2.1.3.1.1.2'  # RFC1213-MIB::atPhysAddress
         session = self.get_session()
 
         ip = []
