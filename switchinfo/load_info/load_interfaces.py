@@ -21,6 +21,15 @@ def set_interface_vlan(interface, vlan_number: int):
         vlan_obj.save()
 
 
+def load_aggregations(aggregations: dict, switch: Switch):
+    for aggregation_index, members in aggregations.items():
+        parent_interface = Interface.objects.get(switch=switch, index=aggregation_index)
+        for member_id in members:
+            interface = Interface.objects.get(switch=switch, index=member_id)
+            interface.aggregation = parent_interface
+            interface.save()
+
+
 def load_interfaces(switch: Switch, now=None):
     if not now:
         now = datetime.now()
@@ -216,7 +225,7 @@ def load_interfaces(switch: Switch, now=None):
         #    for vlan in tagged_ports[if_index]:
         #        print('vlan %s is tagged on ifindex %s' % (vlan, if_index))
         #        # interface.tagged_vlans.add(vlan)
-
+    load_aggregations(aggregations, switch)
     del device.sessions[switch.ip]
 
 

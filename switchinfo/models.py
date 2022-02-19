@@ -123,6 +123,13 @@ class Interface(models.Model):
     force_mac = models.BooleanField(
         help_text='Load MAC addresses even if the interface is trunk',
         default=False)
+    aggregation = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+        related_name='aggregation_members',
+        help_text='Aggregation virtual interface',
+    )
 
     class Meta:
         unique_together = (('switch', 'index'),)
