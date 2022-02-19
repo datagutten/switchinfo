@@ -98,3 +98,12 @@ ul.toc a:hover {  background-color: #FFFFE0; text-decoration: none; }
     overflow-wrap: break-word;
     white-space: pre-line;
 }
+
+.show_tagged {
+    cursor: pointer;
+}
+
+.tagged_vlans {
+    font-family: monospace;
+    font-size: 13px;
+}

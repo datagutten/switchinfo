@@ -1,3 +1,4 @@
+{% load static %}
 {% if interfaces %}
 	<table border="1">
 	<tr class="tblHead">
@@ -16,13 +17,25 @@
 	{% for interface in interfaces %}
 		<tr class="{{interface.css}}">
             <td title="{{ interface.index }}">{{ interface.interface }}</td>
-			{% if not interface.is_trunk %}
-			    <td><a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{interface.vlan}}</a></td>
-            {% elif interface.is_trunk and interface.vlan %}
-                <td>trunk (<a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{interface.vlan}}</a>)</td>
-			{% else %}
+            {% if not interface.is_trunk %}
+                <td><a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{ interface.vlan }}</a></td>
+            {% elif interface.tagged_vlans.exists %}
+                <td title="Show tagged vlans">
+                    <span class="show_tagged" data-id="{{ interface.id }}">trunk</span>
+                    {% if interface.vlan %}
+                        (<a href="{% url 'switchinfo:vlan' vlan=interface.vlan.vlan %}">{{ interface.vlan }}</a>)
+                    {% endif %}
+
+                    <br/>
+                    <div id="tagged_{{ interface.id }}" class="tagged_vlans" style="display: none">
+                        {% for vlan in interface.tagged_vlans.all %}
+                            <a href="{% url 'switchinfo:vlan' vlan=vlan.vlan %}">{{ vlan }}</a><br/>
+                        {% endfor %}
+                    </div>
+                </td>
+            {% else %}
 			<td>{{interface.vlan|default:"trunk"}}</td>
-			{% endif %}
+            {% endif %}
 			<td>{{interface.status_format}} {% if interface.link_status_changed %}since {{ interface.link_status_changed }}{% endif %}</td>
 			{% if switch.has_poe %}<td>{{interface.poe_status|default:""}}</td>{% endif %}
 			<td>{{interface.speed_format}}</td>

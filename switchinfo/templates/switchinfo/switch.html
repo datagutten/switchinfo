@@ -1,4 +1,9 @@
 {% extends 'switchinfo/base.html' %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'switchinfo/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'switchinfo/collapse_vlans.js' %}"></script>
+{% endblock %}
 
 {% block content %}
     {% if switch.image %}
