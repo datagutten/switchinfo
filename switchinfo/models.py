@@ -64,7 +64,7 @@ class SwitchGroup(models.Model):
 
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)
-    on_switch = models.ManyToManyField(Switch)
+    on_switch = models.ManyToManyField(Switch, related_name='vlan')
     name = models.CharField(max_length=50, blank=True, null=True)
     has_ports = models.BooleanField(default=False)
 
@@ -85,7 +85,8 @@ class Interface(models.Model):
     switch = models.ForeignKey(
         Switch,
         on_delete=models.CASCADE,
-        related_name='switch')
+        related_name='interfaces'
+    )
     interface = models.CharField(max_length=50)
     type = models.CharField('Interface type', max_length=50)
     vlan = models.ForeignKey(
@@ -190,7 +191,11 @@ class Interface(models.Model):
 
 
 class Mac(models.Model):
-    interface = models.ForeignKey(Interface, on_delete=models.CASCADE)
+    interface = models.ForeignKey(
+        Interface,
+        on_delete=models.CASCADE,
+        related_name='macs'
+    )
     mac = models.CharField(max_length=12)
     last_seen = models.DateTimeField(auto_now=False, blank=True, null=True)
 
