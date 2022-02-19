@@ -8,6 +8,19 @@ from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Interface, Switch, Vlan
 
 
+def set_interface_vlan(interface, vlan_number: int):
+    vlan_obj, created = Vlan.objects.get_or_create(vlan=vlan_number, defaults={'has_ports': True})
+    if created or interface.switch not in vlan_obj.on_switch.all():
+        vlan_obj.on_switch.add(interface.switch)
+    if created:
+        print('Created missing vlan %d, run load_vlans to get name' % vlan_number)
+
+    interface.vlan = vlan_obj
+    if not vlan_obj.has_ports:
+        vlan_obj.has_ports = True
+        vlan_obj.save()
+
+
 def load_interfaces(switch: Switch, now=None):
     if not now:
         now = datetime.now()
@@ -179,13 +192,7 @@ def load_interfaces(switch: Switch, now=None):
                 print('%d not in interface_vlan' % key)
                 interface.vlan = None
             else:
-                vlan = interface_vlan[key]
-                try:
-                    interface.vlan = Vlan.objects.get(vlan=vlan)
-                    interface.vlan.has_ports = True
-                    interface.vlan.save()
-                except Vlan.DoesNotExist:
-                    print('Missing vlan %s, run load_vlans' % vlan)
+                set_interface_vlan(interface, interface_vlan[key])
         if tagged_vlans and key in tagged_vlans:
 
             for tagged_vlan in tagged_vlans[key]:
@@ -195,12 +202,7 @@ def load_interfaces(switch: Switch, now=None):
                 except Vlan.DoesNotExist:
                     print('Missing tagged vlan %s, run load_vlans' % tagged_vlan)
         if untagged_vlan and key in untagged_vlan:
-            try:
-                interface.vlan = Vlan.objects.get(vlan=untagged_vlan[key])
-                interface.vlan.has_ports = True
-                interface.vlan.save()
-            except Vlan.DoesNotExist:
-                print('Missing vlan %s, run load_vlans' % untagged_vlan[key])
+            set_interface_vlan(interface, untagged_vlan[key])
         if interface.index in stack:
             print('Interface %s in stack' % interface)
             interface.neighbor_string = stack[interface.index]
