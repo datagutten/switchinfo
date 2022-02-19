@@ -31,8 +31,9 @@ def show_switch(request, name=None, ip=None):
         'title': str(switch),
     }
 
-    if switch.has_backup():
-        context['backup_folder'] = os.path.basename(settings.BACKUP_PATH)
+    if switch.has_backup() and hasattr(settings, 'BACKUP_WEB_BASE'):
+        context['backup_web_base'] = settings.BACKUP_WEB_BASE
+
     return render(request, 'switchinfo/switch.html', context)
 
 

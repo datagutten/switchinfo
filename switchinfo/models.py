@@ -37,9 +37,9 @@ class Switch(models.Model):
         return Vlan.objects.filter(on_switch=self, vlan__gt=1)
 
     def has_backup(self):
-        if apps.is_installed('config_backup'):
-            from config_backup.backup import has_backup
-            return has_backup(self)
+        if hasattr(settings, 'BACKUP_PATH'):
+            backup_path = os.path.join(settings.BACKUP_PATH + '/' + self.name)
+            return os.path.exists(backup_path)
 
     def has_tree(self):
         if apps.is_installed('switch_tree'):
