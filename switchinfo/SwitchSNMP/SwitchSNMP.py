@@ -313,6 +313,9 @@ class SwitchSNMP:
 
         return [port_vlan, tagged_vlans, untagged_vlan]
 
+    def vlan_ports_static(self):
+        return self.vlan_ports(static=True)
+
     def vlan_ports_pvid(self):
         # Q-BRIDGE-MIB::dot1qPvid
         oid = '.1.3.6.1.2.1.17.7.1.4.5.1.1'

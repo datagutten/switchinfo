@@ -39,8 +39,11 @@ def load_interfaces(switch: Switch, now=None):
     device = get_switch(switch)
     interfaces = device.interfaces_rfc()
     try:
-        interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(
-            static=switch.type == 'Comware')
+        if switch.type == 'Comware':
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports_static()
+        else:
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
+
     except SNMPNoData as e:  # HP 1910
         if switch.type == 'Cisco':
             raise e
