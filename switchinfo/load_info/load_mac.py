@@ -56,9 +56,9 @@ def load_mac(switch: Switch, vlan=None):
             except Interface.DoesNotExist:
                 # print('Interface with index %s not found' % if_index)
                 continue
-            # if not interface_obj.vlan:  # Do not find mac for trunk ports
-            #    continue
-            if (not interface_obj.vlan and not interface_obj.force_mac) or interface_obj.skip_mac:
+
+            # Do not load mac for trunk ports
+            if (interface_obj.is_trunk() and not interface_obj.force_mac) or interface_obj.skip_mac:
                 # print('mac: %s trunk interface: %s %s' % (
                 #     mac, interface_obj.switch, interface_obj))
                 continue
