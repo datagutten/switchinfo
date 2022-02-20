@@ -257,33 +257,38 @@ class SwitchSNMP:
             e.message = 'Unable to get VLAN names'
             raise e
 
-    def egress_ports(self):
+    def egress_ports(self, static=False):
+        values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
-        values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4')
+        if not static:
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2')
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True)
         return values
 
-    def untagged_ports(self):
+    def untagged_ports(self, static=False):
+        values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentUntaggedPorts
-        values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5')
+        if not static:
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True)
         if not values:
-            # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2')
+            # Q-BRIDGE-MIB::dot1qVlanStaticUntaggedPorts
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.4', int_index=True)
         return values
 
     # Return vlan number or None if the interface is trunk
-    def vlan_ports(self):
+    def vlan_ports(self, static=False):
         # If a port has egress vlan, but not untagged, the port is a trunk port
         # If a port has egress multiple vlans, the port is a trunk port
-        egress = self.egress_ports()
-        untagged = self.untagged_ports()
+        egress = self.egress_ports(static)
+        untagged = self.untagged_ports(static)
         port_vlan = dict()
         tagged_vlans = dict()
         untagged_vlan = dict()
 
         for vlan, ports in egress.items():
+            vlan = int(vlan)
             egress_ports = utils.parse_port_list(ports)
             # Is the port untagged in the current vlan
             is_untagged = utils.parse_port_list(untagged[vlan])
