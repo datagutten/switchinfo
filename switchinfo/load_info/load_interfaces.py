@@ -50,18 +50,17 @@ def load_interfaces(switch: Switch, now=None):
     uptime = device.uptime()
 
     ports_rev = dict()
-    aggregations = {}
+
+    try:
+        aggregations = device.aggregations()
+    except SNMPError:
+        aggregations = {}
 
     if switch.type == 'Cisco':
         try:
             ports = device.bridgePort_to_ifIndex()
         except SNMPError:
             ports = {}
-
-        try:
-            aggregations = device.aggregations()
-        except SNMPError:
-            aggregations = {}
 
         vlan_check = []
         for vlan in untagged_vlan.values():
