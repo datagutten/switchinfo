@@ -397,7 +397,7 @@ class SwitchSNMP:
         return cdp
 
     def aggregations(self):
-        oid = '.1.2.840.10006.300.43.1.2.1.1.12'  # IEEE8023-LAG-MIB::dot3adAggPortSelectedAggID
+        oid = '.1.2.840.10006.300.43.1.2.1.1.13'  # IEEE8023-LAG-MIB::dot3adAggPortAttachedAggID
         session = self.get_session()
         aggregations = {}
         try:
