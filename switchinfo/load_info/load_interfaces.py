@@ -194,14 +194,15 @@ def load_interfaces(switch: Switch, now=None):
             if neighbor in ['Mitel IP Phone']:
                 interface.force_mac = True
 
-        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Comware']:
+        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba']:
             key = int(bridge_port)
         else:
             key = int(if_index)
 
         if interface_vlan:
             if key not in interface_vlan or not interface_vlan[key]:
-                print('%d not in interface_vlan' % key)
+                if key not in interface_vlan:
+                    print('%d not in interface_vlan' % key)
                 interface.vlan = None
             else:
                 set_interface_vlan(interface, interface_vlan[key])
