@@ -8,17 +8,20 @@ from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Interface, Switch, Vlan
 
 
-def set_interface_vlan(interface, vlan_number: int):
-    vlan_obj, created = Vlan.objects.get_or_create(vlan=vlan_number, defaults={'has_ports': True})
+def set_interface_vlan(interface, vlan_number: int, tagged=False):
+    vlan_obj, created = Vlan.objects.get_or_create(vlan=vlan_number, defaults={'has_ports': not tagged})
     if created or interface.switch not in vlan_obj.on_switch.all():
         vlan_obj.on_switch.add(interface.switch)
     if created:
         print('Created missing vlan %d, run load_vlans to get name' % vlan_number)
 
-    interface.vlan = vlan_obj
-    if not vlan_obj.has_ports:
-        vlan_obj.has_ports = True
-        vlan_obj.save()
+    if not tagged:
+        interface.vlan = vlan_obj
+        if not vlan_obj.has_ports:
+            vlan_obj.has_ports = True
+            vlan_obj.save()
+    else:
+        interface.tagged_vlans.add(vlan_obj)
 
 
 def load_aggregations(aggregations: dict, switch: Switch):
@@ -203,13 +206,9 @@ def load_interfaces(switch: Switch, now=None):
             else:
                 set_interface_vlan(interface, interface_vlan[key])
         if tagged_vlans and key in tagged_vlans:
-
             for tagged_vlan in tagged_vlans[key]:
-                try:
-                    vlan = Vlan.objects.get(vlan=tagged_vlan)
-                    interface.tagged_vlans.add(vlan)
-                except Vlan.DoesNotExist:
-                    print('Missing tagged vlan %s, run load_vlans' % tagged_vlan)
+                set_interface_vlan(interface, tagged_vlan, True)
+
         if untagged_vlan and key in untagged_vlan:
             set_interface_vlan(interface, untagged_vlan[key])
         if interface.index in stack:
