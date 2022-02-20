@@ -161,7 +161,7 @@ def load_interfaces(switch: Switch, now=None):
 
         if switch.type == 'Westermo':
             neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
-        elif switch.type == 'HP':
+        elif switch.type == 'HP' or switch.type == 'Comware':
             neighbor = get_neighbors(int(bridge_port), cdp_multi, switch)
         else:
             neighbor = get_neighbors(interface.index, cdp_multi, switch)
