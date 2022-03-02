@@ -15,7 +15,7 @@ class Extreme(SwitchSNMP):
         mac = self.create_list(device, oid=oid)
         return dict(zip(mac, ip))
 
-    def interface_poe_status(self):
+    def interface_poe_status(self, device=None):
         return
     #def trunk_status(self):
     #    return dict()

@@ -46,12 +46,12 @@ class ArubaCX(SwitchSNMP):
         oid = '.1.3.111.2.802.1.1.4.1.4.3.1.3'
         return self.create_dict(oid=oid)
 
-    def egress_ports(self):
+    def egress_ports(self, static=False):
         # Qdot1qVlanCurrentEgressPorts
         values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5')
         return values
 
-    def untagged_ports(self):
+    def untagged_ports(self, static=False):
         # ieee8021QBridgeVlanCurrentUntaggedPorts
         values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6')
         return values
