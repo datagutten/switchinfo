@@ -48,19 +48,19 @@ class ArubaCX(SwitchSNMP):
 
     def egress_ports(self, static=False):
         # Qdot1qVlanCurrentEgressPorts
-        values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5')
+        values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5', int_index=True)
         return values
 
     def untagged_ports(self, static=False):
         # ieee8021QBridgeVlanCurrentUntaggedPorts
-        values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6')
+        values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6', int_index=True)
         return values
 
     def vlans(self, device=None):
         # Q-BRIDGE-MIB::dot1qVlanFdbId
         oid = '.1.3.111.2.802.1.1.4.1.4.2.1.4'
         vlans = self.create_dict(device, oid=oid)
-
+        # TODO: Can this be replaced with int_value argument?
         vlan_list = []
         for vlan in vlans:
             vlan_list.append(int(vlan))
