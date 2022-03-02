@@ -145,11 +145,10 @@ def ip_search(request, ip):
 
 
 def vlans(request):
-    # vlans = Vlan.objects.filter(on_switch__switch__interface__startswith=)
-    vlans = Vlan.objects.filter(has_ports=True, vlan__gt=1)
+    vlans_obj = Vlan.objects.filter(has_ports=True, vlan__gt=1)
 
     context = {
-        'vlans': vlans,
+        'vlans': vlans_obj,
         'title': 'Vlans',
     }
     return render(request, 'switchinfo/vlans.html', context)
