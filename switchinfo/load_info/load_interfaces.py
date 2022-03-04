@@ -244,7 +244,7 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
                 neighbor['ip'] = None
 
             try:
-                if 'device_id' in neighbor:
+                if 'device_id' in neighbor and neighbor['device_id']:
                     neighbor_switch = Switch.objects.get(
                         Q(ip=neighbor['ip']) |
                         Q(name=neighbor['device_id']) |
@@ -254,7 +254,7 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
                     neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
 
             except Switch.DoesNotExist:
-                print('Unknown neighbor: %s' % (neighbor['ip'] or neighbor['device_id']))
+                print('Unknown neighbor: %s' % (neighbor['ip'] or neighbor['device_id'] or neighbor['platform']))
                 continue
             except Switch.MultipleObjectsReturned:
                 print('Multiple switches found with info ', neighbor['ip'], neighbor['device_id'])
