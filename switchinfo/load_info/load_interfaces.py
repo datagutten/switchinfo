@@ -160,8 +160,11 @@ def load_interfaces(switch: Switch, now=None):
         interface.interface = name
         interface.type = interfaces['type'][if_index]
 
-        if poe_status and bridge_port in poe_status:
-            interface.poe_status = poe_status[bridge_port]
+        if poe_status:
+            if switch.type == 'Cisco' and name in poe_status:
+                interface.poe_status = poe_status[name]
+            elif bridge_port in poe_status:
+                interface.poe_status = poe_status[bridge_port]
         else:
             interface.poe_status = None
 
