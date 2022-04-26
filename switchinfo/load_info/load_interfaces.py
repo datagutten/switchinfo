@@ -5,7 +5,7 @@ from django.db.utils import DataError
 
 from switchinfo.SwitchSNMP.exceptions import SNMPError, SNMPNoData
 from switchinfo.SwitchSNMP.select import get_switch
-from switchinfo.models import Interface, Switch, Vlan
+from switchinfo.models import Interface, Switch, Vlan, trunk_force_mac
 
 
 def set_interface_vlan(interface, vlan_number: int, tagged=False):
@@ -197,7 +197,7 @@ def load_interfaces(switch: Switch, now=None):
         else:
             interface.neighbor_string = neighbor
             # Mitel IP Phones have lldp, but we want to load their MAC
-            if neighbor in ['Mitel IP Phone']:
+            if neighbor and neighbor.split('\n')[2] in trunk_force_mac:
                 interface.force_mac = True
 
         if switch.type not in ['Cisco', 'CiscoSB', 'Aruba']:
