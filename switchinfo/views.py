@@ -102,27 +102,42 @@ def search_form(request):
         elif form.cleaned_data['ip']:
             return redirect('switchinfo:ip', ip=form.cleaned_data['ip'])
             # return ip_search(request, form.cleaned_data['ip'])
+        elif form.cleaned_data['neighbor']:
+            return neighbor_search(request, neighbor=form.cleaned_data['neighbor'])
     else:
         return render(request, 'switchinfo/search.html', {'form': form, 'title': 'Search switches'})
 
 
 def mac_search(request, mac):
-    from pprint import pprint
-    # interfaces = Interface.objects.filter()
     mac = mac.lower()
     macs = Mac.objects.filter(mac__startswith=mac).\
         order_by('interface__switch').order_by('interface__index')
+
     mac_switch = dict()
-    pprint(macs)
     for mac in macs:
         switch = mac.interface.switch
         if switch not in mac_switch:
             mac_switch[switch] = []
         mac_switch[switch].append(mac.interface)
-    pprint(mac_switch)
+
     return render(request, 'switchinfo/vlan.html',
                   context={'switches': mac_switch.items(),
                            'title': 'MAC addresses starting with %s' % mac})
+
+
+def neighbor_search(request, neighbor):
+    interfaces = Interface.objects.filter(neighbor_string__icontains=neighbor)
+
+    neighbor_switch = {}
+    for interface in interfaces:
+        switch = interface.switch
+        if switch not in neighbor_switch:
+            neighbor_switch[switch] = []
+        neighbor_switch[switch].append(interface)
+
+    return render(request, 'switchinfo/vlan.html',
+                  context={'switches': neighbor_switch.items(),
+                           'title': 'Neighbors containing %s' % neighbor})
 
 
 def ip_search(request, ip):
