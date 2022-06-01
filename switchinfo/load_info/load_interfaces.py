@@ -110,6 +110,11 @@ def load_interfaces(switch: Switch, now=None):
         else:
             bridge_port = ports_rev[if_index]
 
+        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba']:
+            key = int(bridge_port)
+        else:
+            key = int(if_index)
+
         if if_index in interfaces['name']:
             name = interfaces['name'][if_index]
         elif if_index in interfaces['descr']:
@@ -199,11 +204,6 @@ def load_interfaces(switch: Switch, now=None):
             # Mitel IP Phones have lldp, but we want to load their MAC
             if neighbor and neighbor.split('\n')[2] in trunk_force_mac:
                 interface.force_mac = True
-
-        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba']:
-            key = int(bridge_port)
-        else:
-            key = int(if_index)
 
         if interface_vlan:
             if key not in interface_vlan or not interface_vlan[key]:
