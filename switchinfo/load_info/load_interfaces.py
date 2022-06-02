@@ -218,11 +218,13 @@ def load_interfaces(switch: Switch, now=None):
             for tagged_vlan in tagged_vlans[key]:
                 set_interface_vlan(interface, tagged_vlan, True)
 
-        # Remove tagged vlans from database when removed from switch
-        vlan_obj: Vlan
-        for vlan_obj in interface.tagged_vlans.all():
-            if vlan_obj.vlan not in tagged_vlans[key]:
-                interface.tagged_vlans.remove(vlan_obj)
+            # Remove tagged vlans from database when removed from switch
+            vlan_obj: Vlan
+            for vlan_obj in interface.tagged_vlans.all():
+                if vlan_obj.vlan not in tagged_vlans[key]:
+                    interface.tagged_vlans.remove(vlan_obj)
+        else:
+            interface.tagged_vlans.clear()
 
         if untagged_vlan and key in untagged_vlan:
             set_interface_vlan(interface, untagged_vlan[key])
