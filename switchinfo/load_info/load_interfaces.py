@@ -182,13 +182,13 @@ def load_interfaces(switch: Switch, now=None):
 
         if not neighbor and interface.neighbor:
                 if interface.neighbor_set_by == switch:
-                    print('Clearing neigbor %s from %s, set by %s'
+                    print('Clearing neighbor %s from %s, set by %s'
                           % (interface.neighbor,
                              interface,
                              interface.neighbor_set_by))
                     interface.neighbor = None
                 else:
-                    print('Keeping neigbor %s on %s set by %s' %
+                    print('Keeping neighbor %s on %s set by %s' %
                           (interface.neighbor,
                            interface,
                            interface.neighbor_set_by))
@@ -196,7 +196,7 @@ def load_interfaces(switch: Switch, now=None):
         elif isinstance(neighbor, Switch):
             interface.neighbor = neighbor
             interface.neighbor_set_by = switch
-            # Interfaces with CDP or LDDP is a link,
+            # Interfaces with CDP or LLDP is a link,
             # skip loading of MAC addresses
             interface.skip_mac = True
         elif neighbor is not None:
@@ -213,6 +213,7 @@ def load_interfaces(switch: Switch, now=None):
                 interface.vlan = None
             else:
                 set_interface_vlan(interface, interface_vlan[key])
+
         if tagged_vlans and key in tagged_vlans:
             for tagged_vlan in tagged_vlans[key]:
                 set_interface_vlan(interface, tagged_vlan, True)
