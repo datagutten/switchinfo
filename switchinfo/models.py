@@ -36,7 +36,7 @@ class Switch(models.Model):
             return re.sub(r'([A-Z][a-z])[a-zA-Z]*([0-9\/]+)', r'\1\2',
                           interface_name)
         elif self.type == 'Extreme':
-            return re.sub(r'Slot:\s+([0-9]+), Port:\s([0-9]+)', r'\1:\2',
+            return re.sub(r'Slot:\s+([0-9]+), Port:\s+([0-9]+)', r'\1:\2',
                           interface_name)
         else:
             return interface_name
