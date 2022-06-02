@@ -199,11 +199,12 @@ def load_interfaces(switch: Switch, now=None):
             # Interfaces with CDP or LDDP is a link,
             # skip loading of MAC addresses
             interface.skip_mac = True
-        else:
+        elif neighbor is not None:
             interface.neighbor_string = neighbor
             # Mitel IP Phones have lldp, but we want to load their MAC
-            if neighbor and neighbor.split('\n')[2] in trunk_force_mac:
-                interface.force_mac = True
+            for line in neighbor.split('\n'):
+                if line in trunk_force_mac:
+                    interface.force_mac = True
 
         if interface_vlan:
             if key not in interface_vlan or not interface_vlan[key]:
