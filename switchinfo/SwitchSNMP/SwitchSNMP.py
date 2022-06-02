@@ -7,6 +7,7 @@ try:
     # noinspection PyUnresolvedReferences
     from django.conf import settings
     from django.core.exceptions import ImproperlyConfigured
+
     use_netsnmp = settings.USE_NETSNMP
 except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
     if 'USE_NETSNMP' in os.environ:
@@ -16,7 +17,6 @@ except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
 except AttributeError:
     use_netsnmp = True
 
-
 if use_netsnmp:
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
 else:
@@ -24,7 +24,6 @@ else:
 
 
 class SwitchSNMP:
-
     sessions = dict()
     session = None
     device = None
