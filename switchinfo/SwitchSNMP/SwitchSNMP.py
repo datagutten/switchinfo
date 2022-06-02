@@ -398,14 +398,16 @@ class SwitchSNMP:
                                 '.0.8802.1.1.2.1.4.1.1.10', 'platform')
 
             # Windows computers send their MAC-address as LLDP remote port and device id
-            if 'remote_port' in cdp[if_index][device_index] and \
-                    len(cdp[if_index][device_index]['remote_port']) == 6 and \
-                    cdp[if_index][device_index]['device_id'] == cdp[if_index][device_index]['remote_port']:
-                mac = ''
-                for char in cdp[if_index][device_index]['device_id']:
-                    mac += '%x' % ord(char)
-                cdp[if_index][device_index]['device_id'] = mac
-                cdp[if_index][device_index]['remote_port'] = ''
+            try:
+                if len(cdp[if_index][device_index]['remote_port']) == 6 and \
+                        cdp[if_index][device_index]['device_id'] == cdp[if_index][device_index]['remote_port']:
+                    mac = ''
+                    for char in cdp[if_index][device_index]['device_id']:
+                        mac += '%x' % ord(char)
+                    cdp[if_index][device_index]['device_id'] = mac
+                    cdp[if_index][device_index]['remote_port'] = ''
+            except KeyError:
+                pass
 
         return cdp
 
