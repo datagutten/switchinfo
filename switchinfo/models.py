@@ -3,7 +3,11 @@ import os.path
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-trunk_force_mac = ['Mitel IP Phone']
+
+if hasattr(settings, 'TRUNK_FORCE_MAC'):
+    trunk_force_mac = settings.TRUNK_FORCE_MAC
+else:
+    trunk_force_mac = ['Mitel IP Phone']
 
 
 class Switch(models.Model):
