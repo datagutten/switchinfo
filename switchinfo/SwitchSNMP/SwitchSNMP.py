@@ -401,9 +401,7 @@ class SwitchSNMP:
                 if len(cdp[if_index][device_index]['remote_port']) == 6 and \
                         cdp[if_index][device_index]['device_id'] == cdp[if_index][device_index]['remote_port']:
                     mac = ''
-                    for char in cdp[if_index][device_index]['device_id']:
-                        mac += '%x' % ord(char)
-                    cdp[if_index][device_index]['device_id'] = mac
+                    cdp[if_index][device_index]['device_id'] = utils.mac_string(cdp[if_index][device_index]['device_id'])
                     cdp[if_index][device_index]['remote_port'] = ''
             except KeyError:
                 pass
