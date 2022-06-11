@@ -58,6 +58,13 @@ class Switch(models.Model):
             except Tree.DoesNotExist:
                 return False
 
+    def neighbor_interfaces(self):
+        """
+        Get interfaces with neighbors
+        :return:
+        """
+        return self.interfaces.exclude(neighbor=None)
+
 
 class SwitchGroup(models.Model):
     grouping_key = models.CharField(max_length=50, unique=True)
