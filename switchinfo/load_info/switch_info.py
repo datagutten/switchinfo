@@ -57,13 +57,14 @@ def switch_type(description: str) -> str:
         return 'ProCurve'
     elif description.find('Comware') > -1:
         return 'Comware'
-    elif description.find('Hewlett-Packard') > -1 or \
-            description.find('HP') == 0:
+    elif re.search(r'Hewlett[-\s]Packard', description) or description.strip().find('HP') == 0:
         return 'HP'
     elif description.find('Westermo') == 0:
         return 'Westermo'
     elif description.find('3Com') == 0:
         return '3Com'
+    elif description.find('Schneider') == 0:
+        return 'Schneider'
 
 
 def switch_series(switch: Switch) -> str:
@@ -72,6 +73,11 @@ def switch_series(switch: Switch) -> str:
         series = re.match(r'((?:WS|IE)-[A-Z0-9]+).*?$', switch.model)
     elif switch.type == 'Aruba':
         series = re.match(r'Aruba [A-Z0-9]+ ([A-Z0-9]+)', switch.description)
+    elif switch.type == 'HP':
+        series = re.search(r'HPE? (\w+)', switch.model)
+    elif switch.type == 'ProCurve':
+        series = re.search(r'ProCurve \w+ Switch (\w+)', switch.description) or re.search(r'HP \w+ (\w+)',
+                                                                                          switch.description)
 
     if series:
         return series.group(1)
