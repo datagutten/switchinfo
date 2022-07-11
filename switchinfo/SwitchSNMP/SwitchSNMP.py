@@ -399,9 +399,11 @@ class SwitchSNMP:
             # Windows computers send their MAC-address as LLDP remote port and device id
             try:
                 if len(cdp[if_index][device_index]['remote_port']) == 6 and \
-                        cdp[if_index][device_index]['device_id'] == cdp[if_index][device_index]['remote_port']:
+                        cdp[if_index][device_index]['device_id'] == \
+                        cdp[if_index][device_index]['remote_port']:
                     mac = ''
-                    cdp[if_index][device_index]['device_id'] = utils.mac_string(cdp[if_index][device_index]['device_id'])
+                    cdp[if_index][device_index]['device_id'] = utils.mac_string(
+                        cdp[if_index][device_index]['device_id'])
                     cdp[if_index][device_index]['remote_port'] = ''
             except KeyError:
                 pass
