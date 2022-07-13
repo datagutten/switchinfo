@@ -1,20 +1,22 @@
-    <table>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>IP</th>
+        <th>Model</th>
+        <th>Software</th>
+    </tr>
+    {% for switch in switches %}
         <tr>
-            <th>Name</th>
-            <th>IP</th>
-            <th>Model</th>
-        </tr>
-        {% for switch in switches %}
-            <tr>
-                <td>
-                    {% if not ip_link %}
-                        <a href="{% url 'switchinfo:switch' name=switch.name %}">{{ switch.name }}</a>
-                    {% else %}
-                        <a href="{% url 'switchinfo:switch' ip=switch.ip %}">{{ switch.name }}</a>
-                    {% endif %}
-                </td>
+            <td>
+                {% if not ip_link %}
+                    <a href="{% url 'switchinfo:switch' name=switch.name %}">{{ switch.name }}</a>
+                {% else %}
+                    <a href="{% url 'switchinfo:switch' ip=switch.ip %}">{{ switch.name }}</a>
+                {% endif %}
+            </td>
             <td>{{ switch.ip }}</td>
             <td>{{ switch.type|default:"" }}&nbsp;{{ switch.model }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+            <td>{{ switch.software|default:"" }}</td>
+        </tr>
+    {% endfor %}
+</table>

@@ -1,4 +1,5 @@
 import os.path
+import re
 
 from django.apps import apps
 from django.conf import settings
@@ -64,6 +65,18 @@ class Switch(models.Model):
         :return:
         """
         return self.interfaces.exclude(neighbor=None)
+
+    def software(self):
+        matches = None
+        if self.type == 'Aruba' or self.type == 'ProCurve':
+            matches = re.search(r'revision ([A-Z]+[0-9.]+)', self.description)
+        elif self.type == 'HP':
+            matches = re.search(r'Release ([A-Z0-9]+)', self.description)
+        elif self.type == 'Cisco':
+            matches = re.search(r'Version ([\w.()]+)', self.description)
+
+        if matches:
+            return matches.group(1)
 
 
 class SwitchGroup(models.Model):
