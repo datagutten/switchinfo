@@ -74,7 +74,7 @@ def switch_series(switch: Switch) -> str:
     elif switch.type == 'Aruba':
         series = re.match(r'Aruba [A-Z0-9]+ ([A-Z0-9]+)', switch.description)
     elif switch.type == 'HP':
-        series = re.search(r'HPE? (\w+)', switch.model)
+        series = re.search(r'HPE? (\w+)', switch.description)
     elif switch.type == 'ProCurve':
         series = re.search(r'ProCurve \w+ Switch (\w+)', switch.description) or re.search(r'HP \w+ (\w+)',
                                                                                           switch.description)
