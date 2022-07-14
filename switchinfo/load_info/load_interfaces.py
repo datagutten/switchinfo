@@ -39,7 +39,7 @@ def load_interfaces(switch: Switch, now=None):
     device = get_switch(switch)
     interfaces = device.interfaces_rfc()
     try:
-        if switch.type == 'Comware':
+        if switch.type == 'Comware' or switch.type == 'Aruba CX':
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports_static()
         else:
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
