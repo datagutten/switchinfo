@@ -174,7 +174,11 @@ class SwitchSNMP:
             self.create_dict(oid='.1.3.6.1.2.1.2.2.1.8',
                              value_translator=utils.translate_status)
         # EtherLike-MIB::dot3StatsDuplexStatus
-        info['duplex'] = self.create_dict(oid='.1.3.6.1.2.1.10.7.2.1.19')
+        try:
+            info['duplex'] = self.create_dict(oid='.1.3.6.1.2.1.10.7.2.1.19')
+        except exceptions.SNMPNoData:
+            info['duplex'] = {}
+
         return info
 
     # return value: bridgePort
