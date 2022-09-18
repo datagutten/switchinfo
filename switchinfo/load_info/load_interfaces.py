@@ -47,6 +47,7 @@ def load_interfaces(switch: Switch, now=None):
         now = datetime.now()
     device = get_switch(switch)
     interfaces = device.interfaces_rfc()
+    using_pvid = False
     try:
         if switch.type == 'Comware' or switch.type == 'Aruba CX':
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports_static()
@@ -54,9 +55,15 @@ def load_interfaces(switch: Switch, now=None):
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
 
     except SNMPNoData as e:  # HP 1910
-        if switch.type == 'Cisco':
+        if switch.type in ['Cisco', 'Aruba CX']:
             raise e
-        interface_vlan = device.vlan_ports_pvid()
+        using_pvid = True
+        print('Using Q-BRIDGE-MIB::dot1qPvid')
+        try:
+            interface_vlan = device.vlan_ports_pvid()
+        except SNMPNoData:
+            interface_vlan = None
+
         tagged_vlans = None
         untagged_vlan = None
 
@@ -93,9 +100,13 @@ def load_interfaces(switch: Switch, now=None):
             except SNMPError:
                 pass
     else:
-        ports = device.bridgePort_to_ifIndex()
-        for bridge_port, if_index in ports.items():
-            ports_rev[if_index] = bridge_port
+        try:
+            ports = device.bridgePort_to_ifIndex()
+            for bridge_port, if_index in ports.items():
+                ports_rev[if_index] = bridge_port
+        except SNMPNoData:
+            ports = {}
+            ports_rev = {}
 
     cdp_multi = device.cdp_multi()
 
