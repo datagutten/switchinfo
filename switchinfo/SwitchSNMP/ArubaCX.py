@@ -44,7 +44,7 @@ class ArubaCX(SwitchSNMP):
     def vlan_names(self):
         # Q-BRIDGE-MIB::dot1qVlanStaticName
         oid = '.1.3.111.2.802.1.1.4.1.4.3.1.3'
-        return self.create_dict(oid=oid)
+        return self.create_dict(oid=oid, int_index=True)
 
     def egress_ports(self, static=False):
         if not static:

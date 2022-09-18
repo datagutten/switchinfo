@@ -18,8 +18,8 @@ def load_vlan(switch, silent=True):
         if created and not silent:
             print('Created vlan %d on switch %s' % (vlan, switch))
         # vlan name
-        if str(vlan) in vlan_names:
-            vlan_name = vlan_names[str(vlan)]
+        if vlan in vlan_names:
+            vlan_name = vlan_names[vlan]
             if vlan_name.find('VLAN') < 0:
                 vlan_obj.name = vlan_name
                 vlan_obj.save()

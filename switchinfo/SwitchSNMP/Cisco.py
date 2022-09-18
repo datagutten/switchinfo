@@ -53,9 +53,9 @@ class Cisco(SwitchSNMP):
         return poe_status
 
     # Return key: vlan number
-    def vlan_names(self, device=None):
+    def vlan_names(self):
         oid = '.1.3.6.1.4.1.9.9.46.1.3.1.1.4'  # vtpVlanName
-        return self.create_dict(device, oid=oid)
+        return self.create_dict(oid=oid, int_index=True)
 
     # Return key: interfaceIndex
     def trunk_status(self, device=None):
