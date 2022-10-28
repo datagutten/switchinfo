@@ -31,6 +31,9 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
     else:
         switch.model = model_from_description(device, switch.type)
 
+    if info['model'][0:3] == 'FSW':
+        switch.type = 'Fortinet'
+
     switch.series = switch_series(switch)
 
     if not silent:

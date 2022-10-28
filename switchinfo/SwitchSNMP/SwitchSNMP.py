@@ -1,7 +1,7 @@
 import os
 import re
 
-from . import exceptions, utils
+from . import exceptions, mibs, utils
 
 try:
     # noinspection PyUnresolvedReferences
@@ -281,7 +281,7 @@ class SwitchSNMP:
         return values
 
     # Return vlan number or None if the interface is trunk
-    def vlan_ports(self, static=False):
+    def vlan_ports(self, static=False, vlan_index=False):
         # If a port has egress vlan, but not untagged, the port is a trunk port
         # If a port has egress multiple vlans, the port is a trunk port
         egress = self.egress_ports(static)
@@ -289,12 +289,21 @@ class SwitchSNMP:
         port_vlan = dict()
         tagged_vlans = dict()
         untagged_vlan = dict()
+        if vlan_index:
+            q_bridge = mibs.qBridgeMIB(self)
+            index_table = q_bridge.dot1qVlanIndex()
+        else:
+            index_table = {}
 
-        for vlan, ports in egress.items():
-            vlan = int(vlan)
+        for vlan_key, ports in egress.items():
+            if vlan_key in index_table.keys():
+                vlan = index_table[vlan_key]
+            else:
+                vlan = vlan_key
+
             egress_ports = utils.parse_port_list(ports)
             # Is the port untagged in the current vlan
-            is_untagged = utils.parse_port_list(untagged[vlan])
+            is_untagged = utils.parse_port_list(untagged[vlan_key])
 
             for index, port in egress_ports.items():
                 # Port has egress, but not untagged
