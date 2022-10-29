@@ -138,7 +138,8 @@ class SwitchSNMP:
         except exceptions.SNMPNoData:
             info['model'] = ''
         try:
-            info['location'] = session.get('1.3.6.1.2.1.1.6.0').value
+            location = session.get('1.3.6.1.2.1.1.6.0').value
+            info['location'] = location.encode('iso-8859-1').decode('utf8')
         except exceptions.SNMPNoData:
             info['location'] = ''
 
