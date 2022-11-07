@@ -484,21 +484,24 @@ class SwitchSNMP:
 
             if value['lldpRemChassisIdSubtype'] == '4':
                 mac = utils.mac_string(value['lldpRemChassisId'])
-                neighbors[key] = {0: {
-                    'device_id': lldp_data[key]['lldpRemSysName'],
-                    'platform': lldp_data[key]['lldpRemSysDesc'],
-                    'local_port': ports[key],
-                    'remote_port': lldp_data[key]['lldpRemPortId'],
-                    'mac': utils.mac_string(value['lldpRemChassisId']),
-                }}
+            else:
+                mac = None
 
-                if key in addresses:
-                    if addresses[key]['lldpRemManAddr'][0] not in ['1', '2']:
-                        neighbors[key][0]['ip'] = utils.ip_string(addresses[key]['lldpRemManAddr'])
-                    else:
-                        neighbors[key][0]['ip'] = addresses[key]['lldpRemManAddr']
+            neighbors[key] = {0: {
+                'device_id': lldp_data[key]['lldpRemSysName'],
+                'platform': lldp_data[key]['lldpRemSysDesc'],
+                'local_port': ports[key],
+                'remote_port': lldp_data[key]['lldpRemPortId'],
+                'mac': mac,
+            }}
+
+            if key in addresses:
+                if addresses[key]['lldpRemManAddr'][0] not in ['1', '2']:
+                    neighbors[key][0]['ip'] = utils.ip_string(addresses[key]['lldpRemManAddr'])
                 else:
-                    neighbors[key][0]['ip'] = None
+                    neighbors[key][0]['ip'] = addresses[key]['lldpRemManAddr']
+            else:
+                neighbors[key][0]['ip'] = None
 
         return neighbors
 
