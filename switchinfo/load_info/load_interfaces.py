@@ -27,14 +27,20 @@ def set_interface_vlan(interface, vlan_number: int, tagged=False):
 def load_aggregations(aggregations: dict, switch: Switch):
     for aggregation_index, members in aggregations.items():
         try:
-            parent_interface = Interface.objects.get(switch=switch, index=aggregation_index)
+            if type(aggregation_index) == int:
+                parent_interface = Interface.objects.get(switch=switch, index=aggregation_index)
+            else:
+                parent_interface = Interface.objects.get(switch=switch, interface=aggregation_index)
         except Interface.DoesNotExist:
             print('Unable to find aggregation parent interface with index %d' % aggregation_index)
             return
 
         for member_id in members:
             try:
-                interface = Interface.objects.get(switch=switch, index=member_id)
+                if type(member_id) == int:
+                    interface = Interface.objects.get(switch=switch, index=member_id)
+                else:
+                    interface = Interface.objects.get(switch=switch, interface=member_id)
                 interface.aggregation = parent_interface
                 interface.save()
             except Interface.DoesNotExist:
@@ -158,6 +164,8 @@ def load_interfaces(switch: Switch, now=None):
         169 is DSL
         """
         allowed_types = ['6', '117', '169', 'ethernetCsmacd', 'shdsl']
+        if switch.type == 'Fortinet':
+            allowed_types.append('54')
 
         if not interfaces['type'][if_index] in allowed_types and \
                 int(if_index) not in aggregations.keys():
