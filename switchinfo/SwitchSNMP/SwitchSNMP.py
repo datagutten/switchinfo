@@ -344,6 +344,164 @@ class SwitchSNMP:
             vlan_list.append(int(vlan))
         return vlan_list
 
+    def build_dict(self, oid, key_names: list, fields, key=None, session=None):
+        """
+
+        :param oid: Base OID to walk
+        :param key_names: Key fields appended to the oid
+        :param fields: Field names
+        :param key: Key field to use as key for a returned dict
+        :param session:
+        """
+        if not session:
+            session = self.get_session()
+
+        if not key:
+            if len(key_names) == 1:
+                key = key_names[0]
+            else:
+                raise NotImplementedError()
+
+        items = {}
+
+        for item in session.walk(oid):
+            key_pos = len('iso' + oid[2:])
+            matches = re.match(r'\.([0-9]+)\.(.+)', item.oid[key_pos:])
+            field = int(matches.group(1))
+            sub_key = matches.group(2).split('.')
+            keys = dict(zip(key_names, sub_key))
+
+            if not key:
+                raise NotImplementedError()
+            if keys[key] not in items:
+                items[keys[key]] = {}
+
+            items[keys[key]][fields[field]] = item.value
+
+        return items
+
+    def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session=None):
+        """
+
+        :param oid: Base OID to walk
+        :param key_names: Key fields appended to the oid
+        :param fields: Field names
+        :param key: Key field to use as key for a returned dict
+        :param session:
+        """
+        if not session:
+            session = self.get_session()
+
+        if not key:
+            if len(key_names) == 1:
+                key = key_names[0]
+            else:
+                raise NotImplementedError()
+
+        items = {}
+
+        for item in session.walk(oid):
+            # print('%s=%s' % (item.oid, item.value))
+            # continue
+            keys = {}
+
+            key_pos = len('iso' + oid[2:])
+            # print('Keys', item.oid[key_pos:])
+            matches = re.match(r'\.([0-9]+)\.(.+)', item.oid[key_pos:])
+            # print(item.oid[key_pos:])
+            key_values = item.oid[key_pos + 1:].split('.')
+            key_values = list(map(int, key_values))
+
+            if key_values[0] not in fields.keys():
+                raise IndexError('No name for key %d' % key_values[0])
+            column = fields[key_values[0]]
+
+            key_num = 0
+            for sub_key in key_values[1:]:
+                # sub_key = int(sub_key)
+                if key_num < len(key_names):
+                    keys[key_names[key_num]] = sub_key
+                else:
+                    if key_num == len(key_names):
+                        keys[key_names[-1]] = str(sub_key)
+                    else:
+                        keys[key_names[-1]] += '.%d' % sub_key
+                key_num += 1
+
+            if not key:
+                raise NotImplementedError()
+            if keys[key] not in items:
+                items[keys[key]] = keys
+
+            items[keys[key]][column] = item.value
+
+        return items
+
+    def lldp(self):
+        session = self.get_session()
+        oid = '.1.0.8802.1.1.2.1.4.1.1'  # LLDP-MIB::lldpRemEntry
+        keys = ['lldpRemTimeMark', 'lldpRemLocalPortNum', 'lldpRemIndex']
+        fields = {1: 'lldpRemManAddrSubtype', 2: 'lldpRemManAddr', 3: 'lldpRemManAddrIfSubtype',
+                  4: 'lldpRemChassisIdSubtype', 5: 'lldpRemChassisId',
+                  6: 'lldpRemPortIdSubtype', 7: 'lldpRemPortId', 8: 'lldpRemPortDesc',
+                  9: 'lldpRemSysName', 10: 'lldpRemSysDesc', 11: 'lldpRemSysCapSupported',
+                  12: 'lldpRemSysCapEnabled'}
+
+        ports = self.build_dict_multikeys('.1.0.8802.1.1.2.1.3.7.1',  # LLDP::lldpLocPortEntry
+                                          key_names=['lldpLocPortNum'],
+                                          fields={1: 'lldpLocPortNum',
+                                                  2: 'lldpLocPortIdSubtype',
+                                                  3: 'lldpLocPortId',
+                                                  4: 'lldpLocPortDesc',
+                                                  },
+                                          )
+
+        lldp_data = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.1.1',
+                                              # LLDP-MIB::lldpRemManAddrTable
+                                              key_names=keys,
+                                              fields=fields, key='lldpRemLocalPortNum',
+                                              session=session)
+
+        addresses = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.2.1',
+                                              key_names=['lldpRemTimeMark', 'lldpRemLocalPortNum',
+                                                         'lldpRemIndex', 'lldpRemManAddrSubtype',
+                                                         'lldpRemManAddr'],
+                                              fields={
+                                                  1: 'lldpRemManAddrSubtype',
+                                                  2: 'lldpRemManAddr',
+                                                  3: 'lldpRemManAddrIfSubtype',
+                                                  4: 'lldpRemManAddrIfId',
+                                                  5: 'lldpRemManAddrOID',
+                                              },
+                                              key='lldpRemLocalPortNum')
+
+        neighbors = {}
+        for key, value in lldp_data.items():
+            if key not in ports:
+                print('LLDP neighbor %s found on non-existing port %d' % (
+                    lldp_data[key]['lldpRemSysName'], key))
+                continue
+
+            if value['lldpRemChassisIdSubtype'] == '4':
+                mac = utils.mac_string(value['lldpRemChassisId'])
+                neighbors[key] = {0: {
+                    'device_id': lldp_data[key]['lldpRemSysName'],
+                    'platform': lldp_data[key]['lldpRemSysDesc'],
+                    'local_port': ports[key],
+                    'remote_port': lldp_data[key]['lldpRemPortId'],
+                    'mac': utils.mac_string(value['lldpRemChassisId']),
+                }}
+
+                if key in addresses:
+                    if addresses[key]['lldpRemManAddr'][0] not in ['1', '2']:
+                        neighbors[key][0]['ip'] = utils.ip_string(addresses[key]['lldpRemManAddr'])
+                    else:
+                        neighbors[key][0]['ip'] = addresses[key]['lldpRemManAddr']
+                else:
+                    neighbors[key][0]['ip'] = None
+
+        return neighbors
+
     # TODO: Rename to something including LLDP
     def cdp_multi(self):
         session = self.get_session()

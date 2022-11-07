@@ -112,6 +112,7 @@ def load_interfaces(switch: Switch, now=None):
             ports_rev = {}
 
     cdp_multi = device.cdp_multi()
+    lldp = device.lldp()
 
     poe_status = device.interface_poe_status()
     if poe_status and not switch.has_poe:
@@ -196,25 +197,33 @@ def load_interfaces(switch: Switch, now=None):
         else:
             interface.poe_status = None
 
-        if switch.type == 'Westermo':
-            neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
-        elif switch.type == 'HP' or switch.type == 'Comware':
-            neighbor = get_neighbors(int(bridge_port), cdp_multi, switch)
+        if lldp:
+            neighbor = get_neighbors(interface.index, lldp, switch)
+            if not neighbor:
+                neighbor = get_neighbors(int(bridge_port), lldp, switch)
         else:
-            neighbor = get_neighbors(interface.index, cdp_multi, switch)
+            neighbor = None
+
+        if not neighbor and cdp_multi:  # Retry with CDP
+            if switch.type == 'Westermo':
+                neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
+            elif switch.type == 'HP' or switch.type == 'Comware':
+                neighbor = get_neighbors(int(bridge_port), cdp_multi, switch)
+            else:
+                neighbor = get_neighbors(interface.index, cdp_multi, switch)
 
         if not neighbor and interface.neighbor:
-                if interface.neighbor_set_by == switch:
-                    print('Clearing neighbor %s from %s, set by %s'
-                          % (interface.neighbor,
-                             interface,
-                             interface.neighbor_set_by))
-                    interface.neighbor = None
-                else:
-                    print('Keeping neighbor %s on %s set by %s' %
-                          (interface.neighbor,
-                           interface,
-                           interface.neighbor_set_by))
+            if interface.neighbor_set_by == switch:
+                print('Clearing neighbor %s from %s, set by %s'
+                      % (interface.neighbor,
+                         interface,
+                         interface.neighbor_set_by))
+                interface.neighbor = None
+            else:
+                print('Keeping neighbor %s on %s set by %s' %
+                      (interface.neighbor,
+                       interface,
+                       interface.neighbor_set_by))
 
         elif isinstance(neighbor, Switch):
             interface.neighbor = neighbor
@@ -269,7 +278,7 @@ def load_interfaces(switch: Switch, now=None):
 
 
 def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
-    if index in cdp_multi:
+    if index in cdp_multi and cdp_multi[index]:
         neighbor = None
         for neighbor in cdp_multi[index].values():
             if neighbor == {}:
