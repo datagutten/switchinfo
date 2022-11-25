@@ -206,9 +206,10 @@ def load_interfaces(switch: Switch, now=None):
             interface.poe_status = None
 
         if lldp:
-            neighbor = get_neighbors(interface.index, lldp, switch)
-            if not neighbor:
+            if switch.type == 'Cisco':
                 neighbor = get_neighbors(int(bridge_port), lldp, switch)
+            else:
+                neighbor = get_neighbors(interface.index, lldp, switch)
         else:
             neighbor = None
 

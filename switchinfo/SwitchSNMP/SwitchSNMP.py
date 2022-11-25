@@ -543,34 +543,6 @@ class SwitchSNMP:
             if not cdp[if_index][device_index]:
                 cdp[if_index] = None
 
-        oid = '.1.0.8802.1.1.2.1.4.1'
-
-        for entry in session.walk(oid):
-            match = re.match(r'.+\.([0-9]+)\.([0-9]+)', entry.oid)
-            if_index = int(match.group(1))  # cdpCacheIfIndex
-
-            if cdp_high_index and if_index < 10000:
-                if_index = 10100 + if_index
-
-            device_index = int(match.group(2))  # cdpCacheDeviceIndex
-            if if_index not in cdp:
-                cdp[if_index] = dict()
-            if device_index not in cdp[if_index]:
-                cdp[if_index][device_index] = dict()
-
-            # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.8') >= 0:
-            #    cdp[if_index][device_index]['remote_port'] = entry.value
-            utils.check_and_set(cdp[if_index][device_index], entry,
-                                '.0.8802.1.1.2.1.4.1.1.8', 'remote_port')
-            utils.check_and_set(cdp[if_index][device_index], entry,
-                                '.0.8802.1.1.2.1.4.1.1.9', 'device_id')
-            # if entry.oid.find('.0.8802.1.1.2.1.4.1.1.9') >= 0:
-            #    cdp[if_index][device_index]['device_id'] = entry.value
-            # elif entry.oid.find('.0.8802.1.1.2.1.4.1.1.10') >= 0:
-            #    cdp[if_index][device_index]['platform'] = entry.value
-            utils.check_and_set(cdp[if_index][device_index], entry,
-                                '.0.8802.1.1.2.1.4.1.1.10', 'platform')
-
             # Windows computers send their MAC-address as LLDP remote port and device id
             try:
                 if len(cdp[if_index][device_index]['remote_port']) == 6 and \
@@ -581,6 +553,8 @@ class SwitchSNMP:
                         cdp[if_index][device_index]['device_id'])
                     cdp[if_index][device_index]['remote_port'] = ''
             except KeyError:
+                pass
+            except TypeError:
                 pass
 
         return cdp
