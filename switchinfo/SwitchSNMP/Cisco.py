@@ -108,6 +108,7 @@ class Cisco(SwitchSNMP):
             else:
                 port_vlan[index] = native_vlan[index]
                 untagged_vlan[index] = native_vlan[index]
+                tagged_vlans[index] = ['all']
 
             if vlans == all_tagged:
                 if debug:  # pragma: no cover
