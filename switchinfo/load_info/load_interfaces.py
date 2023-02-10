@@ -55,13 +55,11 @@ def load_interfaces(switch: Switch, now=None):
     interfaces = device.interfaces_rfc()
     using_pvid = False
     try:
-        if switch.type in ['Comware', 'Aruba CX']:
-            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports_static()
-        elif switch.type in ['Fortinet']:
+        if switch.type in ['Fortinet']:
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True,
                                                                             vlan_index=True)
         else:
-            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True)
 
     except SNMPNoData as e:  # HP 1910
         if switch.type in ['Cisco', 'Aruba CX']:
