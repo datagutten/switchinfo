@@ -19,6 +19,6 @@ class SNMPTestCase(TestCase):
 
     def test_vlan_names(self):
         names = self.device.vlan_names()
-        expected_vlans = {'1': 'DEFAULT_VLAN', '9': 'Modem', '12': 'PC',
-                          '100': 'Management'}
+        expected_vlans = {1: 'DEFAULT_VLAN', 9: 'Modem', 12: 'PC',
+                          100: 'Management'}
         self.assertEqual(expected_vlans.items(), names.items())
