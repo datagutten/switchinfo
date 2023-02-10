@@ -42,10 +42,10 @@ class CiscoSNMPTestCase(TestCase):
 
     def test_vlan_names(self):
         names = self.device.vlan_names()
-        expected_vlans = {'1': 'default', '9': 'Modem', '12': 'PC',
-                          '100': 'Management', '1002': 'fddi-default',
-                          '1003': 'token-ring-default',
-                          '1004': 'fddinet-default', '1005': 'trnet-default'}
+        expected_vlans = {1: 'default', 9: 'Modem', 12: 'PC',
+                          100: 'Management', 1002: 'fddi-default',
+                          1003: 'token-ring-default',
+                          1004: 'fddinet-default', 1005: 'trnet-default'}
         self.assertEqual(expected_vlans.items(), names.items())
 
     def test_vlan_ports(self):
