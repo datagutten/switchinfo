@@ -54,7 +54,7 @@ jobs:
 
     - name: Run tests
       env:
-        SNMP_LIBRARY: ${{ matrix.snmp_library }}
+        SNMP_LIBRARY: "${{ matrix.snmp_library }}"
       run: |
         coverage run -p runtests.py
         coverage run -p runtests_aruba.py
