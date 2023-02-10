@@ -39,17 +39,17 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Install netsnmp
-      if: ${{matrix.snmp_library == netsnmp}}
+      if: ${{matrix.snmp_library == 'netsnmp'}}
       run: |
         pip install -r optional-requirements-netsnmp.txt
 
     - name: Install easysnmp
-      if: ${{matrix.snmp_library == easysnmp}}
+      if: ${{matrix.snmp_library == 'easysnmp'}}
       run: |
         pip install -r optional-requirements-easysnmp.txt
 
     - name: Install pynetsnmp-2
-      if: ${{matrix.snmp_library == pynetsnmp}}
+      if: ${{matrix.snmp_library == 'pynetsnmp'}}
       run: pip install pynetsnmp-2
 
     - name: Run tests
