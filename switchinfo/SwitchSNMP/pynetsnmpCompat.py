@@ -11,3 +11,7 @@ class PynetsnmpCompat(pynetsnmp.netsnmp.Session):
                          community=community,
                          community_len=len(community))
         self.open()
+
+    def get(self, oid):
+        oid = tuple(map(int, oid.strip('.').split('.')))
+        return super().sget([oid])
