@@ -3,24 +3,34 @@ import re
 
 from . import exceptions, mibs, utils
 
+snmp_library = 'netsnmp'
+
 try:
     # noinspection PyUnresolvedReferences
     from django.conf import settings
     from django.core.exceptions import ImproperlyConfigured
 
-    use_netsnmp = settings.USE_NETSNMP
-except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
-    if 'USE_NETSNMP' in os.environ:
-        use_netsnmp = os.environ['USE_NETSNMP'] == 'true'
+    if settings.SNMP_LIBRARY:
+        snmp_library = settings.SNMP_LIBRARY
+    elif settings.USE_NETSNMP:
+        snmp_library = 'netsnmp'
     else:
-        use_netsnmp = True
-except AttributeError:
-    use_netsnmp = True
+        snmp_library = 'easysnmp'
 
-if use_netsnmp:
+except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
+    if 'SNMP_LIBRARY' in os.environ:
+        snmp_library = os.environ['SNMP_LIBRARY']
+except AttributeError:
+    pass
+
+if snmp_library == 'netsnmp':
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
-else:
+elif snmp_library == 'pynetsnmp':
+    from .pynetsnmpCompat import PynetsnmpCompat as SNMPSession
+elif snmp_library == 'easysnmp':
     from .EasySNMPCompat import EasySNMPCompat as SNMPSession
+else:
+    raise ValueError('Invalid SNMP library "%s"' % snmp_library)
 
 
 class SwitchSNMP:
