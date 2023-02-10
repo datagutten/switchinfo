@@ -3,8 +3,6 @@ import re
 
 from . import exceptions, mibs, utils
 
-snmp_library = 'netsnmp'
-
 try:
     # noinspection PyUnresolvedReferences
     from django.conf import settings
@@ -17,11 +15,13 @@ try:
     else:
         snmp_library = 'easysnmp'
 
-except (ImportError, ImproperlyConfigured):  # TODO: Better django detection
+except (ImportError, ImproperlyConfigured, AttributeError):
     if 'SNMP_LIBRARY' in os.environ:
         snmp_library = os.environ['SNMP_LIBRARY']
-except AttributeError:
-    pass
+    else:
+        print('SNMP library fallback to netsnmp')
+        print(os.environ)
+        snmp_library = 'netsnmp'
 
 if snmp_library == 'netsnmp':
     from .NetSNMPCompat import NetSNMPCompat as SNMPSession
