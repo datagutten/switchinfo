@@ -87,7 +87,7 @@ class Cisco(SwitchSNMP):
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.4'
         return self.create_dict(oid=oid, int_index=True)
 
-    def vlan_ports(self, debug=False):
+    def vlan_ports(self, debug=False, **kwargs):
         from pprint import pprint
 
         trunk_status = self.trunk_status()
