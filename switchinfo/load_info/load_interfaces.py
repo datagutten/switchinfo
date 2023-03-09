@@ -234,6 +234,10 @@ def load_interfaces(switch: Switch, now=None):
                        interface,
                        interface.neighbor_set_by))
 
+        if interface.neighbor_string and not neighbor:
+            print('Clear neighbor string from %s' % interface)
+            interface.neighbor_string = None
+
         elif isinstance(neighbor, Switch):
             interface.neighbor = neighbor
             interface.neighbor_set_by = switch
