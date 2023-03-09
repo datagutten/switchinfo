@@ -58,6 +58,8 @@ def load_interfaces(switch: Switch, now=None):
         if switch.type in ['Fortinet']:
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True,
                                                                             vlan_index=True)
+        elif switch.type in ['Aruba CX']:
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=False)
         else:
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True)
 
