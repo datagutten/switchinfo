@@ -4,6 +4,7 @@ from switchinfo.SwitchSNMP.Fortinet import Fortinet
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.SwitchSNMP.ArubaVSF import ArubaVSF
 from switchinfo.SwitchSNMP.ArubaCX import ArubaCX
+from switchinfo import SwitchSNMP as SwitchSNMPModule
 
 
 def get_switch(switch):
@@ -17,6 +18,8 @@ def get_switch(switch):
         snmp = ArubaVSF
     elif switch.type == 'Aruba CX':
         snmp = ArubaCX
+    elif switch.type == 'Westermo':
+        snmp = SwitchSNMPModule.Westermo
     else:
         snmp = SwitchSNMP
 

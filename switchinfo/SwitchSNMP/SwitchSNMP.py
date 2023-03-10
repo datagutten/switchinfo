@@ -39,6 +39,7 @@ class SwitchSNMP:
     device = None
     info_dicts = dict()
     community = None
+    timeout = 0.5
 
     # TODO: Make arguments mandatory?
     def __init__(self, community: str = None, device: str = None):
@@ -64,7 +65,7 @@ class SwitchSNMP:
         if vlan not in self.sessions[device]:
             # print('Creating session for %s vlan %s community %s' %
             #        (device, vlan, community))
-            self.sessions[device][vlan] = SNMPSession(device, community)
+            self.sessions[device][vlan] = SNMPSession(device, community, timeout=self.timeout)
         return self.sessions[device][vlan]
 
     def close_sessions(self):
