@@ -1,5 +1,7 @@
 import re
 
+from switchinfo.SwitchSNMP import utils
+
 # This regular expression is used to extract the index from an OID
 OID_INDEX_RE = re.compile(
     r'''(
@@ -65,3 +67,13 @@ class SNMPVariable(object):
 
     def __setattr__(self, name, value):
         self.__dict__[name] = str(value)
+
+    def typed_value(self):
+        if self.snmp_type == 'STRING':
+            return self.value
+        elif self.snmp_type == 'Hex-STRING':
+            return utils.mac_string(self.value)
+        elif self.snmp_type == 'INTEGER':
+            return int(self.value)
+        else:
+            return self.value

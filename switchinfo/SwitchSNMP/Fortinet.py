@@ -17,3 +17,16 @@ class Fortinet(SwitchSNMP):
             aggregations[match[0]] = match[1].split('  ')
 
         return aggregations
+
+    def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
+        oid = '.1.3.6.1.2.1.17.4.3'  # BRIDGE-MIB::dot1dTpFdbTable
+        data = self.snmp_table(oid, {
+            1: 'dot1dTpFdbAddress',
+            2: 'dot1dTpFdbPort',
+            3: 'dot1dTpFdbStatus'
+        })
+        macs = {}
+
+        for entry in data.values():
+            macs[entry['dot1dTpFdbAddress']] = int(entry['dot1dTpFdbPort'])
+        return macs

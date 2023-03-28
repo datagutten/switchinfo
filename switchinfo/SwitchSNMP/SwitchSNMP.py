@@ -448,6 +448,27 @@ class SwitchSNMP:
 
         return items
 
+    def snmp_table(self, oid: str, key_mappings: dict):
+        """
+        Fetch an SNMP table as a dict
+        :param oid: Base OID to walk
+        :param key_mappings: OID as key, name as value
+        :return: Dict with table values
+        """
+        session = self.get_session()
+        data = {}
+        for item in session.walk(oid):
+            matches = re.match(r'.+\.([0-9]+)\.([0-9]+)', item.oid)
+            col = int(matches.group(1))
+            row = int(matches.group(2))
+            field_name = key_mappings[col]
+            if row not in data.keys():
+                data[row] = {}
+
+            data[row][field_name] = item.typed_value()
+
+        return data
+
     def lldp(self):
         session = self.get_session()
         oid = '.1.0.8802.1.1.2.1.4.1.1'  # LLDP-MIB::lldpRemEntry
