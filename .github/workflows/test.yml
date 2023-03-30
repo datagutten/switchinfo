@@ -58,6 +58,7 @@ jobs:
         coverage run -p runtests_aruba.py
         coverage run -p runtests_connect.py
         coverage run -m tests.test_snmp
+        coverage run -m tests.test_lldp
         coverage combine
       env:
         SNMP_LIBRARY: ${{ matrix.snmp_library }}
