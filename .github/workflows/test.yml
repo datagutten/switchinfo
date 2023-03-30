@@ -19,7 +19,7 @@ jobs:
         snmp_library: ['netsnmp']
         include:
           - python-version: 3.6.11
-            snmp_library: ['easysnmp']
+            snmp_library: 'easysnmp'
 
     steps:
     - uses: actions/checkout@v3
