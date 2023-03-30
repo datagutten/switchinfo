@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.7, 3.8, 3.9]
-        snmp_library: ['netsnmp', 'pynetsnmp']
+        snmp_library: ['netsnmp']
         include:
           - python-version: 3.6.11
             snmp_library: ['easysnmp']
