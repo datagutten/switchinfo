@@ -444,7 +444,7 @@ class SwitchSNMP:
             if keys[key] not in items:
                 items[keys[key]] = keys
 
-            items[keys[key]][column] = item.value
+            items[keys[key]][column] = item.typed_value()
 
         return items
 
