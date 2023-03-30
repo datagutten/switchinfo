@@ -522,6 +522,7 @@ class SwitchSNMP:
             neighbors[key] = {0: {
                 'device_id': lldp_data[key]['lldpRemSysName'],
                 'platform': lldp_data[key]['lldpRemSysDesc'],
+                'local_port_num': lldp_data[key]['lldpRemLocalPortNum'],
                 'local_port': ports[key],
                 'remote_port': lldp_data[key]['lldpRemPortId'],
                 'mac': mac,
