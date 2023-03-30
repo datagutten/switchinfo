@@ -473,11 +473,19 @@ class SwitchSNMP:
         session = self.get_session()
         oid = '.1.0.8802.1.1.2.1.4.1.1'  # LLDP-MIB::lldpRemEntry
         keys = ['lldpRemTimeMark', 'lldpRemLocalPortNum', 'lldpRemIndex']
-        fields = {1: 'lldpRemManAddrSubtype', 2: 'lldpRemManAddr', 3: 'lldpRemManAddrIfSubtype',
-                  4: 'lldpRemChassisIdSubtype', 5: 'lldpRemChassisId',
-                  6: 'lldpRemPortIdSubtype', 7: 'lldpRemPortId', 8: 'lldpRemPortDesc',
-                  9: 'lldpRemSysName', 10: 'lldpRemSysDesc', 11: 'lldpRemSysCapSupported',
-                  12: 'lldpRemSysCapEnabled'}
+        fields = {1: 'lldpRemTimeMark',
+                  2: 'lldpRemLocalPortNum',
+                  3: 'lldpRemIndex',
+                  4: 'lldpRemChassisIdSubtype',
+                  5: 'lldpRemChassisId',
+                  6: 'lldpRemPortIdSubtype',
+                  7: 'lldpRemPortId',
+                  8: 'lldpRemPortDesc',
+                  9: 'lldpRemSysName',
+                  10: 'lldpRemSysDesc',
+                  11: 'lldpRemSysCapSupported',
+                  12: 'lldpRemSysCapEnabled'
+                  }
 
         ports = self.build_dict_multikeys('.1.0.8802.1.1.2.1.3.7.1',  # LLDP::lldpLocPortEntry
                                           key_names=['lldpLocPortNum'],
