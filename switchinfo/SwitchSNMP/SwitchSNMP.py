@@ -501,19 +501,21 @@ class SwitchSNMP:
                                               key_names=keys,
                                               fields=fields, key='lldpRemLocalPortNum',
                                               session=session)
-
-        addresses = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.2.1',
-                                              key_names=['lldpRemTimeMark', 'lldpRemLocalPortNum',
-                                                         'lldpRemIndex', 'lldpRemManAddrSubtype',
-                                                         'lldpRemManAddr'],
-                                              fields={
-                                                  1: 'lldpRemManAddrSubtype',
-                                                  2: 'lldpRemManAddr',
-                                                  3: 'lldpRemManAddrIfSubtype',
-                                                  4: 'lldpRemManAddrIfId',
-                                                  5: 'lldpRemManAddrOID',
-                                              },
-                                              key='lldpRemLocalPortNum')
+        try:
+            addresses = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.2.1',
+                                                  key_names=['lldpRemTimeMark', 'lldpRemLocalPortNum',
+                                                             'lldpRemIndex', 'lldpRemManAddrSubtype',
+                                                             'lldpRemManAddr'],
+                                                  fields={
+                                                      1: 'lldpRemManAddrSubtype',
+                                                      2: 'lldpRemManAddr',
+                                                      3: 'lldpRemManAddrIfSubtype',
+                                                      4: 'lldpRemManAddrIfId',
+                                                      5: 'lldpRemManAddrOID',
+                                                  },
+                                                  key='lldpRemLocalPortNum')
+        except exceptions.SNMPError:
+            addresses = {}
 
         neighbors = {}
         for key, value in lldp_data.items():
