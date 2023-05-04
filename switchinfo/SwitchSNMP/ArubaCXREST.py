@@ -1,12 +1,14 @@
-import pyaoscx.session
-from config_backup import ConfigBackup
-from pyaoscx.exceptions.login_error import LoginError
-
 from switchinfo.SwitchSNMP import ArubaCX
 
 
 class ArubaCXREST(ArubaCX):
+
     def __init__(self, *args, **kwargs):
+        # Imports are placed here to avoid crash on import if pyaoscx is not installed
+        import pyaoscx.session
+        from config_backup import ConfigBackup
+        from pyaoscx.exceptions.login_error import LoginError
+
         super().__init__(*args, **kwargs)
         options = ConfigBackup.backup_options(self.switch)
         try:
