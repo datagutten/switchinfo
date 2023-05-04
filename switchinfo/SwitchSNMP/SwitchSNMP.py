@@ -2,6 +2,7 @@ import os
 import re
 
 from . import exceptions, mibs, utils
+from .. import models
 
 try:
     # noinspection PyUnresolvedReferences
@@ -34,6 +35,7 @@ else:
 
 
 class SwitchSNMP:
+    switch: models.Switch
     sessions = dict()
     session = None
     device = None
@@ -42,9 +44,10 @@ class SwitchSNMP:
     timeout = 0.5
 
     # TODO: Make arguments mandatory?
-    def __init__(self, community: str = None, device: str = None):
+    def __init__(self, community: str = None, device: str = None, switch: models.Switch = None):
         self.community = community
         self.device = device
+        self.switch = switch
 
     def __del__(self):
         self.sessions = None
