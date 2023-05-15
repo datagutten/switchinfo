@@ -55,7 +55,11 @@ def load_interfaces(switch: Switch, now=None):
     interfaces = device.interfaces_rfc()
     using_pvid = False
     try:
-        if switch.type in ['Fortinet']:
+        if 'untagged' in interfaces:
+            interface_vlan = None
+            untagged_vlan = interfaces['untagged']
+            tagged_vlans = interfaces['tagged']
+        elif switch.type in ['Fortinet']:
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True,
                                                                             vlan_index=True)
         elif switch.type in ['Aruba CX']:
@@ -108,7 +112,7 @@ def load_interfaces(switch: Switch, now=None):
                 device.close_sessions()
             except SNMPError:
                 pass
-    else:
+    elif switch.type != 'Aruba CX REST API':
         try:
             ports = device.bridgePort_to_ifIndex()
             for bridge_port, if_index in ports.items():
@@ -135,15 +139,15 @@ def load_interfaces(switch: Switch, now=None):
 
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():
-        if if_index not in ports_rev:
-            bridge_port = (str(int(if_index[-2:])))
-        else:
-            bridge_port = ports_rev[if_index]
-
-        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba']:
+        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
+            if if_index not in ports_rev:
+                bridge_port = (str(int(if_index[-2:])))
+            else:
+                bridge_port = ports_rev[if_index]
             key = int(bridge_port)
         else:
             key = int(if_index)
+            bridge_port = None
 
         if if_index in interfaces['name']:
             name = interfaces['name'][if_index]
