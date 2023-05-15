@@ -2,7 +2,6 @@ import os
 import re
 
 from . import exceptions, mibs, utils
-from .. import models
 
 try:
     # noinspection PyUnresolvedReferences
