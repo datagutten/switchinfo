@@ -1,7 +1,7 @@
 import easysnmp
 from easysnmp import SNMPVariable as EasySNMPVariable
 
-from . import exceptions, SNMPVariable as CustomSNMPVariable
+from . import exceptions, SNMPVariable as CustomSNMPVariable, utils
 
 
 class EasySNMPCompat(easysnmp.Session):
@@ -44,4 +44,24 @@ class EasySNMPCompat(easysnmp.Session):
 
 
 def convert_variable(var: EasySNMPVariable):
-    return CustomSNMPVariable(oid=var.oid, oid_index=var.oid_index, value=var.value, snmp_type=var.snmp_type)
+    return CustomEasySNMPVariable(oid=var.oid, oid_index=var.oid_index, value=var.value, snmp_type=var.snmp_type)
+
+
+class CustomEasySNMPVariable(CustomSNMPVariable):
+    def typed_value(self):
+        if self.snmp_type == 'OCTETSTR':
+            if self.value.isprintable():
+                try:
+                    return int(self.value)
+                except ValueError:
+                    return self.value
+            else:
+                return utils.mac_string(self.value)
+        elif self.snmp_type == 'INTEGER':
+            return int(self.value)
+        elif self.snmp_type == 'Timeticks':
+            return self.value  # TODO: Return timedelta?
+        elif self.snmp_type == 'OBJECTID':
+            return self.value  # Value 'ccitt.0.0'
+        else:
+            return self.value
