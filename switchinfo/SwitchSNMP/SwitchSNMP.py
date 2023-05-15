@@ -35,7 +35,7 @@ else:
 
 
 class SwitchSNMP:
-    switch: models.Switch
+    switch = None
     sessions = dict()
     session = None
     device = None
@@ -44,7 +44,7 @@ class SwitchSNMP:
     timeout = 0.5
 
     # TODO: Make arguments mandatory?
-    def __init__(self, community: str = None, device: str = None, switch: models.Switch = None):
+    def __init__(self, community: str = None, device: str = None, switch=None):
         self.community = community
         self.device = device
         self.switch = switch
