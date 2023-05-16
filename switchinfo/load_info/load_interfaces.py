@@ -141,15 +141,15 @@ def load_interfaces(switch: Switch, now=None):
     for if_index in interfaces['type'].keys():
         if if_index in ports_rev.keys():
             bridge_port = ports_rev[if_index]
-        elif switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
-            if if_index not in ports_rev:
-                bridge_port = (str(int(if_index[-2:])))
-            else:
-                bridge_port = ports_rev[if_index]
+        elif len(str(if_index)) > 2:
+            bridge_port = str(if_index)[-2:]
+        else:
+            bridge_port = None
+
+        if bridge_port and switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
             key = int(bridge_port)
         else:
             key = int(if_index)
-            bridge_port = None
 
         if if_index in interfaces['name']:
             name = interfaces['name'][if_index]
@@ -213,7 +213,7 @@ def load_interfaces(switch: Switch, now=None):
 
         if lldp:  # LLDP on Cisco is indexed by bridge port
             if switch.type in ['Cisco', 'Extreme', 'Westermo']:
-                neighbor = get_neighbors(bridge_port, lldp, switch)
+                neighbor = get_neighbors(int(bridge_port), lldp, switch)
             else:
                 neighbor = get_neighbors(interface.index, lldp, switch)
         else:
