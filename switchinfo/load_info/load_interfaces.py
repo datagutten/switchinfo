@@ -139,7 +139,9 @@ def load_interfaces(switch: Switch, now=None):
 
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():
-        if switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
+        if if_index in ports_rev.keys():
+            bridge_port = ports_rev[if_index]
+        elif switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
             if if_index not in ports_rev:
                 bridge_port = (str(int(if_index[-2:])))
             else:
@@ -209,9 +211,9 @@ def load_interfaces(switch: Switch, now=None):
         else:
             interface.poe_status = None
 
-        if lldp:
+        if lldp:  # LLDP on Cisco is indexed by bridge port
             if switch.type in ['Cisco', 'Extreme', 'Westermo']:
-                neighbor = get_neighbors(key, lldp, switch)
+                neighbor = get_neighbors(bridge_port, lldp, switch)
             else:
                 neighbor = get_neighbors(interface.index, lldp, switch)
         else:
@@ -222,7 +224,7 @@ def load_interfaces(switch: Switch, now=None):
                 neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
             elif switch.type == 'HP' or switch.type == 'Comware':
                 neighbor = get_neighbors(int(bridge_port), cdp_multi, switch)
-            else:
+            else:  # CDP on Cisco is indexed by interface index
                 neighbor = get_neighbors(interface.index, cdp_multi, switch)
 
         if not neighbor and interface.neighbor:
