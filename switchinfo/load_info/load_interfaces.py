@@ -211,7 +211,7 @@ def load_interfaces(switch: Switch, now=None):
 
         if lldp:
             if switch.type in ['Cisco', 'Extreme', 'Westermo']:
-                neighbor = get_neighbors(int(bridge_port), lldp, switch)
+                neighbor = get_neighbors(key, lldp, switch)
             else:
                 neighbor = get_neighbors(interface.index, lldp, switch)
         else:
