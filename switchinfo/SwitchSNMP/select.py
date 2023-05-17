@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from switchinfo.SwitchSNMP.Cisco import Cisco
 from switchinfo.SwitchSNMP.Extreme import Extreme
 from switchinfo.SwitchSNMP.Fortinet import Fortinet
@@ -8,6 +10,15 @@ from switchinfo.SwitchSNMP.ArubaCXREST import ArubaCXREST
 from switchinfo import SwitchSNMP as SwitchSNMPModule
 
 from switchinfo.models import Switch
+
+
+def select_snmp_library():
+    if hasattr(settings, 'SNMP_LIBRARY'):
+        return settings.SNMP_LIBRARY
+    elif hasattr(settings, 'USE_NETSNMP') and settings.USE_NETSNMP is True:
+        return 'netsnmp'
+    else:
+        return 'easysnmp'
 
 
 def get_switch(switch: Switch) -> SwitchSNMP:
@@ -28,4 +39,4 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     else:
         snmp = SwitchSNMP
 
-    return snmp(community=switch.community, device=switch.ip, switch=switch)
+    return snmp(community=switch.community, device=switch.ip, switch=switch, snmp_library=select_snmp_library())

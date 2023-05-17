@@ -3,34 +3,19 @@ import re
 
 from . import exceptions, mibs, utils
 
-try:
-    # noinspection PyUnresolvedReferences
-    from django.conf import settings
-    from django.core.exceptions import ImproperlyConfigured
 
-    if settings.SNMP_LIBRARY:
-        snmp_library = settings.SNMP_LIBRARY
-    elif settings.USE_NETSNMP:
-        snmp_library = 'netsnmp'
+def select_library(library):
+    if library == 'netsnmp':
+        from .NetSNMPCompat import NetSNMPCompat
+        return NetSNMPCompat
+    elif library == 'easysnmp':
+        from .EasySNMPCompat import EasySNMPCompat
+        return EasySNMPCompat
+    elif library == 'pynetsnmp':
+        from .pynetsnmpCompat import PynetsnmpCompat
+        return PynetsnmpCompat
     else:
-        snmp_library = 'easysnmp'
-
-except (ImportError, ImproperlyConfigured, AttributeError):
-    if 'SNMP_LIBRARY' in os.environ:
-        snmp_library = os.environ['SNMP_LIBRARY']
-    else:
-        print('SNMP library fallback to netsnmp')
-        print(os.environ)
-        snmp_library = 'netsnmp'
-
-if snmp_library == 'netsnmp':
-    from .NetSNMPCompat import NetSNMPCompat as SNMPSession
-elif snmp_library == 'pynetsnmp':
-    from .pynetsnmpCompat import PynetsnmpCompat as SNMPSession
-elif snmp_library == 'easysnmp':
-    from .EasySNMPCompat import EasySNMPCompat as SNMPSession
-else:
-    raise ValueError('Invalid SNMP library "%s"' % snmp_library)
+        raise ValueError('Invalid SNMP library "%s"' % library)
 
 
 class SwitchSNMP:
@@ -41,12 +26,17 @@ class SwitchSNMP:
     info_dicts = dict()
     community = None
     timeout = 0.5
+    snmp_library = None
 
     # TODO: Make arguments mandatory?
-    def __init__(self, community: str = None, device: str = None, switch=None):
+    def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None):
         self.community = community
         self.device = device
         self.switch = switch
+        if snmp_library:
+            self.snmp_library = select_library(snmp_library)
+        else:
+            self.snmp_library = select_library(os.environ.get('SNMP_LIBRARY') or 'netsnmp')
 
     def __del__(self):
         self.sessions = None
@@ -67,7 +57,7 @@ class SwitchSNMP:
         if vlan not in self.sessions[device]:
             # print('Creating session for %s vlan %s community %s' %
             #        (device, vlan, community))
-            self.sessions[device][vlan] = SNMPSession(device, community, timeout=self.timeout)
+            self.sessions[device][vlan] = self.snmp_library(device, community, timeout=self.timeout)
         return self.sessions[device][vlan]
 
     def close_sessions(self):
