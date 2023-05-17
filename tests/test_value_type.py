@@ -23,7 +23,7 @@ class SNMPValueTypeTestCase(unittest.TestCase):
     )
     def test_value(self, snmp_library, vendor, key):
         snmp = SwitchSNMP(vendor, '127.0.0.%d' % key, snmp_library=snmp_library)
-        interfaces = snmp.if_table()
+        interfaces = snmp.interface_table()
 
         self.assertEqual(select_library(snmp_library), type(snmp.get_session()))
         if vendor == 'cisco':
