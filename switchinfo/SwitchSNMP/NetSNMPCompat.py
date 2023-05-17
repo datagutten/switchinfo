@@ -25,7 +25,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
         # print('Init NetSNMPCompat', hostname, community, version, timeout, retries)
         try:
             super().__init__(peername=hostname, community=community, version=version, timeout=timeout, retries=retries)
-        except SNMPError as e:
+        except (SNMPError, SystemError) as e:
             raise get_exception(str(e))(e)
 
     def get(self, oids):
@@ -35,7 +35,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             is_list = False
         try:
             data = super().get(oids)
-        except SNMPError as e:
+        except (SNMPError, SystemError) as e:
             raise get_exception(str(e))(e, self.session, oids)
 
         return convert_response(data, is_list)
@@ -47,7 +47,7 @@ class NetSNMPCompat(netsnmp.SNMPSession):
             for element in data:
                 elements.append(convert_response(element))
             return elements
-        except SNMPError as e:
+        except (SNMPError, SystemError) as e:
             raise get_exception(str(e))(e, self.session, oids)
 
 
