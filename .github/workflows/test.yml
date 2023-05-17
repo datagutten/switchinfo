@@ -35,7 +35,7 @@ jobs:
       run: |
         sudo apt-get install libsnmp-dev libczmq-dev
         python -m pip install --upgrade pip
-        python -m pip install flake8 coverage
+        python -m pip install flake8 coverage parameterized
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Install netsnmp
@@ -59,6 +59,7 @@ jobs:
         coverage run -p runtests_connect.py
         coverage run -m tests.test_snmp
         coverage run -m tests.test_lldp
+        coverage run -m tests.test_value_type
 #        coverage run -m tests.test_select_snmp
         coverage combine
       env:
