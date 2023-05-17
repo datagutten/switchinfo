@@ -5,6 +5,9 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 
 
 class Cisco(SwitchSNMP):
+    """
+    Common stuff for Cisco IOS and IOS XE
+    """
 
     def vlans(self, device=None):
         # CISCO-VTP-MIB::vtpVlanState
@@ -19,6 +22,7 @@ class Cisco(SwitchSNMP):
         return vlan_list
 
     def interface_poe_status(self, device=None):
+        # raise DeprecationWarning('Use interface_poe')
         oid = '.1.3.6.1.2.1.105.1.1.1.6'  # pethPsePortDetectionStatus
         try:
             session = self.get_session()

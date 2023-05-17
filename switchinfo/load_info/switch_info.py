@@ -48,7 +48,11 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
 
 def switch_type(description: str) -> str:
     if description.find('Cisco') == 0:
-        return 'Cisco'
+        version = re.search(r'Version (\d+)', description)
+        if int(version.group(1)) >= 16:
+            return 'Cisco IOS XE'
+        else:
+            return 'Cisco'
     elif description.find('ExtremeXOS') == 0:
         return 'Extreme'
     elif description.find('Aruba') == 0 or description.find('J9624A') > -1:

@@ -23,7 +23,9 @@ def select_snmp_library():
 
 def get_switch(switch: Switch) -> SwitchSNMP:
     if switch.type == 'Cisco':
-        snmp = Cisco
+        snmp = SwitchSNMPModule.CiscoIOS
+    elif switch.type == 'Cisco IOS XE':
+        snmp = SwitchSNMPModule.CiscoIOSXE
     elif switch.type == 'Extreme':
         snmp = Extreme
     elif switch.type == 'Fortinet':
