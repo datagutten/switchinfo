@@ -73,7 +73,7 @@ class SNMPVariable(object):
             return self.value
         elif self.snmp_type == 'Hex-STRING':
             return utils.mac_string(self.value)
-        elif self.snmp_type == 'INTEGER':
+        elif self.snmp_type in ['INTEGER', 'Gauge32', 'Counter32']:
             return int(self.value)
         else:
             return self.value

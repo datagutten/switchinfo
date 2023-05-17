@@ -57,7 +57,7 @@ class CustomEasySNMPVariable(CustomSNMPVariable):
                     return int(self.value)
                 except ValueError:
                     return self.value
-        elif self.snmp_type == 'INTEGER':
+        elif self.snmp_type in ['INTEGER', 'COUNTER', 'COUNTER64', 'GAUGE']:
             return int(self.value)
         elif self.snmp_type == 'Timeticks':
             return self.value  # TODO: Return timedelta?
