@@ -60,7 +60,6 @@ jobs:
         coverage run -m tests.test_snmp
         coverage run -m tests.test_lldp
         coverage run -m tests.test_value_type
-#        coverage run -m tests.test_select_snmp
         coverage combine
       env:
         SNMP_LIBRARY: ${{ matrix.snmp_library }}
