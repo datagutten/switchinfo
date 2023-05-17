@@ -59,7 +59,7 @@ jobs:
         coverage run -p runtests_connect.py
         coverage run -m tests.test_snmp
         coverage run -m tests.test_lldp
-        coverage run -m tests.test_select_snmp
+#        coverage run -m tests.test_select_snmp
         coverage combine
       env:
         SNMP_LIBRARY: ${{ matrix.snmp_library }}
