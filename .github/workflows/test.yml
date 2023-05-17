@@ -9,17 +9,53 @@ on:
     branches: [ master ]
 
 jobs:
+  test_multilib:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ 3.6.11, 3.7, 3.8, 3.9 ]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Start snmpsim
+      run: |
+        docker pull tandrup/snmpsim
+        docker run -d -v $(pwd)/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
+    - name: Install dependencies
+      run: |
+        sudo apt-get install libsnmp-dev libczmq-dev
+        python -m pip install --upgrade pip
+        python -m pip install flake8 coverage parameterized easysnmp pyzmq netsnmp-py==0.5.2
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run tests
+      run: |
+        coverage run -p runtests.py tests.test_select_snmp
+        coverage run -m tests.test_value_type
+        coverage combine
+      env:
+        SNMP_LIBRARY: ${{ matrix.snmp_library }}
+
+    - uses: codecov/codecov-action@v3
+
+
   build:
 
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
-        snmp_library: ['netsnmp']
+        python-version: [ 3.7, 3.8, 3.9 ]
+        snmp_library: [ 'netsnmp' ]
         include:
-          - python-version: 3.6.11
-            snmp_library: 'easysnmp'
+        - python-version: 3.6.11
+          snmp_library: 'easysnmp'
 
     steps:
     - uses: actions/checkout@v3
@@ -59,7 +95,6 @@ jobs:
         coverage run -p runtests_connect.py
         coverage run -m tests.test_snmp
         coverage run -m tests.test_lldp
-        coverage run -m tests.test_value_type
         coverage combine
       env:
         SNMP_LIBRARY: ${{ matrix.snmp_library }}
