@@ -14,11 +14,13 @@ class LoadInfoTestCase(TestCase):
         self.assertIsInstance(snmp.get_session(), EasySNMPCompat)
 
     def test_use_easysnmp(self):
+        del settings.SNMP_LIBRARY
         settings.USE_EASYSNMP = True
         snmp = select.get_switch(models.Switch(ip='127.0.0.2'))
         self.assertIsInstance(snmp.get_session(), EasySNMPCompat)
 
     def test_use_netsnmp(self):
+        del settings.SNMP_LIBRARY
         settings.USE_NETSNMP = True
         snmp = select.get_switch(models.Switch(ip='127.0.0.3'))
         self.assertIsInstance(snmp.get_session(), NetSNMPCompat)
