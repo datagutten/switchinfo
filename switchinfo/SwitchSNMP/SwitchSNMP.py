@@ -309,28 +309,6 @@ class SwitchSNMP:
 
         return ports
 
-    def interface_poe_status(self, device=None):
-        oid = '.1.3.6.1.2.1.105.1.1.1.6'  # pethPsePortDetectionStatus
-        try:
-            bridge_port_poe = self.create_dict(device, oid=oid)
-            if not bridge_port_poe:
-                return None
-        except exceptions.SNMPNoData:
-            print('Switch has no PoE')
-            return None
-
-        states = dict()
-        states['1'] = 'disabled'
-        states['2'] = 'searching'
-        states['3'] = 'deliveringPower'
-        states['4'] = 'fault'
-        states['5'] = 'test'
-        states['6'] = 'otherFault'
-
-        for bridge_port, poe_status in bridge_port_poe.items():
-            bridge_port_poe[bridge_port] = states[poe_status]
-        return bridge_port_poe
-
     def vlan_names(self):
         # Q-BRIDGE-MIB::dot1qVlanStaticName
         oid = '.1.3.6.1.2.1.17.7.1.4.3.1.1'

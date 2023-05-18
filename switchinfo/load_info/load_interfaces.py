@@ -125,9 +125,8 @@ def load_interfaces(switch: Switch, now=None):
     cdp_multi = device.cdp_multi()
     lldp = device.lldp()
 
-    poe_status = device.interface_poe_status()
     poe_interfaces = device.interface_poe()
-    if poe_status and not switch.has_poe:
+    if poe_interfaces and not switch.has_poe:
         switch.has_poe = True
         switch.save()
 
