@@ -11,14 +11,14 @@ class CiscoIOSTestCase(unittest.TestCase):
     def test_poe_cisco(self):
         poe = session.interface_poe()
         key = list(poe.keys())[0]
-        self.assertEqual('1', key)
+        self.assertEqual(1, key)
 
     def test_lldp(self):
         lldp = session_lldp.lldp()
         self.assertEqual(lldp[4][0]['device_id'], 'SFIKT-34:d2')
         self.assertEqual(lldp[4][0]['local_port_num'], 4)
         self.assertEqual(lldp[4][0]['remote_port'], '3817c3c934d2')
-        
+
     def test_switch_info_cisco(self):
         info_cisco = session.switch_info()
         self.assertEqual('WS-C2960S-24PS-L', info_cisco['model'])
@@ -43,9 +43,9 @@ class CiscoIOSTestCase(unittest.TestCase):
         self.assertEqual('10124', table['24'])
 
     def test_interface_poe_status(self):
-        status = session.interface_poe_status()
-        self.assertEqual('disabled', status['10'])
-        self.assertEqual('deliveringPower', status['22'])
+        status = session.interface_poe()
+        self.assertEqual('disabled', status[10]['pethPsePortDetectionStatus'])
+        self.assertEqual('deliveringPower', status[22]['pethPsePortDetectionStatus'])
 
     def test_vlan_names(self):
         names = session.vlan_names()

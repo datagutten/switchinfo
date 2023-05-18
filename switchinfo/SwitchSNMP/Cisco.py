@@ -9,10 +9,10 @@ class Cisco(SwitchSNMP):
     Common stuff for Cisco IOS and IOS XE
     """
 
-    def vlans(self, device=None):
+    def vlans(self):
         # CISCO-VTP-MIB::vtpVlanState
         oid = '.1.3.6.1.4.1.9.9.46.1.3.1.1.2'
-        vlans = self.create_dict(oid=oid, ip=device)
+        vlans = self.create_dict(oid=oid)
         if not vlans:
             return False
         vlan_list = []
@@ -20,41 +20,6 @@ class Cisco(SwitchSNMP):
             if int(vlan) not in [1002, 1003, 1004, 1005, 4095]:
                 vlan_list.append(int(vlan))
         return vlan_list
-
-    def interface_poe_status(self, device=None):
-        # raise DeprecationWarning('Use interface_poe')
-        oid = '.1.3.6.1.2.1.105.1.1.1.6'  # pethPsePortDetectionStatus
-        try:
-            session = self.get_session()
-            items = session.walk(oid)
-            # bridge_port_poe = self.create_dict(device, oid=oid)
-            # if not bridge_port_poe:
-            #     return None
-        except exceptions.SNMPNoData:
-            print('Switch has no PoE')
-            return None
-
-        states = dict()
-        states['1'] = 'disabled'
-        states['2'] = 'searching'
-        states['3'] = 'deliveringPower'
-        states['4'] = 'fault'
-        states['5'] = 'test'
-        states['6'] = 'otherFault'
-
-        poe_status = {}
-        item: SNMPVariable
-        for item in items:
-            matches = re.match(r'.+\.([0-9]+)\.([0-9]+)$', item.oid)
-            stack = matches.group(1)
-            port = matches.group(2)
-            interface = 'Gi%s/0/%s' % (stack, port)
-            interface2 = 'Te%s/0/%s' % (stack, port)
-            poe_status[interface] = states[item.value]
-            poe_status[interface2] = states[item.value]
-            poe_status[port] = states[item.value]
-
-        return poe_status
 
     # Return key: vlan number
     def vlan_names(self):
@@ -100,7 +65,7 @@ class Cisco(SwitchSNMP):
         port_vlan = dict()
         tagged_vlans = dict()
         untagged_vlan = dict()
-        all_tagged = chr(127) + chr(255)*127
+        all_tagged = chr(127) + chr(255) * 127
 
         for index, vlans in self.tagged_vlans().items():
             if trunk_status[index] == 2:
