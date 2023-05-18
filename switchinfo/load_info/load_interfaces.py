@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.db.utils import DataError
+from switchinfo import SwitchSNMP
 
 from switchinfo.SwitchSNMP.exceptions import SNMPError, SNMPNoData
 from switchinfo.SwitchSNMP.select import get_switch
@@ -203,13 +204,16 @@ def load_interfaces(switch: Switch, now=None):
         interface.interface = name
         interface.type = interfaces['type'][if_index]
 
-        if poe_status:
-            if switch.type == 'Cisco' and name in poe_status:
-                interface.poe_status = poe_status[name]
-            elif bridge_port in poe_status:
-                interface.poe_status = poe_status[bridge_port]
-        else:
-            interface.poe_status = None
+        interface.poe_status = None
+
+        if device.poe_absolute_index and bridge_port in poe_interfaces:
+            interface.poe_status = poe_interfaces[bridge_port]['pethPsePortDetectionStatus']
+        elif if_index_int in poe_interfaces:
+            interface.poe_status = poe_interfaces[if_index_int]['pethPsePortDetectionStatus']
+        elif not device.poe_absolute_index:
+            normalized_port = SwitchSNMP.utils.normalize_interface(name)
+            if normalized_port and normalized_port in poe_interfaces:
+                interface.poe_status = poe_interfaces[normalized_port]['pethPsePortDetectionStatus']
 
         if lldp:  # LLDP on Cisco is indexed by bridge port
             if switch.type in ['Cisco', 'Extreme', 'Westermo']:

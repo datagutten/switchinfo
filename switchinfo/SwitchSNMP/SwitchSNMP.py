@@ -27,6 +27,11 @@ class SwitchSNMP:
     community = None
     timeout = 0.5
     snmp_library = None
+    poe_absolute_index = True
+    """
+    POWER-ETHERNET-MIB
+    Is pethPsePortIndex in pethPsePortTable absolute for all ports in the stack or relative to the stack member?
+    """
 
     # TODO: Make arguments mandatory?
     def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None):
@@ -257,9 +262,52 @@ class SwitchSNMP:
                             'ifIndex conversion table for vlan %d' % vlan
                 raise e
 
-    # POWER-ETHERNET-MIB
+    @staticmethod
+    def module_to_ifindex(module, index):
+        return index
 
-    # Return key: bridgePort
+    def interface_poe(self):
+        """
+        POWER-ETHERNET-MIB::PethPsePortEntry
+        Return key: bridgePort
+        """
+        if self.poe_absolute_index:
+            keys = ['pethPsePortIndex']
+        else:
+            keys = ['pethPsePortGroupIndex', 'pethPsePortIndex']
+
+        ports = self.build_dict_multikeys(
+            '.1.3.6.1.2.1.105.1.1.1',
+            keys,
+            {
+                1: 'pethPsePortGroupIndex',
+                2: 'pethPsePortIndex',
+                3: 'pethPsePortAdminEnable',
+                4: 'pethPsePortPowerPairsControlAbility',
+                5: 'pethPsePortPowerPairs',
+                6: 'pethPsePortDetectionStatus',
+                7: 'pethPsePortPowerPriority',
+                8: 'pethPsePortMPSAbsentCounter',
+                9: 'pethPsePortType',
+                10: 'pethPsePortPowerClassifications',
+                11: 'pethPsePortInvalidSignatureCounter',
+                12: 'pethPsePortPowerDeniedCounter',
+                13: 'pethPsePortOverLoadCounter',
+                14: 'pethPsePortShortCounter',
+            })
+        states = {
+            1: 'disabled',
+            2: 'searching',
+            3: 'deliveringPower',
+            4: 'fault',
+            5: 'test',
+            6: 'otherFault'
+        }
+        for key, value in ports.items():
+            ports[key]['pethPsePortDetectionStatus'] = states[value['pethPsePortDetectionStatus']]
+
+        return ports
+
     def interface_poe_status(self, device=None):
         oid = '.1.3.6.1.2.1.105.1.1.1.6'  # pethPsePortDetectionStatus
         try:
@@ -425,8 +473,11 @@ class SwitchSNMP:
         if not key:
             if len(key_names) == 1:
                 key = key_names[0]
+                join_keys = False
             else:
-                raise NotImplementedError()
+                join_keys = True
+        else:
+            join_keys = False
 
         items = {}
 
@@ -458,12 +509,20 @@ class SwitchSNMP:
                         keys[key_names[-1]] += '.%d' % sub_key
                 key_num += 1
 
-            if not key:
-                raise NotImplementedError()
-            if keys[key] not in items:
-                items[keys[key]] = keys
+            if join_keys:
+                key = '.'.join(map(str, keys.values()))
+                if key not in items:
+                    items[key] = keys
 
-            items[keys[key]][column] = item.typed_value()
+                # for key_name, value in keys.items():
+                #     if key_name not in items[key]:
+                #         items[key][key_name] = value
+                items[key][column] = item.typed_value()
+            else:
+                if keys[key] not in items:
+                    items[keys[key]] = keys
+
+                items[keys[key]][column] = item.typed_value()
 
         return items
 
@@ -480,7 +539,11 @@ class SwitchSNMP:
             matches = re.match(r'.+\.([0-9]+)\.([0-9]+)', item.oid)
             col = int(matches.group(1))
             row = int(matches.group(2))
-            field_name = key_mappings[col]
+            try:
+                field_name = key_mappings[col]
+            except KeyError:
+                field_name = col
+
             if row not in data.keys():
                 data[row] = {}
 
