@@ -2,8 +2,9 @@ import datetime
 import unittest
 
 from switchinfo import SwitchSNMP
+from tests.SwitchSNMP.snmp_data import get_file
 
-session = SwitchSNMP.SwitchSNMP('cisco', '127.0.0.1')
+session = SwitchSNMP.SwitchSNMP(*get_file('cisco'))
 
 
 class SwitchSNMPTestCase(unittest.TestCase):

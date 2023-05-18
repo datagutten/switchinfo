@@ -1,9 +1,10 @@
 import unittest
 
 from switchinfo import SwitchSNMP
+from tests.SwitchSNMP.snmp_data import get_file
 
-session = SwitchSNMP.ArubaVSF('aruba_test', '127.0.0.1')
-session_lldp = SwitchSNMP.ArubaVSF('lldp_aruba', '127.0.0.2')
+session = SwitchSNMP.ArubaVSF(*get_file('aruba_test'))
+session_lldp = SwitchSNMP.ArubaVSF(*get_file('lldp_aruba'))
 
 
 class ArubaTestCase(unittest.TestCase):
