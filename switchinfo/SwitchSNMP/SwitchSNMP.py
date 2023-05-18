@@ -297,6 +297,7 @@ class SwitchSNMP:
                 14: 'pethPsePortShortCounter',
             })
         states = {
+            0: 'disabled',  # Extreme use 0 for disabled
             1: 'disabled',
             2: 'searching',
             3: 'deliveringPower',
