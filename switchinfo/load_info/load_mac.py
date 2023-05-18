@@ -11,7 +11,7 @@ def load_mac(switch: Switch, vlan=None):
     if switch.type not in ['Cisco', 'Aruba CX REST API']:
         vlans = [Vlan(vlan=0)]
     else:
-        vlans = Vlan.objects.filter(on_switch=switch, has_ports=True)
+        vlans = switch.vlan.filter(has_ports=True)
         if vlan:
             vlans.filter(vlan=vlan)
         if not vlans:
