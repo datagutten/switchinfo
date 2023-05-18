@@ -14,7 +14,7 @@ class LoadInfoTestCase(TestCase):
         self.switch_aruba = switch_info.switch_info(ip=ip, community=file)
 
     def testLoadVlans(self):
-        load_vlan(self.switch_cisco)
+        load_vlan(self.switch_cisco, silent=False)
         vlan = Vlan.objects.get(vlan=12, on_switch=self.switch_cisco)
         self.assertEqual('PC', vlan.name)
         vlan = Vlan.objects.get(vlan=9, on_switch=self.switch_cisco)
@@ -23,7 +23,14 @@ class LoadInfoTestCase(TestCase):
     def testRemovedVlan(self):
         bad_vlan = self.switch_cisco.vlan.create(vlan=11)
         self.assertIn(bad_vlan, self.switch_cisco.vlan.all())
-        load_vlan(self.switch_cisco)
+        load_vlan(self.switch_cisco, silent=False)
         self.assertNotIn(bad_vlan, self.switch_cisco.vlan.all())
         vlan = Vlan.objects.get(vlan=9)
         self.assertIn(vlan, self.switch_cisco.vlan.all())
+
+    def testUpdatedName(self):
+        vlan = self.switch_cisco.vlan.create(vlan=12, name='Klient')
+        self.assertEqual('Klient', vlan.name)
+        load_vlan(self.switch_cisco)
+        vlan = Vlan.objects.get(vlan=12, on_switch=self.switch_cisco)
+        self.assertEqual('PC', vlan.name)
