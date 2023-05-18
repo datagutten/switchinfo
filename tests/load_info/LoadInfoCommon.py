@@ -12,3 +12,5 @@ class LoadInfoCommon(TestCase, ABC):
         self.switch_cisco = switch_info.switch_info(ip=ip, community=file)
         file, ip = get_file('aruba_test')
         self.switch_aruba = switch_info.switch_info(ip=ip, community=file)
+        file, ip = get_file('extreme')
+        self.switch_extreme = switch_info.switch_info(ip=ip, community=file)

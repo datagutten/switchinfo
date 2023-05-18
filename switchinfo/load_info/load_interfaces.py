@@ -69,7 +69,7 @@ def load_interfaces(switch: Switch, now=None):
             interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True)
 
     except SNMPNoData as e:  # HP 1910
-        if switch.type in ['Cisco', 'Aruba CX']:
+        if switch.type in ['Cisco', 'Aruba CX', 'Extreme']:
             raise e
         using_pvid = True
         print('Using Q-BRIDGE-MIB::dot1qPvid')

@@ -4,6 +4,7 @@ from switchinfo import SwitchSNMP
 from switchinfo import models
 from switchinfo.SwitchSNMP import select
 from switchinfo.load_info.switch_info import switch_type
+from tests_unittest.SwitchSNMP.snmp_data import get_file
 
 
 class SwitchTypeTestCase(TestCase):
@@ -30,3 +31,10 @@ class SwitchTypeTestCase(TestCase):
         self.assertEqual('Cisco IOS XE', switch_type(desc))
         switch = models.Switch(ip='127.0.0.1', community='cisco', type=switch_type(desc))
         self.assertIsInstance(select.get_switch(switch), SwitchSNMP.CiscoIOSXE)
+
+    def test_extreme(self):
+        desc = 'ExtremeXOS (X450e-48p) version 15.3.4.6 v1534b6-patch1-10 by release-manager on Sat Dec 6 15:03:37 EST 2014'
+        self.assertEqual('Extreme', switch_type(desc))
+        community, ip = get_file('extreme')
+        switch = models.Switch(ip=ip, community=community, type=switch_type(desc))
+        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.Extreme)
