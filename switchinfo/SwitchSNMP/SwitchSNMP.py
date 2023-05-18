@@ -306,6 +306,7 @@ class SwitchSNMP:
             6: 'otherFault'
         }
         for key, value in ports.items():
+            # noinspection PyTypeChecker
             ports[key]['pethPsePortDetectionStatus'] = states[value['pethPsePortDetectionStatus']]
 
         return ports
@@ -484,7 +485,7 @@ class SwitchSNMP:
                     keys[key_names[key_num]] = sub_key
                 else:
                     if key_num == len(key_names):
-                        keys[key_names[-1]] = str(sub_key)
+                        keys[key_names[-1]] = sub_key
                     else:
                         keys[key_names[-1]] += '.%d' % sub_key
                 key_num += 1
