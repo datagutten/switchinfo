@@ -7,10 +7,12 @@ from tests_unittest.SwitchSNMP.snmp_data import get_file
 
 
 class LoadInfoCommon(TestCase, ABC):
+    @staticmethod
+    def get_switch(switch):
+        file, ip = get_file(switch)
+        return switch_info.switch_info(ip=ip, community=file)
+
     def setUp(self):
-        file, ip = get_file('cisco')
-        self.switch_cisco = switch_info.switch_info(ip=ip, community=file)
-        file, ip = get_file('aruba_test')
-        self.switch_aruba = switch_info.switch_info(ip=ip, community=file)
-        file, ip = get_file('extreme')
-        self.switch_extreme = switch_info.switch_info(ip=ip, community=file)
+        self.switch_cisco = self.get_switch('cisco')
+        self.switch_aruba = self.get_switch('aruba_test')
+        self.switch_extreme = self.get_switch('extreme')

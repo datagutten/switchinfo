@@ -1,12 +1,11 @@
-from django.test import TestCase
-
 from switchinfo.load_info import switch_info
 from switchinfo.load_info.load_vlan import load_vlan
 from switchinfo.models import Vlan
+from tests.load_info.LoadInfoCommon import LoadInfoCommon
 from tests_unittest.SwitchSNMP.snmp_data import get_file
 
 
-class LoadInfoTestCase(TestCase):
+class LoadInfoTestCase(LoadInfoCommon):
     def setUp(self):
         file, ip = get_file('cisco')
         self.switch_cisco = switch_info.switch_info(ip=ip, community=file)
@@ -19,6 +18,14 @@ class LoadInfoTestCase(TestCase):
         self.assertEqual('PC', vlan.name)
         vlan = Vlan.objects.get(vlan=9, on_switch=self.switch_aruba)
         self.assertEqual('Modem', vlan.name)
+
+    def testLoadVlansExtreme(self):
+        switch = self.get_switch('extreme')
+        load_vlan(switch)
+        vlan = Vlan.objects.get(vlan=11, on_switch=switch)
+        self.assertEqual('PC', vlan.name)
+        vlan = Vlan.objects.get(vlan=100, on_switch=switch)
+        self.assertEqual('Mgmt-100', vlan.name)
 
     def testLoadVlans(self):
         load_vlan(self.switch_cisco, silent=False)
