@@ -17,6 +17,11 @@ class SwitchSNMPTestCase(unittest.TestCase):
         self.assertIsInstance(uptime, datetime.timedelta)
         self.assertEqual(116, uptime.days)
 
+    def testNoPoe(self):
+        session_no_poe = SwitchSNMP.SwitchSNMP(*get_file('ROV-SW-04'))
+        poe = session_no_poe.interface_poe()
+        self.assertEqual({}, poe)
+
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
