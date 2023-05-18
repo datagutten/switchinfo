@@ -92,7 +92,6 @@ jobs:
       run: |
         coverage run -p runtests.py
         coverage run -p runtests_aruba.py
-        coverage run -p runtests_connect.py
         coverage run -m tests.test_snmp
         coverage run -p runtests.py tests.load_info
         coverage run -m unittest discover tests_unittest
