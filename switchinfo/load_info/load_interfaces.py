@@ -126,6 +126,7 @@ def load_interfaces(switch: Switch, now=None):
     lldp = device.lldp()
 
     poe_status = device.interface_poe_status()
+    poe_interfaces = device.interface_poe()
     if poe_status and not switch.has_poe:
         switch.has_poe = True
         switch.save()
@@ -140,6 +141,7 @@ def load_interfaces(switch: Switch, now=None):
 
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():
+        if_index_int = int(if_index)
         if if_index in ports_rev.keys():
             bridge_port = ports_rev[if_index]
         elif len(str(if_index)) > 2:
