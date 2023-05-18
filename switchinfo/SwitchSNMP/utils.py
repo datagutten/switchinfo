@@ -1,3 +1,4 @@
+import datetime
 import re
 
 
@@ -61,6 +62,10 @@ def mac_string(mac_address):
         # Format as lower case hex digit without prefix
         string += format(octet, 'x')
     return string
+
+
+def timeticks(ticks: int) -> datetime.timedelta:
+    return datetime.timedelta(seconds=ticks / 100)
 
 
 def ip_string(ip):
