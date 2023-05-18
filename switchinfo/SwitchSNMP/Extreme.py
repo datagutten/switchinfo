@@ -1,46 +1,32 @@
 import re
 
+from switchinfo.SwitchSNMP import exceptions, utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
-from . import exceptions, utils
 
 
 class Extreme(SwitchSNMP):
 
-    # BRIDGE-MIB
-    def ports(self, device=None):
-        oid = '.1.3.6.1.2.1.17.4.4.1.1'  # dot1dTpPort
-        return self.create_dict(device, oid=oid)
-
     def arp(self, device=None, arp_model=None):
-        oid = '.1.3.6.1.4.1.1916.1.16.2.1.2'  # extremeFdbIpFdbIPAddress
+        oid = '.1.3.6.1.4.1.1916.1.16.2.1.2'  # EXTREME-FDB-MIB::extremeFdbIpFdbIPAddress
         ip = self.create_list(device, oid=oid)
-        oid = '.1.3.6.1.4.1.1916.1.16.2.1.3'  # extremeFdbIpFdbMacAddress
+        oid = '.1.3.6.1.4.1.1916.1.16.2.1.3'  # EXTREME-FDB-MIB::extremeFdbIpFdbMacAddress
         mac = self.create_list(device, oid=oid)
         return dict(zip(mac, ip))
-
-    def interface_poe_status(self, device=None):
-        return
 
     def vlan_index(self):
         # EXTREME-VLAN-MIB::extremeVlanIfVlanId
         oid = '.1.3.6.1.4.1.1916.1.2.1.2.1.10'
         return self.create_dict(oid=oid, int_value=True, int_index=True)
 
-    # def trunk_status(self):
-    #    return dict()
-
     def vlans(self):
-        vlans = self.vlan_index()
-        return list(map(int, vlans.values()))
+        return list(self.vlan_index().values())
 
     def vlan_names(self):
-        oid = '.1.3.6.1.4.1.1916.1.2.1.2.1.2'
-
+        oid = '.1.3.6.1.4.1.1916.1.2.1.2.1.2'  # EXTREME-VLAN-MIB::extremeVlanIfTable
         try:
             vlans = self.vlan_index()
-            names = self.create_dict(oid=oid)
-            vlans = list(map(int, vlans.values()))
-            return dict(zip(vlans, names.values()))
+            names = self.create_dict(oid=oid, int_index=True)
+            return dict(zip(vlans.values(), names.values()))
         except exceptions.SNMPError as e:
             e.message = 'Unable to get VLAN names'
             raise e
