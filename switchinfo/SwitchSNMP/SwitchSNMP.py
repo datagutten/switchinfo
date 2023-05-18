@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 
@@ -153,9 +154,9 @@ class SwitchSNMP:
 
         return info
 
-    def uptime(self):
+    def uptime(self) -> datetime.timedelta:
         session = self.get_session()
-        return session.get('.1.3.6.1.2.1.1.3.0').value
+        return session.get('.1.3.6.1.2.1.1.3.0').typed_value()
 
     def interface_table(self) -> dict:
         """
