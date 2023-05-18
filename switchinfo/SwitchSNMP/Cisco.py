@@ -62,7 +62,7 @@ class Cisco(SwitchSNMP):
         return self.create_dict(oid=oid, int_index=True)
 
     # Return key: interfaceIndex
-    def trunk_status(self, device=None):
+    def trunk_status(self):
         """
         Check if the port is trunk or not
         :param device:
@@ -74,17 +74,17 @@ class Cisco(SwitchSNMP):
                                                           }
         """
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.13'  # CISCO-VTP-MIB::vlanTrunkPortDynamicState
-        return self.create_dict(device, oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True, int_value=True)
 
-    def port_vlan(self, device=None):
+    def port_vlan(self):
         # CISCO-VLAN-MEMBERSHIP-MIB::vmVlan
         oid = '.1.3.6.1.4.1.9.9.68.1.2.2.1.2'
-        return self.create_dict(device, oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True, int_value=True)
 
-    def native_vlan(self, device=None):
+    def native_vlan(self):
         #  vlanTrunkPortNativeVlan
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.5'
-        return self.create_dict(device, oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True, int_value=True)
 
     def tagged_vlans(self):
         # CISCO-VTP-MIB::vlanTrunkPortVlansEnabled
