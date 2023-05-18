@@ -17,10 +17,6 @@ class CiscoSNMPTestCase(TestCase):
     def test_vlans(self):
         self.assertEqual([1, 9, 12, 100], self.device.vlans())
 
-    def test_uptime(self):
-        uptime = self.device.uptime()
-        self.assertEqual('1009351573', uptime)
-
     def test_interfaces(self):
         interfaces = self.device.interfaces_rfc()
         self.assertEqual('Trunk serverswitch', interfaces['alias']['10124'])

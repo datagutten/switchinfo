@@ -59,8 +59,8 @@ class CustomEasySNMPVariable(CustomSNMPVariable):
                     return self.value
         elif self.snmp_type in ['INTEGER', 'COUNTER', 'COUNTER64', 'GAUGE']:
             return int(self.value)
-        elif self.snmp_type == 'Timeticks':
-            return self.value  # TODO: Return timedelta?
+        elif self.snmp_type == 'TICKS':
+            return utils.timeticks(int(self.value))
         elif self.snmp_type == 'OBJECTID':
             return self.value  # Value 'ccitt.0.0'
         else:

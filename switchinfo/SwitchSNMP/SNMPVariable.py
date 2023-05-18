@@ -75,5 +75,9 @@ class SNMPVariable(object):
             return utils.mac_string(self.value)
         elif self.snmp_type in ['INTEGER', 'Gauge32', 'Counter32']:
             return int(self.value)
+        elif self.snmp_type == 'Timeticks':
+            return utils.timeticks(int(self.value))
+        elif self.snmp_type in ['OID', 'OBJECTID']:
+            return self.value  # Value 'ccitt.0.0'
         else:
             return self.value
