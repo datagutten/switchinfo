@@ -20,3 +20,11 @@ class LoadInfoTestCase(TestCase):
         self.assertEqual(10116, interface.index)
         self.assertEqual('Vanlig patchepunkt vlan 12', interface.description)
         self.assertEqual('disabled', interface.poe_status)
+
+    def testLoadInterfacesAruba(self):
+        load_info.load_interfaces(self.switch_aruba)
+        interface = self.switch_aruba.interfaces.first()
+        self.assertEqual(12, interface.vlan.vlan)
+        self.assertEqual(1, interface.index)
+        self.assertEqual(1000, interface.speed)
+        self.assertEqual('searching', interface.poe_status)
