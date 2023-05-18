@@ -13,6 +13,13 @@ class LoadInfoTestCase(TestCase):
         file, ip = get_file('aruba_test')
         self.switch_aruba = switch_info.switch_info(ip=ip, community=file)
 
+    def testLoadVlansAruba(self):
+        load_vlan(self.switch_aruba)
+        vlan = Vlan.objects.get(vlan=12, on_switch=self.switch_aruba)
+        self.assertEqual('PC', vlan.name)
+        vlan = Vlan.objects.get(vlan=9, on_switch=self.switch_aruba)
+        self.assertEqual('Modem', vlan.name)
+
     def testLoadVlans(self):
         load_vlan(self.switch_cisco, silent=False)
         vlan = Vlan.objects.get(vlan=12, on_switch=self.switch_cisco)
