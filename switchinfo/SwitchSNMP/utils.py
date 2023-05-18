@@ -15,7 +15,7 @@ def parse_port_list(string, limit=None, zero_count=False):
         offset = 8 * pos
         for binpos, binbyte in enumerate(binary):
             if not zero_count:
-                index = binpos+offset+1
+                index = binpos + offset + 1
             else:
                 index = binpos + offset
             # print('Port: %d Byte: %s' % (index, binbyte))
@@ -100,3 +100,20 @@ def translate_status(status: str) -> int:
             return 5
         else:
             return status_names[status]
+
+
+def parse_interface(interface):
+    matches = re.match(r'^(\D+)?(\d)(?:/\d)?/(\d+)', interface)
+    if not matches:
+        return None, None
+    return matches.group(2), matches.group(3)
+
+
+def normalize_interface(interface, include_module=True):
+    module, port = parse_interface(interface)
+    if not port:
+        return None
+    if include_module:
+        return '%s.%s' % (module, port)
+    else:
+        return int(port)
