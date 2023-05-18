@@ -9,6 +9,8 @@ from tests_unittest.SwitchSNMP.snmp_data import get_file
 class LoadInfoCommon(TestCase, ABC):
     @staticmethod
     def get_switch(switch):
+        if switch == 'aruba':
+            switch = 'aruba_test'
         file, ip = get_file(switch)
         return switch_info.switch_info(ip=ip, community=file)
 

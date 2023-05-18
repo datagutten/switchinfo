@@ -1,7 +1,6 @@
-from django.test import TestCase
+from parameterized import parameterized
 
 from switchinfo import load_info
-from switchinfo.load_info import switch_info
 from switchinfo.models import Interface
 from tests.load_info.LoadInfoCommon import LoadInfoCommon
 
@@ -31,3 +30,14 @@ class LoadInfoTestCase(LoadInfoCommon):
         self.assertEqual(1001, interface.index)
         self.assertEqual(100, interface.speed)
         self.assertEqual('searching', interface.poe_status)
+
+    @parameterized.expand(
+        [['aruba'], ['extreme']]  # TODO: Cisco is broken
+    )
+    def testTaggedVlans(self, switch):
+        switch_obj = self.get_switch(switch)
+        load_info.load_interfaces(switch_obj)
+        interface = switch_obj.interfaces.exclude(tagged_vlans=None).first()
+        self.assertIsNotNone(interface)
+        for vlan in interface.tagged_vlans.all():
+            self.assertIn(vlan, switch_obj.vlan.all())
