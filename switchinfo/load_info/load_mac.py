@@ -8,8 +8,8 @@ from switchinfo.models import Interface, Mac, Switch, Vlan
 
 def load_mac(switch: Switch, vlan=None):
     device = get_switch(switch)
-    if not switch.type == 'Cisco':
-        vlans = Vlan.objects.filter(vlan=0)
+    if switch.type not in ['Cisco', 'Aruba CX REST API']:
+        vlans = [Vlan(vlan=0)]
     else:
         vlans = Vlan.objects.filter(on_switch=switch, has_ports=True)
         if vlan:
@@ -21,7 +21,7 @@ def load_mac(switch: Switch, vlan=None):
     mac_on_port = None
     for vlan in vlans:
         try:
-            mac_on_port = device.mac_on_port(vlan=vlan.vlan,
+            mac_on_port = device.mac_on_port(vlan=vlan.vlan or None,
                                              use_q_bridge_mib=switch.type == 'Comware')
             if not mac_on_port:
                 print('No ports in vlan %s' % vlan)
