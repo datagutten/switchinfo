@@ -487,7 +487,7 @@ class SwitchSNMP:
                     if key_num == len(key_names):
                         keys[key_names[-1]] = sub_key
                     else:
-                        keys[key_names[-1]] += '.%d' % sub_key
+                        keys[key_names[-1]] = '%s.%d' % (str(keys[key_names[-1]]), sub_key)
                 key_num += 1
 
             if join_keys:
