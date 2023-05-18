@@ -91,14 +91,15 @@ jobs:
         coverage run -p runtests.py tests.load_info
         coverage run -p runtests_aruba.py
         coverage run -m tests.test_snmp
+      env:
+        SNMP_LIBRARY: ${{ matrix.snmp_library }}
 
     - name: Run tests with unittest
       run: coverage run -m unittest discover tests_unittest
+      env:
+        SNMP_LIBRARY: ${{ matrix.snmp_library }}
 
     - name: Combine coverage
       run: coverage combine
-
-      env:
-        SNMP_LIBRARY: ${{ matrix.snmp_library }}
 
     - uses: codecov/codecov-action@v3
