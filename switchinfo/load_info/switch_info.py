@@ -28,11 +28,10 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
 
     if 'model' in info and not info['model'] == '':
         switch.model = info['model']
+        if info['model'][0:3] == 'FSW':
+            switch.type = 'Fortinet'
     else:
         switch.model = model_from_description(device, switch.type)
-
-    if info['model'][0:3] == 'FSW':
-        switch.type = 'Fortinet'
 
     switch.series = switch_series(switch)
 
