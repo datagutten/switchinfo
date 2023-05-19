@@ -38,6 +38,8 @@ def get_switch(switch: Switch) -> SwitchSNMP:
         snmp = ArubaCXREST
     elif switch.type == 'Westermo':
         snmp = SwitchSNMPModule.Westermo
+    elif switch.type == 'pfSense':
+        snmp = SwitchSNMPModule.PfSense
     else:
         snmp = SwitchSNMP
 

@@ -38,3 +38,10 @@ class SwitchTypeTestCase(TestCase):
         community, ip = get_file('extreme')
         switch = models.Switch(ip=ip, community=community, type=switch_type(desc))
         self.assertIsInstance(select.get_switch(switch), SwitchSNMP.Extreme)
+
+    def test_pfsense(self):
+        desc = 'pfSense pfSense.quad.local 2.6.0-RELEASE FreeBSD 12.3-STABLE amd64'
+        self.assertEqual('pfSense', switch_type(desc))
+        community, ip = get_file('pfsense')
+        switch = models.Switch(ip=ip, community=community, type=switch_type(desc))
+        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.PfSense)

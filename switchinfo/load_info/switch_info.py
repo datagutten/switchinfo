@@ -71,6 +71,8 @@ def switch_type(description: str) -> str:
         return '3Com'
     elif description.find('Schneider') == 0:
         return 'Schneider'
+    elif description.find('pfSense') == 0:
+        return 'pfSense'
 
 
 def switch_series(switch: Switch) -> str:

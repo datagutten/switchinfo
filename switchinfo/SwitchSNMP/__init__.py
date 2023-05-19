@@ -4,6 +4,7 @@ from .Cisco import Cisco
 from .CiscoIOS import CiscoIOS
 from .CiscoIOSXE import CiscoIOSXE
 from .Extreme import Extreme
+from .PfSense import PfSense
 from .SwitchSNMP import SwitchSNMP
 from .ArubaCX import ArubaCX
 from .Westermo import Westermo

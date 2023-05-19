@@ -33,6 +33,10 @@ class SwitchSNMP:
     POWER-ETHERNET-MIB
     Is pethPsePortIndex in pethPsePortTable absolute for all ports in the stack or relative to the stack member?
     """
+    arp_oid = 'atPhysAddress'
+    """
+    Field in RFC1213-MIB to use for ARP fetching
+    """
 
     # TODO: Make arguments mandatory?
     def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None):
@@ -687,7 +691,13 @@ class SwitchSNMP:
         return aggregations
 
     def arp(self):
-        oid = '.1.3.6.1.2.1.3.1.1.2'  # RFC1213-MIB::atPhysAddress
+        if self.arp_oid == 'atPhysAddress':
+            oid = '.1.3.6.1.2.1.3.1.1.2'  # RFC1213-MIB::atPhysAddress
+        elif self.arp_oid == 'ipNetToMediaPhysAddress':
+            oid = '.1.3.6.1.2.1.4.22.1.2'  # RFC1213-MIB::ipNetToMediaPhysAddress
+        else:
+            raise ValueError('Invalid arp field')
+
         session = self.get_session()
 
         ip = []
