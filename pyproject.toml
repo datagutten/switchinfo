@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "switchinfo"
+version = "0"
+description = ""
+authors = ["Anders Birkenes <datagutten@datagutten.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+Django = "^3|^4"
+requests = "^2.30.0"
+pyaoscx = "^2.4.0"
+
+
+[tool.poetry.group.dev.dependencies]
+coverage = "^7.2.5"
+parameterized = "^0.9.0"
+
+
+[tool.poetry.group.easysnmp.dependencies]
+easysnmp = "^0.2.6"
+
+
+[tool.poetry.group.netsnmp.dependencies]
+netsnmp-py = "^0.6"
+pyzmq = "^25.0.2"
+
+
+[tool.poetry.group.backup.dependencies]
+django-switch-config-backup = "^1.1"
+
+[tool.poetry.group.snmp_dev.dependencies]
+snmpsim = "^0.4.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
