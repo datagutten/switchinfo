@@ -217,8 +217,8 @@ def load_interfaces(switch: Switch, now=None):
                 interface.poe_status = poe_interfaces[normalized_port]['pethPsePortDetectionStatus']
 
         if lldp:  # LLDP on Cisco is indexed by bridge port
-            if switch.type in ['Cisco', 'Extreme', 'Westermo']:
-                neighbor = get_neighbors(int(bridge_port), lldp, switch)
+            if switch.type in ['Cisco', 'Extreme', 'Westermo']:  # TODO: Handle bridge_port is none
+                neighbor = get_neighbors(int(bridge_port or 0), lldp, switch)
             else:
                 neighbor = get_neighbors(interface.index, lldp, switch)
         else:
