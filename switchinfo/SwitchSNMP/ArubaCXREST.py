@@ -4,6 +4,7 @@ from switchinfo.SwitchSNMP import ArubaCX
 
 
 class ArubaCXREST(ArubaCX):
+    aos_session: pyaoscx.session.Session = None
 
     def __init__(self, *args, **kwargs):
         # Imports are placed here to avoid crash on import if pyaoscx is not installed
@@ -21,7 +22,8 @@ class ArubaCXREST(ArubaCX):
             self.aos_session.open(options.username, options.password)
 
     def __del__(self):
-        self.aos_session.close()
+        if self.aos_session:
+            self.aos_session.close()
 
     def arp(self):
         arp = self.aos_session.request('GET', 'system/vrfs/*/neighbors?attributes=ip_address,mac&depth=2')
