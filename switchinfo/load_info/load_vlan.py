@@ -12,7 +12,7 @@ def load_vlan(switch, silent=True):
     if not vlans_on_switch:
         return
 
-    Vlan.objects.get_or_create(vlan=0, name='Trunk')
+    Vlan.objects.get_or_create(vlan=0, defaults={'name': 'Trunk'})
     for vlan in vlans_on_switch:
         vlan_obj, created = Vlan.objects.get_or_create(vlan=vlan)
         if created and not silent:
