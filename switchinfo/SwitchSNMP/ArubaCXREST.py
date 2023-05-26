@@ -1,25 +1,26 @@
 import math
 
+from switchinfo.SwitchAPI.api_exceptions import LoginFailed
 from switchinfo.SwitchSNMP import ArubaCX
 
 
 class ArubaCXREST(ArubaCX):
     aos_session = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, username, password, **kwargs):
+        if not username or not password:
+            raise LoginFailed('Username or password not set')
         # Imports are placed here to avoid crash on import if pyaoscx is not installed
         import pyaoscx.session
-        from config_backup import ConfigBackup
         from pyaoscx.exceptions.login_error import LoginError
 
-        super().__init__(*args, **kwargs)
-        options = ConfigBackup.backup_options(self.switch)
+        super().__init__(**kwargs)
         try:
-            self.aos_session = pyaoscx.session.Session(self.switch.ip, '10.09')
-            self.aos_session.open(options.username, options.password)
+            self.aos_session = pyaoscx.session.Session(self.device, '10.09')
+            self.aos_session.open(username, password)
         except LoginError:
-            self.aos_session = pyaoscx.session.Session(self.switch.ip, '10.04')
-            self.aos_session.open(options.username, options.password)
+            self.aos_session = pyaoscx.session.Session(self.device, '10.04')
+            self.aos_session.open(username, password)
 
     def __del__(self):
         if self.aos_session:

@@ -8,6 +8,7 @@ from switchinfo.SwitchSNMP.ArubaVSF import ArubaVSF
 from switchinfo.SwitchSNMP.ArubaCX import ArubaCX
 from switchinfo.SwitchSNMP.ArubaCXREST import ArubaCXREST
 from switchinfo import SwitchSNMP as SwitchSNMPModule
+from switchinfo import SwitchAPI
 
 from switchinfo.models import Switch
 
@@ -19,6 +20,19 @@ def select_snmp_library():
         return 'netsnmp'
     else:
         return 'easysnmp'
+
+
+def get_login(switch: Switch):
+    try:
+        from config_backup import ConfigBackup
+    except ImportError:
+        return None, None
+
+    try:
+        options = ConfigBackup.backup_options(switch)
+        return options.username, options.password
+    except ConfigBackup.BackupFailed:
+        return None, None
 
 
 def get_switch(switch: Switch) -> SwitchSNMP:
@@ -33,7 +47,7 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     elif switch.type == 'Aruba':
         snmp = ArubaVSF
     elif switch.type == 'Aruba CX':
-        snmp = ArubaCX
+        snmp = [ArubaCXREST, ArubaCX]
     elif switch.type == 'Aruba CX REST API':
         snmp = ArubaCXREST
     elif switch.type == 'Westermo':
@@ -43,4 +57,16 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     else:
         snmp = SwitchSNMP
 
-    return snmp(community=switch.community, device=switch.ip, switch=switch, snmp_library=select_snmp_library())
+    username, password = get_login(switch)
+    if type(snmp) != list:
+        snmp = [snmp]
+    for snmp_class in snmp:
+        try:
+            return snmp_class(community=switch.community, device=switch.ip, switch=switch,
+                              snmp_library=select_snmp_library(),
+                              username=username, password=password)
+        except SwitchAPI.api_exceptions.APIError:
+            continue  # Login or API initialization failed
+        except TypeError:  # SNMP class without username and password arguments
+            return snmp_class(community=switch.community, device=switch.ip, switch=switch,
+                              snmp_library=select_snmp_library())
