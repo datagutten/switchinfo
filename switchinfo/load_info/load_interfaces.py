@@ -82,6 +82,7 @@ def load_interfaces(switch: Switch, now=None):
         untagged_vlan = None
 
     uptime = device.uptime()
+    switch_vlans = list(switch.vlan.all().values_list(flat=True))
 
     ports_rev = dict()
 
@@ -275,7 +276,7 @@ def load_interfaces(switch: Switch, now=None):
                 if tagged_vlan == 'all':
                     for vlan in switch.vlan.filter(vlan__gt=1):
                         interface.tagged_vlans.add(vlan)
-                else:
+                elif tagged_vlan in switch_vlans:
                     set_interface_vlan(interface, tagged_vlan, True)
 
             # Remove tagged vlans from database when removed from switch
@@ -285,7 +286,9 @@ def load_interfaces(switch: Switch, now=None):
                     if vlan_obj not in switch.vlan.all():  # vlan removed from switch
                         interface.tagged_vlans.remove(vlan_obj)
                 else:
-                    if vlan_obj.vlan not in tagged_vlans[key]:  # vlan no longer tagged on port
+                    # vlan no longer tagged on port or not on switch
+                    if vlan_obj.vlan not in tagged_vlans[key] or vlan_obj.vlan not in switch_vlans:
+                        print('Remove tagged vlan %s from %s' % (vlan_obj, interface))
                         interface.tagged_vlans.remove(vlan_obj)
         else:
             interface.tagged_vlans.clear()
