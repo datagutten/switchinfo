@@ -276,7 +276,7 @@ def load_interfaces(switch: Switch, now=None):
                 if tagged_vlan == 'all':
                     for vlan in switch.vlan.filter(vlan__gt=1):
                         interface.tagged_vlans.add(vlan)
-                elif tagged_vlan in switch_vlans:
+                elif tagged_vlan in switch_vlans or not device.ignore_unknown_vlans:
                     set_interface_vlan(interface, tagged_vlan, True)
 
             # Remove tagged vlans from database when removed from switch
@@ -287,7 +287,8 @@ def load_interfaces(switch: Switch, now=None):
                         interface.tagged_vlans.remove(vlan_obj)
                 else:
                     # vlan no longer tagged on port or not on switch
-                    if vlan_obj.vlan not in tagged_vlans[key] or vlan_obj.vlan not in switch_vlans:
+                    if vlan_obj.vlan not in tagged_vlans[key] or (
+                            device.ignore_unknown_vlans and vlan_obj.vlan not in switch_vlans):
                         print('Remove tagged vlan %s from %s' % (vlan_obj, interface))
                         interface.tagged_vlans.remove(vlan_obj)
         else:

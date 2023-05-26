@@ -28,6 +28,8 @@ class SwitchSNMP:
     community = None
     timeout = 0.5
     snmp_library = None
+    ignore_unknown_vlans = False
+    """Should tagged vlans not defined on switch be ignored?"""
     poe_absolute_index = True
     """
     POWER-ETHERNET-MIB
