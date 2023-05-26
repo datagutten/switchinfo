@@ -4,7 +4,7 @@ from switchinfo.SwitchSNMP import ArubaCX
 
 
 class ArubaCXREST(ArubaCX):
-    aos_session: pyaoscx.session.Session = None
+    aos_session = None
 
     def __init__(self, *args, **kwargs):
         # Imports are placed here to avoid crash on import if pyaoscx is not installed
