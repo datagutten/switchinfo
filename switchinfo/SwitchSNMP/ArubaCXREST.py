@@ -51,15 +51,19 @@ class ArubaCXREST(ArubaCX):
             if interface['name'].find('lag') == 0:
                 info['status'][key] = link_status(interface['bond_status']['state'])
                 info['high_speed'][key] = interface['bond_status']['bond_speed'] / math.pow(10, 6)
+                info['admin_status'][key] = link_status(interface['admin'])
             else:
                 info['status'][key] = link_status(interface['link_state'])
                 info['high_speed'][key] = interface['link_speed'] / math.pow(10, 6)
                 info['admin_status'][key] = link_status(interface['admin_state'])
 
-            if interface['vlan_tag'] is not None:
+            if 'lacp_current' in interface and interface['lacp_current']:
+                continue
+
+            if 'vlan_tag' in interface and interface['vlan_tag'] is not None:
                 info['untagged'][key] = int(list(interface['vlan_tag'].keys())[0])
 
-            if interface['vlan_mode'] == 'native-untagged':
+            if 'vlan_mode' in interface and interface['vlan_mode'] == 'native-untagged':
                 if interface['vlan_trunks'] == {}:
                     info['tagged'][key] = ['all']
                 else:
