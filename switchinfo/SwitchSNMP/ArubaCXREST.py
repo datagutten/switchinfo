@@ -1,4 +1,5 @@
 import math
+import re
 from urllib.parse import quote
 
 from switchinfo.SwitchAPI.api_exceptions import LoginFailed
@@ -26,6 +27,16 @@ class ArubaCXREST(ArubaCX):
     def __del__(self):
         if self.aos_session and self.aos_session.s:
             self.aos_session.close()
+
+    def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
+        response_mac = self.aos_session.request('GET', 'system/vlans/%d/macs?attributes=port&depth=2' % vlan)
+        mac_addresses = {}
+        for mac, port in response_mac.json().items():
+            mac = re.sub(r'dynamic,(.+)', r'\1', mac)
+            mac = mac.replace(':', '')
+            port = list(port['port'].keys())[0]
+            mac_addresses[mac] = port
+        return mac_addresses
 
     def uptime(self):
         pass
