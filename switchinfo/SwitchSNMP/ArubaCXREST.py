@@ -112,16 +112,16 @@ class ArubaCXREST(ArubaCX):
 
             if 'lacp_current' in interface and interface['lacp_current']:
                 continue
+            # applied_vlan is used to get current vlan when using device profiles
+            if 'applied_vlan_tag' in interface and interface['applied_vlan_tag'] is not None:
+                info['untagged'][key] = int(list(interface['applied_vlan_tag'].keys())[0])
 
-            if 'vlan_tag' in interface and interface['vlan_tag'] is not None:
-                info['untagged'][key] = int(list(interface['vlan_tag'].keys())[0])
-
-            if 'vlan_mode' in interface and interface['vlan_mode'] == 'native-untagged':
-                if interface['vlan_trunks'] == {}:
+            if 'applied_vlan_mode' in interface and interface['applied_vlan_mode'] == 'native-untagged':
+                if interface['applied_vlan_trunks'] == {}:
                     info['tagged'][key] = ['all']
                 else:
                     info['tagged'][key] = []
-                    for vlan in interface['vlan_trunks'].keys():
+                    for vlan in interface['applied_vlan_trunks'].keys():
                         info['tagged'][key].append(int(vlan))
 
         return info
