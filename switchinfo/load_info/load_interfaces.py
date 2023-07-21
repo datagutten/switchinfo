@@ -378,8 +378,9 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
         if neighbor and (neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']):
             return neighbor['device_id']
         elif neighbor:
-            return '%s\n%s\n%s' % (
-                neighbor['device_id'],
-                neighbor['ip'],
-                neighbor['platform'])
+            neighbor_string = ''
+            for field in [neighbor['device_id'], neighbor['ip'], neighbor['platform']]:
+                if field:
+                    neighbor_string += field + '\n'
+            return neighbor_string.strip()
     return None
