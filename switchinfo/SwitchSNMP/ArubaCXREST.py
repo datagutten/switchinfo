@@ -67,11 +67,14 @@ class ArubaCXREST(ArubaCX):
             lldp_neighbors[interface] = {}
             for key, neighbor in neighbors.json().items():
                 lldp_neighbors[interface][key] = {
-                    'device_id': neighbor['chassis_id'],
-                    'platform': neighbor['neighbor_info']['chassis_description'],
+                    'platform': neighbor['neighbor_info']['chassis_description'] or None,
                     'remote_port': neighbor['port_id'],
                 }
-                if 'mgmt_ip_list' in neighbor:
+                if neighbor['neighbor_info']['chassis_name']:
+                    lldp_neighbors[interface][key]['device_id'] = neighbor['neighbor_info']['chassis_name']
+                else:
+                    lldp_neighbors[interface][key]['device_id'] = neighbor['chassis_id']
+                if 'mgmt_ip_list' in neighbor['neighbor_info']:
                     lldp_neighbors[interface][key]['ip'] = neighbor['neighbor_info']['mgmt_ip_list']
 
         return lldp_neighbors
