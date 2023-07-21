@@ -1,4 +1,5 @@
 import math
+from urllib.parse import quote
 
 from switchinfo.SwitchAPI.api_exceptions import LoginFailed
 from switchinfo.SwitchSNMP import ArubaCX
@@ -23,8 +24,45 @@ class ArubaCXREST(ArubaCX):
             self.aos_session.open(username, password)
 
     def __del__(self):
-        if self.aos_session:
+        if self.aos_session and self.aos_session.s:
             self.aos_session.close()
+
+    def uptime(self):
+        pass
+
+    def cdp_multi(self):
+        interfaces = self.aos_session.request('GET', 'system/interfaces?depth=1')
+        cdp_neighbors = {}
+        for interface in interfaces.json():
+            neighbors = self.aos_session.request('GET', 'system/interfaces/%s/cdp_neighbors?depth=2' % quote(interface,
+                                                                                                             safe=[]))
+            cdp_neighbors[interface] = {}
+            for key, neighbor in neighbors.json().items():
+                cdp_neighbors[interface][key] = {
+                    'device_id': neighbor['device_id'],
+                    'ip': neighbor['addresses'][0],
+                    'platform': neighbor['platform'],
+                    'remote_port': neighbor['port_id'],
+                }
+
+        return cdp_neighbors
+
+    def lldp(self):
+        interfaces = self.aos_session.request('GET', 'system/interfaces?depth=1')
+        lldp_neighbors = {}
+        for interface in interfaces.json():
+            neighbors = self.aos_session.request('GET', 'system/interfaces/%s/lldp_neighbors?depth=2' % quote(interface,
+                                                                                                              safe=[]))
+            lldp_neighbors[interface] = {}
+            for key, neighbor in neighbors.json().items():
+                lldp_neighbors[interface][key] = {
+                    'device_id': neighbor['chassis_id'],
+                    'ip': neighbor['neighbor_info']['mgmt_ip_list'],
+                    'platform': neighbor['neighbor_info']['chassis_description'],
+                    'remote_port': neighbor['port_id'],
+                }
+
+        return lldp_neighbors
 
     def arp(self):
         arp = self.aos_session.request('GET', 'system/vrfs/*/neighbors?attributes=ip_address,mac&depth=2')
