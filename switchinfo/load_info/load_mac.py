@@ -37,8 +37,8 @@ def load_mac(switch: Switch, vlan=None):
         except exceptions.SNMPTimeout:
             print('Timeout connecting to %s vlan %s' % (switch, vlan))
             continue
-        if not mac_on_port:
-            print('No ports in vlan %s' % vlan)
+        except exceptions.SNMPError as e:
+            print(e)
             continue
 
         for mac, bridge_port in mac_on_port.items():
