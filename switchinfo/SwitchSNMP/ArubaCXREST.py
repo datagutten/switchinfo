@@ -29,7 +29,7 @@ class ArubaCXREST(ArubaCX):
             self.aos_session.close()
 
     def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
-        response_mac = self.aos_session.request('GET', 'system/vlans/%d/macs?attributes=port&depth=2' % vlan)
+        response_mac = self.aos_session.request('GET', 'system/vlans/%d/macs?attributes=port&depth=2' % int(vlan))
         mac_addresses = {}
         for mac, port in response_mac.json().items():
             mac = re.sub(r'dynamic,(.+)', r'\1', mac)
