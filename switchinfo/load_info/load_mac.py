@@ -8,7 +8,7 @@ from switchinfo.models import Interface, Mac, Switch, Vlan
 
 def load_mac(switch: Switch, vlan=None):
     device = get_switch(switch)
-    if switch.type not in ['Cisco', 'Aruba CX REST API']:
+    if device.__class__.__name__ not in ['ArubaCXREST'] and switch.type not in ['Cisco']:
         vlans = [Vlan(vlan=0)]
     else:
         vlans = switch.vlan.filter(has_ports=True)
