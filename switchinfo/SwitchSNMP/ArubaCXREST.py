@@ -2,7 +2,9 @@ import math
 import re
 from urllib.parse import quote
 
-from switchinfo.SwitchAPI.api_exceptions import LoginFailed
+import requests.exceptions
+
+from switchinfo.SwitchAPI.api_exceptions import LoginFailed, APIError
 from switchinfo.SwitchSNMP import ArubaCX
 
 
@@ -18,11 +20,14 @@ class ArubaCXREST(ArubaCX):
 
         super().__init__(**kwargs)
         try:
-            self.aos_session = pyaoscx.session.Session(self.device, '10.09')
-            self.aos_session.open(username, password)
-        except LoginError:
-            self.aos_session = pyaoscx.session.Session(self.device, '10.04')
-            self.aos_session.open(username, password)
+            try:
+                self.aos_session = pyaoscx.session.Session(self.device, '10.09')
+                self.aos_session.open(username, password)
+            except LoginError:
+                self.aos_session = pyaoscx.session.Session(self.device, '10.04')
+                self.aos_session.open(username, password)
+        except requests.exceptions.RequestException as e:
+            raise APIError(e)
 
     def __del__(self):
         if self.aos_session and self.aos_session.s:
