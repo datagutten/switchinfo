@@ -84,7 +84,11 @@ def load_interfaces(switch: Switch, now=None):
     uptime = device.uptime()
     switch_vlans = list(switch.vlan.all().values_list(flat=True))
 
-    ports_rev = dict()
+    """
+    Key: Interface index
+    Value: Bridge port
+    """
+    ports_rev = {}
 
     try:
         aggregations = device.aggregations()
@@ -133,7 +137,7 @@ def load_interfaces(switch: Switch, now=None):
 
     if switch.type == 'Aruba':
         try:
-            stack = device.stack_ports()
+            stack = device.stack_ports()  # TODO: Correct type ArubaVSF
         except SNMPNoData:
             stack = []
     else:
