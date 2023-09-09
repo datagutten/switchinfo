@@ -1,3 +1,5 @@
+import datetime
+
 import unittest
 
 from switchinfo import SwitchSNMP
@@ -59,6 +61,11 @@ class CiscoIOSTestCase(unittest.TestCase):
         ports = session.vlan_ports()
         self.assertEqual(12, ports[2][10101])
         self.assertEqual(1, ports[2][10127])
+
+    def test_uptime(self):
+        uptime = session.uptime()
+        uptime_expected = datetime.timedelta(hours=2803, minutes=45, seconds=15.73)
+        self.assertEqual(uptime, uptime_expected)
 
 
 if __name__ == "__main__":
