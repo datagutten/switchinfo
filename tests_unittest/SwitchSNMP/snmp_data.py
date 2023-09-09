@@ -8,10 +8,11 @@ def get_file(snmp_file):
     :param snmp_file:
     :return:
     """
-    files = os.scandir(os.path.join(os.path.dirname(__file__), '..', '..', 'test_data', 'snmp_data'))
     key = 1
-    for file in files:
-        name, extension = os.path.splitext(file.name)
-        if name == snmp_file:
-            return name, '127.0.0.%d' % key
-        key += 1
+    with os.scandir(os.path.join(os.path.dirname(__file__), '..', '..', 'test_data', 'snmp_data')) as files:
+        for file in files:
+            name, extension = os.path.splitext(file.name)
+            if name == snmp_file:
+                return name, '127.0.0.%d' % key
+            key += 1
+        raise FileNotFoundError(snmp_file)
