@@ -4,7 +4,7 @@ import unittest
 from parameterized import parameterized
 
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP, select_library
-
+from switchinfo.SwitchSNMP import mibs
 
 def build_combinations(libraries, vendors):
     combinations = []
@@ -23,7 +23,8 @@ class SNMPValueTypeTestCase(unittest.TestCase):
     )
     def test_value(self, snmp_library, vendor, key):
         snmp = SwitchSNMP(vendor, '127.0.0.%d' % key, snmp_library=snmp_library)
-        interfaces = snmp.interface_table()
+        if_mib = mibs.ifMIB(snmp)
+        interfaces = if_mib.ifXTable()
 
         self.assertEqual(select_library(snmp_library), type(snmp.get_session()))
         if vendor == 'cisco':

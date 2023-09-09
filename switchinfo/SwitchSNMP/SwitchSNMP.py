@@ -164,33 +164,6 @@ class SwitchSNMP:
         session = self.get_session()
         return session.get('.1.3.6.1.2.1.1.3.0').typed_value()
 
-    def interface_table(self) -> dict:
-        """
-        IF-MIB::ifXTable
-        :return:
-        """
-        return self.snmp_table('.1.3.6.1.2.1.31.1.1', {
-            1: 'ifName',
-            2: 'ifInMulticastPkts',
-            3: 'ifInBroadcastPkts',
-            4: 'ifOutMulticastPkts',
-            5: 'ifOutBroadcastPkts',
-            6: 'ifHCInOctets',
-            7: 'ifHCInUcastPkts',
-            8: 'ifHCInMulticastPkts',
-            9: 'ifHCInBroadcastPkts',
-            10: 'ifHCOutOctets',
-            11: 'ifHCOutUcastPkts',
-            12: 'ifHCOutMulticastPkts',
-            13: 'ifHCOutBroadcastPkts',
-            14: 'ifLinkUpDownTrapEnable',
-            15: 'ifHighSpeed',
-            16: 'ifPromiscuousMode',
-            17: 'ifConnectorPresent',
-            18: 'ifAlias',
-            19: 'ifCounterDiscontinuityTime',
-        })
-
     def interfaces_rfc(self):
         info = dict()
         # IF-MIB::ifName
