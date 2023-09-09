@@ -30,7 +30,7 @@ class ArubaCXREST(ArubaCX):
             raise APIError(e)
 
     def __del__(self):
-        if self.aos_session and self.aos_session.s:
+        if self.aos_session and self.aos_session.connected:
             self.aos_session.close()
 
     def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
