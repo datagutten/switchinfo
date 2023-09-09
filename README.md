@@ -149,8 +149,9 @@ Restart MariaDB server:
 `/etc/init.d/mariadb restart`
 
 ## Apache vhost:
+Copy config to /etc/apache2/sites-available/switchinfo.conf and edit ServerName:
 
-Copy config to /etc/apache2/sites-available/switchinfo.conf and edit ServerName
+`cp switchinfo.conf /etc/apache2/sites-available/switchinfo.conf`
 
 ```
 <VirtualHost *:80>
@@ -197,7 +198,7 @@ Remove default site:
 `rm 000-default.conf`
 
 Enable site:
-`ln -s ../sites-available/switchinfo.conf`
+`a2ensite switchinfo`
 
 Initialize database and collect static files:
 
