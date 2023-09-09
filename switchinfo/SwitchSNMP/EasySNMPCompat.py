@@ -27,6 +27,8 @@ class EasySNMPCompat(easysnmp.Session):
             raise exceptions.SNMPConnectionError(e, self, oids)
         except easysnmp.exceptions.EasySNMPNoSuchInstanceError as e:
             raise exceptions.SNMPNoData(e, self, oids)
+        except easysnmp.exceptions.EasySNMPError as e:
+            raise exceptions.SNMPNoData(e, self, oids)
         except SystemError as e:
             raise exceptions.SNMPError(e, self, oids)
 
