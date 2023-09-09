@@ -55,7 +55,9 @@ def switch_type(description: str) -> str:
     elif description.find('ExtremeXOS') == 0:
         return 'Extreme'
     elif description.find('Aruba') == 0 or description.find('J9624A') > -1:
-        if description.find('6100') > -1 or description.find('6200') > -1:
+        # Aruba CX has the SKU followed by the 4 digit series
+        matches = re.search(r'Aruba JL\d+\w\s(\d{4})', description)
+        if matches:
             return 'Aruba CX'
         else:
             return 'Aruba'
