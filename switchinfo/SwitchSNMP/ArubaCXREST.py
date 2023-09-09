@@ -1,8 +1,7 @@
 import math
 import re
+import warnings
 from urllib.parse import quote
-
-import requests.exceptions
 
 from switchinfo.SwitchAPI.api_exceptions import LoginFailed, APIError
 from switchinfo.SwitchSNMP import ArubaCX
@@ -16,7 +15,11 @@ class ArubaCXREST(ArubaCX):
             raise LoginFailed('Username or password not set')
         # Imports are placed here to avoid crash on import if pyaoscx is not installed
         import pyaoscx.session
+        import requests.exceptions
         from pyaoscx.exceptions.login_error import LoginError
+        from urllib3.exceptions import InsecureRequestWarning
+
+        warnings.simplefilter("ignore", InsecureRequestWarning)
 
         super().__init__(**kwargs)
         try:
