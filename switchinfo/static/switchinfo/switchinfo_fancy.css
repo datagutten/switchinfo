@@ -1,12 +1,12 @@
-tr:nth-child(even) {
+.switchinfo tr:nth-child(even) {
     background: #f9f9f9
 }
 
-tr:nth-child(odd) {
+.switchinfo tr:nth-child(odd) {
     background: #FFF
 }
 
-thead th, tbody td {
+.switchinfo thead th, .switchinfo tbody td {
     font-size: 13px;
     line-height: 16px;
     border-bottom: 1px solid #eee;
