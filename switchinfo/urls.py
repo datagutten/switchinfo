@@ -10,6 +10,7 @@ urlpatterns = [
          name='switch_load_mac'),
     path('switch', views.switches),
     path('switch/ip/<str:ip>', views.show_switch, name='switch'),
+    path('switch/<str:name>.json', views.switch_json, name='switch_json'),
     path('switch/<str:name>', views.show_switch, name='switch'),
     path('switch/<str:switch_name>/vlans', views.vlans_on_switch, name='switch_vlans'),
     path('switch/<str:switch_name>/vlans.txt', views.vlans_on_switch, name='switch_vlans_cli'),

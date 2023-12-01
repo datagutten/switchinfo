@@ -3,7 +3,7 @@ from pprint import pprint
 from urllib.parse import unquote
 
 from django.conf import settings
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import HttpResponse, get_object_or_404, redirect, render, resolve_url
 
 from .forms import SearchForm
@@ -36,6 +36,24 @@ def show_switch(request, name=None, ip=None):
         context['backup_web_base'] = settings.BACKUP_WEB_BASE
 
     return render(request, 'switchinfo/switch.html', context)
+
+
+def switch_json(request, name):
+    switch = get_object_or_404(Switch, name=unquote(name))
+    data = {
+        'ip': switch.ip,
+        'description': switch.description,
+        'model': switch.model,
+        'interfaces': {},
+    }
+    for interface in switch.interfaces.all():
+        data['interfaces'][interface.index] = {
+            'name': interface.interface,
+            'untagged_vlan': interface.vlan.vlan,
+            'tagged_vlans': list(interface.tagged_vlans.values_list(flat=True)),
+            'description': interface.description,
+        }
+    return JsonResponse(data)
 
 
 def switches(request):
