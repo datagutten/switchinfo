@@ -6,6 +6,8 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.models import Switch
 
+pattern_hp_series = re.compile(r'(HP|Aruba) (Switch|[A-Z]{1,2}\d{3,4}[A-Z]) [A-Z]?([0-9]+)')
+
 
 def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None, silent=True) -> Optional[Switch]:
     if not device:
@@ -46,6 +48,7 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
 
 
 def switch_type(description: str) -> str:
+    matches_hp = pattern_hp_series.search(description)
     if description.find('Cisco') == 0:
         version = re.search(r'Version (\d+)', description)
         if int(version.group(1)) >= 16:
@@ -54,13 +57,19 @@ def switch_type(description: str) -> str:
             return 'Cisco'
     elif description.find('ExtremeXOS') == 0:
         return 'Extreme'
+    elif matches_hp:
+        try:
+            series = int(matches_hp.group(3))
+            if series >= 6000:  # Series 6000 and above is Aruba CX
+                return 'Aruba CX'
+            elif 2900 >= series >= 2000:  # 2000 series below 2900 is ProCurve
+                return 'ProCurve'
+        except ValueError:
+            pass
+        return 'Aruba'
     elif description.find('Aruba') == 0 or description.find('J9624A') > -1:
-        # Aruba CX has the SKU followed by the 4 digit series
-        matches = re.search(r'Aruba JL\d+\w\s(\d{4})', description)
-        if matches:
-            return 'Aruba CX'
-        else:
-            return 'Aruba'
+        return 'Aruba'
+
     elif description.find('ProCurve') > -1:
         return 'ProCurve'
     elif description.find('Comware') > -1:
@@ -79,12 +88,13 @@ def switch_type(description: str) -> str:
 
 def switch_series(switch: Switch) -> str:
     series = None
+    matches_hp = pattern_hp_series.search(switch.description)
     if switch.type == 'Cisco':
         series = re.match(r'((?:WS|IE)-[A-Z0-9]+).*?$', switch.model)
+    elif matches_hp:
+        return '%s %s' % (matches_hp.group(1), matches_hp.group(3))
     elif switch.type == 'Aruba':
-        series = re.match(r'Aruba [A-Z0-9]+ ([A-Z0-9]+)', switch.description)
-    elif switch.type == 'HP':
-        series = re.search(r'HPE? (\w+)', switch.description)
+        series = re.search(r'(Aruba [0-9]+\w) VSF VC', switch.description)
     elif switch.type == 'ProCurve':
         series = re.search(r'ProCurve \w+ Switch (\w+)', switch.description) or re.search(r'HP \w+ (\w+)',
                                                                                           switch.description)
