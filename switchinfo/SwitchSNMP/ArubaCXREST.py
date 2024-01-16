@@ -31,6 +31,8 @@ class ArubaCXREST(ArubaCX):
                 self.aos_session.open(username, password)
         except requests.exceptions.RequestException as e:
             raise APIError(e)
+        except LoginError as e:
+            raise APIError(e)
 
     def __del__(self):
         if self.aos_session and self.aos_session.connected:
