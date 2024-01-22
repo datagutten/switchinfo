@@ -496,9 +496,8 @@ class SwitchSNMP:
         session = self.get_session()
         data = {}
         for item in session.walk(oid):
-            matches = re.match(r'.+\.([0-9]+)\.([0-9]+)', item.oid)
-            col = int(matches.group(1))
-            row = int(matches.group(2))
+            row, col = utils.table_index(oid, item.oid)
+
             try:
                 field_name = key_mappings[col]
             except KeyError:
