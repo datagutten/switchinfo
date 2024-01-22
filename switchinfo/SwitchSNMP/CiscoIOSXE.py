@@ -5,4 +5,4 @@ class CiscoIOSXE(Cisco):
     """
     Cisco IOS XE
     """
-    poe_absolute_index = True
+    poe_absolute_index = False
