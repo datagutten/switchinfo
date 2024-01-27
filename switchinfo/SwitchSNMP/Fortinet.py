@@ -4,6 +4,11 @@ from . import SwitchSNMP, mibs
 
 
 class Fortinet(SwitchSNMP):
+    def interfaces_rfc(self):
+        interfaces = super().interfaces_rfc()
+        interfaces['alias'] = interfaces['descr']
+        return interfaces
+
     def vlans(self):
         mib = mibs.qBridgeMIB(self)
         return mib.dot1qVlanIndex().values()
