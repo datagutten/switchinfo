@@ -224,7 +224,7 @@ def load_interfaces(switch: Switch, now=None):
         if lldp:  # LLDP on Cisco is indexed by bridge port
             if switch.type in ['Cisco', 'Extreme', 'Westermo']:  # TODO: Handle bridge_port is none
                 neighbor = get_neighbors(int(bridge_port or 0), lldp, switch)
-            elif switch.type == 'Aruba CX REST API':
+            elif switch.type == 'Aruba CX REST API' or type(device).__name__ == 'FortinetAPI':
                 neighbor = get_neighbors(interface.interface, lldp, switch)
             else:
                 neighbor = get_neighbors(interface.index, lldp, switch)
@@ -327,7 +327,10 @@ def load_interfaces(switch: Switch, now=None):
 def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
     if index in cdp_multi and cdp_multi[index]:
         neighbor = None
-        for neighbor in cdp_multi[index].values():
+        if type(cdp_multi[index]) == dict:
+            cdp_multi[index] = list(cdp_multi[index].values())
+
+        for neighbor in cdp_multi[index]:
             if neighbor == {}:
                 print('Skip unknown neighbor on index %d' % index)
                 neighbor = None

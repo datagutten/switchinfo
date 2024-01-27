@@ -43,7 +43,7 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     elif switch.type == 'Extreme':
         snmp = Extreme
     elif switch.type == 'Fortinet':
-        snmp = Fortinet
+        snmp = [SwitchAPI.FortinetAPI, Fortinet]
     elif switch.type == 'Aruba':
         snmp = ArubaVSF
     elif switch.type == 'Aruba CX':
