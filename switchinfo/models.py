@@ -72,7 +72,7 @@ class Switch(models.Model):
             matches = re.search(r'revision ([A-Z]+[0-9.]+)', self.description)
         elif self.type == 'HP':
             matches = re.search(r'Release ([A-Z0-9]+)', self.description)
-        elif self.type == 'Cisco':
+        elif self.type in ['Cisco', 'Cisco IOS', 'Cisco IOS XE']:
             matches = re.search(r'Version ([\w.()]+)', self.description)
 
         if matches:
