@@ -24,6 +24,7 @@ class Switch(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'switches'
 
     def __str__(self):
         return '%s (%s)' % (self.name, self.ip)
