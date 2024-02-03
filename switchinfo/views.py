@@ -42,15 +42,20 @@ def switch_json(request, name):
     switch = get_object_or_404(Switch, name=unquote(name))
     data = {
         'ip': switch.ip,
+        'name': switch.name,
         'description': switch.description,
         'model': switch.model,
         'interfaces': {},
     }
     for interface in switch.interfaces.all():
+        if interface.vlan_id:
+            vlan = interface.vlan.vlan
+        else:
+            vlan = None
         data['interfaces'][interface.index] = {
             'name': interface.interface,
-            'untagged_vlan': interface.vlan.vlan,
-            'tagged_vlans': list(interface.tagged_vlans.values_list(flat=True)),
+            'untagged_vlan': vlan,
+            'tagged_vlans': list(interface.tagged_vlans.values_list('vlan', flat=True)),
             'description': interface.description,
         }
     return JsonResponse(data)
