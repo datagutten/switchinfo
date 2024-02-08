@@ -61,10 +61,12 @@ class ArubaCXREST(ArubaCX):
             for key, neighbor in neighbors.json().items():
                 cdp_neighbors[interface][key] = {
                     'device_id': neighbor['device_id'],
-                    'ip': neighbor['addresses'][0],
+                    'ip': None,
                     'platform': neighbor['platform'],
                     'remote_port': neighbor['port_id'],
                 }
+                if len(neighbor['addresses']) > 0:
+                    cdp_neighbors[interface][key]['ip'] = neighbor['addresses'][0]
 
         return cdp_neighbors
 
