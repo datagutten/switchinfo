@@ -153,7 +153,7 @@ def load_interfaces(switch: Switch, now=None):
         else:
             bridge_port = None
 
-        if bridge_port and switch.type not in ['Cisco', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
+        if bridge_port and switch.type not in ['Cisco', 'Cisco IOS XE', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
             key = int(bridge_port)
         else:
             key = int(if_index)
@@ -222,12 +222,16 @@ def load_interfaces(switch: Switch, now=None):
                 interface.poe_status = poe_interfaces[normalized_port]['pethPsePortDetectionStatus']
 
         if lldp:  # LLDP on Cisco is indexed by bridge port
-            if switch.type in ['Cisco', 'Extreme', 'Westermo']:  # TODO: Handle bridge_port is none
-                neighbor = get_neighbors(int(bridge_port or 0), lldp, switch)
-            elif switch.type == 'Aruba CX REST API' or type(device).__name__ == 'FortinetAPI':
-                neighbor = get_neighbors(interface.interface, lldp, switch)
+            if hasattr(device, 'lldp_key'):
+                if device.lldp_key == 'interface_name':
+                    neighbor = get_neighbors(interface.interface, lldp, switch)
             else:
-                neighbor = get_neighbors(interface.index, lldp, switch)
+                if switch.type in ['Cisco', 'Cisco IOS XE', 'Extreme', 'Westermo']:  # TODO: Handle bridge_port is none
+                    neighbor = get_neighbors(int(bridge_port or 0), lldp, switch)
+                elif switch.type == 'Aruba CX REST API' or type(device).__name__ == 'FortinetAPI':
+                    neighbor = get_neighbors(interface.interface, lldp, switch)
+                else:
+                    neighbor = get_neighbors(interface.index, lldp, switch)
         else:
             neighbor = None
 

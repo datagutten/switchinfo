@@ -6,6 +6,7 @@ from . import api_exceptions
 
 class FortinetAPI(Fortinet):
     ignore_unknown_vlans = True
+    lldp_key = 'interface_name'
 
     def __init__(self, username, password, **kwargs):
         if not username or not password:
