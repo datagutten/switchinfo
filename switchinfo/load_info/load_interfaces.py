@@ -221,6 +221,7 @@ def load_interfaces(switch: Switch, now=None):
             if normalized_port and normalized_port in poe_interfaces:
                 interface.poe_status = poe_interfaces[normalized_port]['pethPsePortDetectionStatus']
 
+        neighbor = None
         if lldp:  # LLDP on Cisco is indexed by bridge port
             if hasattr(device, 'lldp_key'):
                 if device.lldp_key == 'interface_name':
