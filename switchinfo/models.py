@@ -35,8 +35,11 @@ class Switch(models.Model):
     def shorten_interface_name(self, interface_name: str):
         interface_name = str(interface_name)
         if self.type == 'Cisco':
-            return re.sub(r'([A-Z][a-z])[a-zA-Z]*([0-9\/]+)', r'\1\2',
-                          interface_name)
+            if interface_name.find('TwentyFiveGigE') == 0:
+                return interface_name.replace('TwentyFiveGigE', 'Twe')
+            else:
+                return re.sub(r'([A-Z][a-z])[a-zA-Z]*([0-9\/]+)', r'\1\2',
+                              interface_name)
         elif self.type == 'Extreme':
             return re.sub(r'Slot:\s+([0-9]+), Port:\s+([0-9]+)', r'\1:\2',
                           interface_name)
