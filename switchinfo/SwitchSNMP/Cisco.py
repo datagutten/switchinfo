@@ -8,6 +8,7 @@ class Cisco(SwitchSNMP):
     """
     Common stuff for Cisco IOS and IOS XE
     """
+    lldp_key = 'bridge_port'
 
     def vlans(self):
         # CISCO-VTP-MIB::vtpVlanState
