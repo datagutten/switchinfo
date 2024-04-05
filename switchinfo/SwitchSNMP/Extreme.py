@@ -5,7 +5,7 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 
 
 class Extreme(SwitchSNMP):
-
+    lldp_key = 'bridge_port'
     def arp(self, device=None, arp_model=None):
         oid = '.1.3.6.1.4.1.1916.1.16.2.1.2'  # EXTREME-FDB-MIB::extremeFdbIpFdbIPAddress
         ip = self.create_list(device, oid=oid)
