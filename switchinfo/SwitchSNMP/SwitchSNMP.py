@@ -512,58 +512,19 @@ class SwitchSNMP:
         return data
 
     def lldp(self):
-        session = self.get_session()
-        oid = '.1.0.8802.1.1.2.1.4.1.1'  # LLDP-MIB::lldpRemEntry
-        keys = ['lldpRemTimeMark', 'lldpRemLocalPortNum', 'lldpRemIndex']
-        fields = {1: 'lldpRemTimeMark',
-                  2: 'lldpRemLocalPortNum',
-                  3: 'lldpRemIndex',
-                  4: 'lldpRemChassisIdSubtype',
-                  5: 'lldpRemChassisId',
-                  6: 'lldpRemPortIdSubtype',
-                  7: 'lldpRemPortId',
-                  8: 'lldpRemPortDesc',
-                  9: 'lldpRemSysName',
-                  10: 'lldpRemSysDesc',
-                  11: 'lldpRemSysCapSupported',
-                  12: 'lldpRemSysCapEnabled'
-                  }
-
-        ports = self.build_dict_multikeys('.1.0.8802.1.1.2.1.3.7.1',  # LLDP::lldpLocPortEntry
-                                          key_names=['lldpLocPortNum'],
-                                          fields={1: 'lldpLocPortNum',
-                                                  2: 'lldpLocPortIdSubtype',
-                                                  3: 'lldpLocPortId',
-                                                  4: 'lldpLocPortDesc',
-                                                  },
-                                          )
-
-        lldp_data = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.1.1',
-                                              # LLDP-MIB::lldpRemManAddrTable
-                                              key_names=keys,
-                                              fields=fields, key='lldpRemLocalPortNum',
-                                              session=session)
+        lldp_mib = mibs.lldpMIB(self)
+        ports = lldp_mib.lldpLocPortTable()
+        remotes = lldp_mib.lldpRemTable()
         try:
-            addresses = self.build_dict_multikeys(oid='.1.0.8802.1.1.2.1.4.2.1',
-                                                  key_names=['lldpRemTimeMark', 'lldpRemLocalPortNum',
-                                                             'lldpRemIndex', 'lldpRemManAddrSubtype',
-                                                             'lldpRemManAddr'],
-                                                  fields={
-                                                      1: 'lldpRemManAddrSubtype',
-                                                      2: 'lldpRemManAddr',
-                                                      3: 'lldpRemManAddrIfSubtype',
-                                                      4: 'lldpRemManAddrIfId',
-                                                      5: 'lldpRemManAddrOID',
-                                                  },
-                                                  key='lldpRemLocalPortNum')
+            addresses = lldp_mib.lldpRemManAddrTable()
         except exceptions.SNMPError:
             addresses = {}
 
         neighbors = {}
-        for key, value in lldp_data.items():
+        for key, value in remotes.items():
             if key not in ports:
                 print('LLDP neighbor %s found on non-existing port %d' % (
-                    lldp_data[key]['lldpRemSysName'], key))
+                    remotes[key]['lldpRemSysName'], key))
                 continue
 
             if value['lldpRemChassisIdSubtype'] == '4':
@@ -572,11 +533,11 @@ class SwitchSNMP:
                 mac = None
 
             neighbors[key] = {0: {
-                'device_id': lldp_data[key]['lldpRemSysName'],
-                'platform': lldp_data[key]['lldpRemSysDesc'],
-                'local_port_num': lldp_data[key]['lldpRemLocalPortNum'],
+                'device_id': remotes[key]['lldpRemSysName'],
+                'platform': remotes[key]['lldpRemSysDesc'],
+                'local_port_num': remotes[key]['lldpRemLocalPortNum'],
                 'local_port': ports[key],
-                'remote_port': lldp_data[key]['lldpRemPortId'],
+                'remote_port': remotes[key]['lldpRemPortId'],
                 'mac': mac,
             }}
 
