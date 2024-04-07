@@ -8,9 +8,11 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 Django = "^3|^4"
-requests = "^2.30.0"
-pyaoscx = "^2.4.0"
 
+[tool.poetry.group.aoscx.dependencies]
+pyaoscx = "^2.4.0"
+requests = "^2"
+urllib3 = "*"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.2.5"
