@@ -18,6 +18,11 @@ urllib3 = "*"
 coverage = "^7.2.5"
 parameterized = "^0.9.0"
 
+[tool.poetry.group.mysql.dependencies]
+mysqlclient = "^2"
+
+[tool.poetry.group.postgres.dependencies]
+psycopg2-binary = "^2"
 
 [tool.poetry.group.easysnmp.dependencies]
 easysnmp = "^0.2.6"
