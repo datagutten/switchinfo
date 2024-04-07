@@ -6,7 +6,7 @@ authors = ["Anders Birkenes <datagutten@datagutten.net>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 Django = "^3|^4"
 requests = "^2.30.0"
 pyaoscx = "^2.4.0"
