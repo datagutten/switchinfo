@@ -130,7 +130,7 @@ class ArubaCXREST(ArubaCX):
                 info['untagged'][key] = int(list(interface['applied_vlan_tag'].keys())[0])
 
             if 'applied_vlan_mode' in interface and interface['applied_vlan_mode'] == 'native-untagged':
-                if interface['applied_vlan_trunks'] == {}:
+                if not interface['applied_vlan_trunks']:
                     info['tagged'][key] = ['all']
                 else:
                     info['tagged'][key] = []
