@@ -30,7 +30,7 @@ easysnmp = "^0.2.6"
 
 [tool.poetry.group.netsnmp.dependencies]
 netsnmp-py = "^0.6"
-pyzmq = "^25.0.2"
+pyzmq = "*"
 
 
 [tool.poetry.group.backup.dependencies]
