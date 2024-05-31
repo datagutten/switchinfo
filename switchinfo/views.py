@@ -57,6 +57,8 @@ def switch_json(request, name):
             'untagged_vlan': vlan,
             'tagged_vlans': list(interface.tagged_vlans.values_list('vlan', flat=True)),
             'description': interface.description,
+            'mac': list(interface.macs.values_list('mac', flat=True)),
+            'neighbor_string': interface.neighbor_string,
         }
     return JsonResponse(data)
 
