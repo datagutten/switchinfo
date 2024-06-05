@@ -47,7 +47,7 @@ class Switch(models.Model):
             return interface_name
 
     def vlans(self):
-        return Vlan.objects.filter(on_switch=self, vlan__gt=1)
+        return self.vlan.filter(vlan__gt=1)
 
     def has_backup(self):
         if hasattr(settings, 'BACKUP_PATH'):
