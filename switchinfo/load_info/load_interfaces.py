@@ -335,19 +335,19 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
                 neighbor = None
                 continue
 
-            for key in ['ip', 'device_id', 'platform']:
-                if key not in neighbor:
-                    neighbor[key] = None
-
             try:
+                query_ip = None
+                query_name = None
+                if 'ip' in neighbor and neighbor['ip']:
+                    query_ip = Q(ip=neighbor['ip'])
+
                 if 'device_id' in neighbor and neighbor['device_id']:
-                    neighbor_switch = Switch.objects.get(
-                        Q(ip=neighbor['ip']) |
-                        Q(name=neighbor['device_id']) |
-                        Q(name=neighbor['device_id'].split('.')[0])
-                    )
+                    query_name = Q(name=neighbor['device_id']) | Q(name=neighbor['device_id'].split('.')[0])
+
+                if query_name and query_ip:
+                    neighbor_switch = Switch.objects.get(query_ip | query_name)
                 else:
-                    neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
+                    neighbor_switch = Switch.objects.get(query_ip or query_name)
 
             except Switch.DoesNotExist:
                 for key in ['ip', 'device_id', 'platform']:
@@ -356,11 +356,15 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
                         break
                 continue
             except Switch.MultipleObjectsReturned:
-                print('Multiple switches found with info ', neighbor['ip'], neighbor['device_id'])
-                try:
-                    neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
-                except Switch.DoesNotExist:
-                    print('Unable to de-duplicate %s using IP %s' % (neighbor['device_id'], neighbor['ip']))
+                if 'ip' in neighbor:
+                    print('Multiple switches found with info ', neighbor['ip'], neighbor['device_id'])
+                    try:
+                        neighbor_switch = Switch.objects.get(ip=neighbor['ip'])
+                    except Switch.DoesNotExist:
+                        print('Unable to de-duplicate %s using IP %s' % (neighbor['device_id'], neighbor['ip']))
+                        continue
+                else:
+                    print('Multiple switches found')
                     continue
 
             print('%s is a valid neighbor' % neighbor_switch)
@@ -388,12 +392,12 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
             return neighbor_switch  # Valid neighbor found
 
         # No valid neighbor found
-        if neighbor and (neighbor['ip'] is None and neighbor['device_id'] == neighbor['platform']):
+        if neighbor and ('ip' not in neighbor and neighbor['device_id'] == neighbor['platform']):
             return neighbor['device_id']
         elif neighbor:
             neighbor_string = ''
-            for field in [neighbor['device_id'], neighbor['ip'], neighbor['platform']]:
-                if field:
-                    neighbor_string += field + '\n'
+            for key in ['device_id', 'ip', 'mac', 'platform']:
+                if key in neighbor:
+                    neighbor_string += neighbor[key] + '\n'
             return neighbor_string.strip()
     return None

@@ -521,33 +521,31 @@ class SwitchSNMP:
             addresses = {}
 
         neighbors = {}
-        for key, value in remotes.items():
+        for key, remote in remotes.items():
             if key not in ports:
                 print('LLDP neighbor %s found on non-existing port %d' % (
                     remotes[key]['lldpRemSysName'], key))
                 continue
 
-            if value['lldpRemChassisIdSubtype'] == '4':
-                mac = utils.mac_string(value['lldpRemChassisId'])
-            else:
-                mac = None
-
-            neighbors[key] = {0: {
-                'device_id': remotes[key]['lldpRemSysName'],
-                'platform': remotes[key]['lldpRemSysDesc'],
-                'local_port_num': remotes[key]['lldpRemLocalPortNum'],
+            neighbor = {
+                'device_id': remote['lldpRemSysName'],
+                'platform': remote['lldpRemSysDesc'],
+                'local_port_num': remote['lldpRemLocalPortNum'],
                 'local_port': ports[key],
-                'remote_port': remotes[key]['lldpRemPortId'],
-                'mac': mac,
-            }}
+                'remote_port': remote['lldpRemPortId'],
+            }
+
+            if remote['lldpRemChassisIdSubtype'] == 4:
+                neighbor['mac'] = remote['lldpRemChassisId']
 
             if key in addresses:
-                if addresses[key]['lldpRemManAddr'][0] not in ['1', '2']:
-                    neighbors[key][0]['ip'] = utils.ip_string(addresses[key]['lldpRemManAddr'])
-                else:
-                    neighbors[key][0]['ip'] = addresses[key]['lldpRemManAddr']
-            else:
-                neighbors[key][0]['ip'] = None
+                address = addresses[key]
+                if address['lldpRemManAddrSubtype'] == 6:
+                    neighbor['mac'] = utils.mac_parse_oid(address['lldpRemManAddr'])
+                elif address['lldpRemManAddrSubtype'] == 1:
+                    neighbor['ip'] = address['lldpRemManAddr']
+
+            neighbors[key] = {0: neighbor}
 
         return neighbors
 
