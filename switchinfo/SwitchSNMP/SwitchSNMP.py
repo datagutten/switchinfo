@@ -93,10 +93,11 @@ class SwitchSNMP:
 
     def create_dict(self, ip=None, vlan=None, oid=None,
                     int_value=False, int_index=False,
+    def create_dict(self, oid=None, vlan=None,
                     value_translator: callable = None):
         if not oid:
             oid = False
-        session = self.get_session(ip, vlan)
+        session = self.get_session(vlan=vlan)
         if not session:
             return False
         indexes = dict()
@@ -129,10 +130,8 @@ class SwitchSNMP:
         return values
 
     # Load core information about a switch
-    def switch_info(self, ip=None):
-        session = self.get_session(ip)
-        if not session:
-            return
+    def switch_info(self):
+        session = self.get_session()
         info = dict()
 
         # SNMPv2-MIB::sysName
