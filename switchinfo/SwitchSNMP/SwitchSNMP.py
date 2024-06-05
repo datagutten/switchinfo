@@ -91,9 +91,8 @@ class SwitchSNMP:
                 values[key] = None
         return values
 
-    def create_dict(self, ip=None, vlan=None, oid=None,
-                    int_value=False, int_index=False,
     def create_dict(self, oid=None, vlan=None,
+                    int_value=False, int_index=False, typed_value=False,
                     value_translator: callable = None):
         if not oid:
             oid = False
@@ -112,6 +111,8 @@ class SwitchSNMP:
                 value = value_translator(item.value)
             elif int_value:
                 value = int(item.value)
+            elif typed_value:
+                value = item.typed_value()
             else:
                 value = item.value
             if int_index:
