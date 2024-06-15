@@ -10,7 +10,7 @@ class UtilsTestCase(TestCase):
     def test_table_index(self):
         row, col = utils.table_index('.1.3.6.1.2.1.17.4.3.1', 'iso.3.6.1.2.1.17.4.3.1.1.0.29.148.23.138.204')
         self.assertEqual(1, col)
-        self.assertEqual('29.148.23.138.204', row)
+        self.assertEqual('0.29.148.23.138.204', row)
 
     def test_table_index2(self):
         row, col = utils.table_index('.1.3.6.1.2.1.17.1.4.1', 'iso.3.6.1.2.1.17.1.4.1.1.23')
