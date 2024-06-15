@@ -106,6 +106,6 @@ jobs:
     - name: Combine coverage
       run: coverage combine
 
-    - uses: codecov/codecov-action@v5
+    - uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
