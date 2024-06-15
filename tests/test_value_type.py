@@ -30,7 +30,7 @@ class SNMPValueTypeTestCase(unittest.TestCase):
         if vendor == 'cisco':
             interface_key = 10101
         else:
-            interface_key = 1
+            interface_key = 663
 
         self.assertEqual(int, type(interfaces[interface_key]['ifHighSpeed']))
         self.assertEqual(str, type(interfaces[interface_key]['ifAlias']))

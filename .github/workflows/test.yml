@@ -87,8 +87,12 @@ jobs:
 
     - name: Run tests with django
       run: |
-        coverage run -p runtests.py
         coverage run -p runtests.py tests.load_info
+        coverage run -p runtests.py test_select_snmp
+        coverage run -p runtests.py test_snmp
+        coverage run -p runtests.py test_value_type
+        coverage run -p runtests.py test_web
+        coverage run -p runtests.py tests.tests_aruba
         coverage run -p runtests_aruba.py
         coverage run -m tests.test_snmp
       env:
