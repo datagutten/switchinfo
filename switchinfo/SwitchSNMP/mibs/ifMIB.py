@@ -7,7 +7,7 @@ class ifMIB(SNMPMib):
         IF-MIB::ifXTable
         :return:
         """
-        return self.snmp.snmp_table('.1.3.6.1.2.1.31.1.1', {
+        return self.snmp.snmp_table('.1.3.6.1.2.1.31.1.1.1', {
             1: 'ifName',
             2: 'ifInMulticastPkts',
             3: 'ifInBroadcastPkts',
@@ -30,7 +30,7 @@ class ifMIB(SNMPMib):
         })
 
     def ifTable(self):
-        return self.snmp.snmp_table('.1.3.6.1.2.1.2.2', {
+        return self.snmp.snmp_table('.1.3.6.1.2.1.2.2.1', {
             1: 'ifIndex',
             2: 'ifDescr',
             3: 'ifType',
