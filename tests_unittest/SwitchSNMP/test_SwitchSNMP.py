@@ -22,6 +22,11 @@ class SwitchSNMPTestCase(unittest.TestCase):
         poe = session_no_poe.interface_poe()
         self.assertEqual({}, poe)
 
+    def test_arp_pfsense(self):
+        snmp = SwitchSNMP.PfSense(*get_file('pfsense'))
+        arp = snmp.arp()
+        self.assertGreaterEqual(len(arp), 5)
+
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
