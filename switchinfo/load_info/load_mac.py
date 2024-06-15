@@ -27,7 +27,7 @@ def load_mac(switch: Switch, vlan=None):
                 print('No ports in vlan %s' % vlan)
                 continue
 
-            if switch.type == 'Cisco':  # Cisco needs one query for each vlan
+            if switch.type in ['Cisco', 'Cisco IOS XE']:  # Cisco needs one query for each vlan
                 bridge_port_to_ifindex = device.bridgePort_to_ifIndex(vlan=vlan.vlan)
             elif switch.type == 'Westermo' or switch.type == 'Comware':
                 bridge_port_to_ifindex = device.bridgePort_to_ifIndex()
