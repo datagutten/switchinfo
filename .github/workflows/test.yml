@@ -28,17 +28,10 @@ jobs:
         docker pull tandrup/snmpsim
         docker run -d -v $(pwd)/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
 
-    - name:  Install pip and poetry
-      if: ${{matrix.python-version == '3.6.11'}}
-      run: python -m pip install --upgrade pip django easysnmp netsnmp==0.5.2
-
-    - name:  Install pip and poetry
-      if: ${{matrix.python-version != '3.6.11'}}
-      run: python -m pip install --upgrade pip poetry poetry-plugin-export
-
     - name: Install dependencies
       run: |
         sudo apt-get install libsnmp-dev libczmq-dev
+        python -m pip install --upgrade pip poetry poetry-plugin-export
         python -m pip install flake8 coverage parameterized
         poetry export -f requirements.txt --without-hashes --with netsnmp --with easysnmp -o requirements.txt
         pip install -r requirements.txt
@@ -66,9 +59,6 @@ jobs:
       matrix:
         python-version: [ 3.7, 3.8, 3.9 ]
         snmp_library: [ 'netsnmp', 'easysnmp' ]
-        include:
-        - python-version: 3.6.11
-          snmp_library: 'easysnmp'
 
     steps:
     - uses: actions/checkout@v4
@@ -83,15 +73,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install libsnmp-dev libczmq-dev
+        python -m pip install --upgrade pip poetry poetry-plugin-export
         python -m pip install flake8 coverage parameterized
-
-    - name:  Install pip and poetry
-      if: ${{matrix.python-version == '3.6.11'}}
-      run: python -m pip install --upgrade pip poetry
-
-    - name:  Install pip and poetry
-      if: ${{matrix.python-version != '3.6.11'}}
-      run: python -m pip install --upgrade pip poetry poetry-plugin-export
 
     - name: Export requirements for netsnmp
       if: ${{matrix.snmp_library == 'netsnmp'}}
