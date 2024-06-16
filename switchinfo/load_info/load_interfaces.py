@@ -346,8 +346,11 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
 
                 if query_name and query_ip:
                     neighbor_switch = Switch.objects.get(query_ip | query_name)
-                else:
+                elif query_ip or query_name:
                     neighbor_switch = Switch.objects.get(query_ip or query_name)
+                else:
+                    print('Unable to identify neighbor')
+                    return
 
             except Switch.DoesNotExist:
                 for key in ['ip', 'device_id', 'platform']:
@@ -397,7 +400,7 @@ def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
         elif neighbor:
             neighbor_string = ''
             for key in ['device_id', 'ip', 'mac', 'platform']:
-                if key in neighbor:
+                if key in neighbor and neighbor[key]:
                     neighbor_string += neighbor[key] + '\n'
             return neighbor_string.strip()
     return None
