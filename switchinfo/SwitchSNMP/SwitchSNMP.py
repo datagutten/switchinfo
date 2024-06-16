@@ -532,11 +532,15 @@ class SwitchSNMP:
                 'platform': remote['lldpRemSysDesc'],
                 'local_port_num': remote['lldpRemLocalPortNum'],
                 'local_port': ports[key],
-                'remote_port': remote['lldpRemPortId'],
             }
 
+            if remote['lldpRemPortIdSubtype'] == 3:  # macAddress
+                neighbor['remote_port'] = utils.mac_string(remote['lldpRemPortId'])
+            else:
+                neighbor['remote_port'] = remote['lldpRemPortId']
+
             if remote['lldpRemChassisIdSubtype'] == 4:
-                neighbor['mac'] = remote['lldpRemChassisId']
+                neighbor['mac'] = utils.mac_string(remote['lldpRemChassisId'])
 
             if key in addresses:
                 address = addresses[key]
