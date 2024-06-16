@@ -52,13 +52,10 @@ def convert_variable(var: EasySNMPVariable):
 class CustomEasySNMPVariable(CustomSNMPVariable):
     def typed_value(self):
         if self.snmp_type == 'OCTETSTR':
-            if not self.value.isprintable() and len(self.value) == 6:
-                return utils.mac_string(self.value)
-            else:
-                try:
-                    return int(self.value)
-                except ValueError:
-                    return self.value
+            try:
+                return int(self.value)
+            except ValueError:
+                return self.value or None
         elif self.snmp_type in ['INTEGER', 'COUNTER', 'COUNTER64', 'GAUGE']:
             return int(self.value)
         elif self.snmp_type == 'TICKS':
