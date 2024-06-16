@@ -6,6 +6,7 @@ from switchinfo.SwitchSNMP import mibs, utils
 from switchinfo.SwitchSNMP.EasySNMPCompat import EasySNMPCompat
 from switchinfo.SwitchSNMP.NetSNMPCompat import NetSNMPCompat
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP, select_library
+from .snmp_data import get_file
 
 
 def build_combinations(libraries, vendors):
@@ -24,7 +25,8 @@ class SNMPValueTypeTestCase(unittest.TestCase):
         build_combinations(['easysnmp', 'netsnmp'], ['cisco', 'aruba_test'])
     )
     def test_value(self, snmp_library, vendor, key):
-        snmp = SwitchSNMP(vendor, '127.0.0.%d' % key, snmp_library=snmp_library)
+        snmp = SwitchSNMP(*get_file(vendor), snmp_library=snmp_library)
+        snmp.sessions = {}
         if_mib = mibs.ifMIB(snmp)
         interfaces = if_mib.ifXTable()
 
@@ -38,9 +40,10 @@ class SNMPValueTypeTestCase(unittest.TestCase):
         self.assertEqual(str, type(interfaces[interface_key]['ifAlias']))
         self.assertEqual(int, type(interfaces[interface_key]['ifInMulticastPkts']))
 
-    @parameterized.expand([['netsnmp', 1], ['easysnmp', 2]])
-    def test_mac(self, snmp_library, key):
-        session_lldp = SwitchSNMP('lldp_cisco', '127.0.0.%d' % key, snmp_library=snmp_library)
+    @parameterized.expand([['netsnmp'], ['easysnmp']])
+    def test_mac(self, snmp_library):
+        session_lldp = SwitchSNMP(*get_file('lldp_cisco'), snmp_library=snmp_library)
+        session_lldp.sessions = {}
         if snmp_library == 'netsnmp':
             self.assertIsInstance(session_lldp.get_session(), NetSNMPCompat)
         elif snmp_library == 'easysnmp':
@@ -52,3 +55,18 @@ class SNMPValueTypeTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
+
+    # @parameterized.expand(
+    #     build_combinations(['easysnmp', 'netsnmp'], ['cisco', 'aruba_test'])
+    # )
+    # def test_timetics(self, snmp_library, vendor, key):
+    #     snmp = SwitchSNMP(vendor, '127.0.0.%d' % key, snmp_library=snmp_library)
+    #     if_mib = mibs.ifMIB(snmp)
+    #     interfaces = if_mib.ifTable()
+    #     if vendor == 'cisco':
+    #         interface_key = 10101
+    #     else:
+    #         interface_key = 1
+    #     pass
+    # def test_uptime(self):
+    #     session = SwitchSNMP(*get_file('cisco'))
