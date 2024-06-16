@@ -72,6 +72,9 @@ def mac_parse_oid(oid):
 
 def mac_string(mac_address):
     string = ''
+    if len(mac_address) == 12:  # No conversion required
+        return mac_address
+
     for octet in mac_address:
         octet = ord(octet)
         if octet <= 0x0f:
