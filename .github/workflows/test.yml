@@ -76,21 +76,23 @@ jobs:
         sudo apt-get install libsnmp-dev libczmq-dev
         python -m pip install --upgrade pip
         python -m pip install flake8 coverage parameterized
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Install netsnmp
+    - name: Export requirements for netsnmp
       if: ${{matrix.snmp_library == 'netsnmp'}}
       run: |
-        pip install -r optional-requirements-netsnmp.txt
+        poetry export -f requirements.txt --without-hashes --with netsnmp -o requirements.txt
 
-    - name: Install easysnmp
+    - name: Export requirements for easysnmp
       if: ${{matrix.snmp_library == 'easysnmp'}}
       run: |
-        pip install -r optional-requirements-easysnmp.txt
+        poetry export -f requirements.txt --without-hashes --with easysnmp -o requirements.txt
 
     - name: Install pynetsnmp-2
       if: ${{matrix.snmp_library == 'pynetsnmp'}}
       run: pip install pynetsnmp-2
+
+    - name: Install requirements
+      run: pip install -r requirements.txt
 
     - name: Run tests with django
       run: |
