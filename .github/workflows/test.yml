@@ -39,7 +39,7 @@ jobs:
     - name: Run tests
       run: |
         coverage run -p runtests.py tests.test_select_snmp
-        coverage run -m tests.test_value_type
+        coverage run -m tests_unittest.SwitchSNMP.test_value_type
       env:
         SNMP_LIBRARY: ${{ matrix.snmp_library }}
 
