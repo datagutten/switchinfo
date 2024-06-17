@@ -7,7 +7,7 @@ from switchinfo.SwitchSNMP import mibs, utils
 try:
     from switchinfo.SwitchSNMP.EasySNMPCompat import EasySNMPCompat
     from switchinfo.SwitchSNMP.NetSNMPCompat import NetSNMPCompat
-except ImportError:
+except ModuleNotFoundError:
     exit(0)
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP, select_library
 from .snmp_data import get_file
