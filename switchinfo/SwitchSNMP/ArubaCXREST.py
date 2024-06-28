@@ -58,7 +58,6 @@ class ArubaCXREST(ArubaCX):
             for key, neighbor in neighbors.json().items():
                 cdp_neighbors[interface][key] = {
                     'device_id': neighbor['device_id'],
-                    'ip': None,
                     'platform': neighbor['platform'],
                     'remote_port': neighbor['port_id'],
                 }
@@ -110,13 +109,16 @@ class ArubaCXREST(ArubaCX):
             info['name'][key] = interface['name']
             info['alias'][key] = interface['description']
             info['type'][key] = '6'
+            info['high_speed'][key] = None
             if interface['name'].find('lag') == 0:
                 info['status'][key] = link_status(interface['bond_status']['state'])
-                info['high_speed'][key] = interface['bond_status']['bond_speed'] / math.pow(10, 6)
+                if interface['bond_status']['bond_speed']:
+                    info['high_speed'][key] = interface['bond_status']['bond_speed'] / math.pow(10, 6)
                 info['admin_status'][key] = link_status(interface['admin'])
             else:
                 info['status'][key] = link_status(interface['link_state'])
-                info['high_speed'][key] = interface['link_speed'] / math.pow(10, 6)
+                if interface['link_speed']:
+                    info['high_speed'][key] = interface['link_speed'] / math.pow(10, 6)
                 info['admin_status'][key] = link_status(interface['admin_state'])
 
             if 'lacp_current' in interface and interface['lacp_current']:
