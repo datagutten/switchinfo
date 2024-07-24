@@ -53,6 +53,9 @@ def load_interfaces(switch: Switch, now=None):
     if not now:
         now = datetime.now()
     device = get_switch(switch)
+    if not device:
+        print('Unable to find a valid connection to %s' % switch)
+        return
     interfaces = device.interfaces_rfc()
     using_pvid = False
     try:
