@@ -83,7 +83,11 @@ class ArubaCXREST(ArubaCX):
                 else:
                     lldp_neighbors[interface][key]['device_id'] = neighbor['chassis_id']
                 if 'mgmt_ip_list' in neighbor['neighbor_info']:
-                    lldp_neighbors[interface][key]['ip'] = neighbor['neighbor_info']['mgmt_ip_list']
+                    for address in neighbor['neighbor_info']['mgmt_ip_list'].split(','):
+                        if re.match(r'([\da-f:]{17}).+', address):
+                            lldp_neighbors[interface][key]['mac'] = address
+                        else:
+                            lldp_neighbors[interface][key]['ip'] = address
 
         return lldp_neighbors
 
