@@ -88,6 +88,13 @@ def timeticks(ticks: int) -> datetime.timedelta:
     return datetime.timedelta(seconds=ticks / 100)
 
 
+def validate_ip(ip: str):
+    if re.match(r'^(?:\b\.?(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){4}$', ip):
+        return True
+    else:
+        return False
+
+
 def ip_string(ip):
     string = ''
     for section in ip:

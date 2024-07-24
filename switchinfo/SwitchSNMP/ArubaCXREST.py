@@ -4,7 +4,7 @@ import warnings
 from urllib.parse import quote
 
 from switchinfo.SwitchAPI.api_exceptions import LoginFailed, APIError
-from switchinfo.SwitchSNMP import ArubaCX
+from switchinfo.SwitchSNMP import ArubaCX, utils
 
 
 class ArubaCXREST(ArubaCX):
@@ -84,10 +84,12 @@ class ArubaCXREST(ArubaCX):
                     lldp_neighbors[interface][key]['device_id'] = neighbor['chassis_id']
                 if 'mgmt_ip_list' in neighbor['neighbor_info']:
                     for address in neighbor['neighbor_info']['mgmt_ip_list'].split(','):
-                        if re.match(r'([\da-f:]{17}).+', address):
+                        if re.match(r'[\da-f:]{17}', address):
                             lldp_neighbors[interface][key]['mac'] = address
-                        else:
+                        elif utils.validate_ip(address):
                             lldp_neighbors[interface][key]['ip'] = address
+                        else:
+                            lldp_neighbors[interface][key]['unknown'] = address
 
         return lldp_neighbors
 
