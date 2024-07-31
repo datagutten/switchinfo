@@ -1,3 +1,5 @@
+from typing import Type
+
 from django.conf import settings
 
 from switchinfo.SwitchSNMP.Cisco import Cisco
@@ -60,6 +62,7 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     username, password = get_login(switch)
     if type(snmp) != list:
         snmp = [snmp]
+    snmp_class: Type[SwitchSNMP]
     for snmp_class in snmp:
         try:
             return snmp_class(community=switch.community, device=switch.ip, switch=switch,

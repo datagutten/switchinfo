@@ -54,7 +54,7 @@ class SwitchSNMP:
     def __del__(self):
         self.sessions = None
 
-    def get_session(self, device: str = None, vlan: int = None):
+    def get_session(self, device: str = None, vlan: int = None) -> SNMPCompat:
         if not vlan:
             vlan = 0
             community = self.community
@@ -78,7 +78,7 @@ class SwitchSNMP:
             session.close()
         del self.sessions[self.device]
 
-    def walk_keys(self, oid: str, keys: list):
+    def walk_keys(self, oid: str, keys: list) -> dict:
         session = self.get_session()
         if oid[-1] != '.':
             oid = oid + '.'
