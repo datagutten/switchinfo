@@ -42,7 +42,7 @@ class SwitchSNMP:
     lldp_key = 'interface_index'
 
     # TODO: Make arguments mandatory?
-    def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None):
+    def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None, **kwargs):
         self.community = community
         self.device = device
         self.switch = switch
