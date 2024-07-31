@@ -3,6 +3,7 @@ import os
 import re
 
 from . import exceptions, mibs, utils
+from .compat.SNMPCompat import SNMPCompat
 
 
 def select_library(library):
