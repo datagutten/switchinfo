@@ -5,6 +5,7 @@ from netsnmp._api import SNMPError
 
 import netsnmp
 from . import exceptions, SNMPVariable
+from .compat.SNMPCompat import SNMPCompat
 
 
 def get_exception(message: str):
@@ -16,7 +17,7 @@ def get_exception(message: str):
         return exceptions.SNMPError
 
 
-class NetSNMPCompat(netsnmp.SNMPSession):
+class NetSNMPCompat(netsnmp.SNMPSession, SNMPCompat):
     session = None
     hostname = None
 

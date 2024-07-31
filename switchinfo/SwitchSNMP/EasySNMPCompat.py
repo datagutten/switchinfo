@@ -2,9 +2,10 @@ import easysnmp
 from easysnmp import SNMPVariable as EasySNMPVariable
 
 from . import exceptions, SNMPVariable as CustomSNMPVariable, utils
+from .compat.SNMPCompat import SNMPCompat
 
 
-class EasySNMPCompat(easysnmp.Session):
+class EasySNMPCompat(easysnmp.Session, SNMPCompat):
     def __init__(self, hostname, community, version=2, timeout=0.5, retries=1):
         try:
             super().__init__(hostname=hostname, community=community,
