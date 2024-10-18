@@ -320,10 +320,7 @@ def load_interfaces(switch: Switch, now=None):
         #        print('vlan %s is tagged on ifindex %s' % (vlan, if_index))
         #        # interface.tagged_vlans.add(vlan)
     load_aggregations(aggregations, switch)
-    try:
-        del device.sessions[switch.ip]
-    except KeyError:
-        pass
+    device.close_sessions()
 
 
 def get_neighbors(index: int, cdp_multi: dict, switch: Switch):
