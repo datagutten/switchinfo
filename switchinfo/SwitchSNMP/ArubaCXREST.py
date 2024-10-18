@@ -118,7 +118,7 @@ class ArubaCXREST(ArubaCX):
             info['high_speed'][key] = None
             if interface['name'].find('lag') == 0:
                 info['status'][key] = link_status(interface['bond_status']['state'])
-                if interface['bond_status']['bond_speed']:
+                if 'bond_speed' in interface['bond_status'] and interface['bond_status']['bond_speed']:
                     info['high_speed'][key] = interface['bond_status']['bond_speed'] / math.pow(10, 6)
                 info['admin_status'][key] = link_status(interface['admin'])
             else:
