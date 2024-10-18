@@ -13,6 +13,7 @@ class Command(SwitchBaseCommand):
     def handle(self, *args, **options):
         switch: Switch
         for switch in self.handle_arguments(options):
+            print(switch)
             device = get_switch(switch)
             try:
                 arp = device.arp()
