@@ -67,4 +67,4 @@ class ArubaCX(SwitchSNMP):
     def vlans(self):
         # ieee8021QBridgeMib::ieee8021QBridgeVlanCurrentEgressPorts
         oid = '.1.3.111.2.802.1.1.4.1.4.2.1.4'
-        return self.create_dict(oid=oid, typed_value=True)
+        return self.create_dict(oid=oid, typed_value=True, int_index=True)
