@@ -108,17 +108,18 @@ class ArubaCXREST(ArubaCX):
 
     def interfaces_rfc(self):
         info = {'name': {}, 'alias': {}, 'type': {}, 'status': {}, 'admin_status': {}, 'duplex': {},
-                'high_speed': {}, 'untagged': {}, 'tagged': {}}
+                'high_speed': {}, 'untagged': {}, 'tagged': {}, 'index': {}}
         interfaces = self.aos_session.request('GET', 'system/interfaces?depth=2')
         for interface in interfaces.json().values():
             if interface['name'].find('lag') != 0 and interface['type'] != 'system':
                 continue
 
-            key = interface['ifindex']
+            key = interface['name']
             info['name'][key] = interface['name']
             info['alias'][key] = interface['description']
             info['type'][key] = '6'
             info['high_speed'][key] = None
+            info['index'][key] = interface['ifindex']
             if interface['name'].find('lag') == 0:
                 info['status'][key] = link_status(interface['bond_status']['state'])
                 if 'bond_speed' in interface['bond_status'] and interface['bond_status']['bond_speed']:

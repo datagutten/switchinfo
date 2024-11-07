@@ -148,7 +148,14 @@ def load_interfaces(switch: Switch, now=None):
 
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():
-        if_index_int = int(if_index)
+        if device.interface_key != 'interface_name':
+            if_index_int = int(if_index)
+        elif 'index' in interfaces and if_index in interfaces['index']:
+            if_index_int = interfaces['index'][if_index]
+        else:
+            print('Unable to find numeric interface index for interface %s' % if_index)
+            continue
+
         if if_index in ports_rev.keys():
             bridge_port = ports_rev[if_index]
         elif len(str(if_index)) > 2:
@@ -156,7 +163,9 @@ def load_interfaces(switch: Switch, now=None):
         else:
             bridge_port = None
 
-        if bridge_port and switch.type not in ['Cisco', 'Cisco IOS XE', 'CiscoSB', 'Aruba', 'Aruba CX REST API']:
+        if device.interface_key == 'interface_name':
+            key = if_index  # if_index is interface name
+        elif bridge_port and switch.type not in ['Cisco', 'Cisco IOS XE', 'CiscoSB', 'Aruba']:
             key = int(bridge_port)
         else:
             key = int(if_index)
@@ -192,7 +201,7 @@ def load_interfaces(switch: Switch, now=None):
 
         interface, new = Interface.objects.get_or_create(
             switch=switch,
-            index=if_index,
+            index=if_index_int,
             defaults={'interface': name, 'type': interfaces['type'][if_index]}
         )
 
@@ -238,7 +247,7 @@ def load_interfaces(switch: Switch, now=None):
                 neighbor = get_neighbors(int(ports_rev[if_index]), cdp_multi, switch)
             elif switch.type == 'HP' or switch.type == 'Comware':
                 neighbor = get_neighbors(int(bridge_port), cdp_multi, switch)
-            elif switch.type == 'Aruba CX REST API':
+            elif device.__class__.__name__ != 'ArubaCXREST':
                 neighbor = get_neighbors(interface.interface, cdp_multi, switch)
             else:  # CDP on Cisco is indexed by interface index
                 neighbor = get_neighbors(interface.index, cdp_multi, switch)
@@ -268,7 +277,6 @@ def load_interfaces(switch: Switch, now=None):
             interface.skip_mac = True
         elif neighbor is not None:
             interface.neighbor_string = neighbor
-            # Mitel IP Phones have lldp, but we want to load their MAC
             for line in neighbor.split('\n'):
                 if line in trunk_force_mac:
                     interface.force_mac = True
