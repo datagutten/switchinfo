@@ -121,7 +121,7 @@ def load_interfaces(switch: Switch, now=None):
                 device.close_sessions()
             except SNMPError:
                 pass
-    elif switch.type != 'Aruba CX REST API':
+    elif device.__class__.__name__ != 'ArubaCXREST':
         try:
             ports = device.bridgePort_to_ifIndex()
             for bridge_port, if_index in ports.items():
