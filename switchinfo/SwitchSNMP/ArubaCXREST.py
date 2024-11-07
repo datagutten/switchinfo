@@ -10,6 +10,7 @@ from switchinfo.SwitchSNMP import ArubaCX, utils
 class ArubaCXREST(ArubaCX):
     aos_session = None
     lldp_key = 'interface_name'
+    interface_key = 'interface_name'
 
     def __init__(self, username, password, **kwargs):
         if not username or not password:

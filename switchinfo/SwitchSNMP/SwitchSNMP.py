@@ -45,6 +45,10 @@ class SwitchSNMP:
     Field in RFC1213-MIB to use for ARP fetching
     """
     lldp_key = 'interface_index'
+    """
+    Key to use for matching description and vlan to interface
+    """
+    interface_key = 'interface_index'
 
     # TODO: Make arguments mandatory?
     def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None, **kwargs):
