@@ -74,10 +74,14 @@ class Switch(models.Model):
         matches = None
         if self.type == 'Aruba' or self.type == 'ProCurve':
             matches = re.search(r'revision ([A-Z]+[0-9.]+)', self.description)
+        elif self.type == 'Aruba CX':
+            matches = re.search(r'([A-Z]{2}\.[\d.]+)', self.description)
         elif self.type == 'HP':
             matches = re.search(r'Release ([A-Z0-9]+)', self.description)
         elif self.type in ['Cisco', 'Cisco IOS', 'Cisco IOS XE']:
             matches = re.search(r'Version ([\w.()]+)', self.description)
+        elif self.type == 'Extreme':
+            matches = re.search(r'version ([\d.]+)', self.description)
 
         if matches:
             return matches.group(1)
