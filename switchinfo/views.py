@@ -83,6 +83,23 @@ def switches(request):
     return render(request, 'switchinfo/switches.html', context)
 
 
+def switches_json(request):
+    switches_obj = Switch.objects.all()
+    switch_list = []
+    for switch in switches_obj:
+        switch_list.append({
+            'name': switch.name,
+            'location': switch.location,
+            'ip': switch.ip,
+            'type': switch.type,
+            'model': switch.model,
+            'description': switch.description,
+            'software': switch.software(),
+
+        })
+    return JsonResponse(switch_list, safe=False)
+
+
 def switches_group(request):
     groups = dict()
     switches_nogroup = Switch.objects.all()
@@ -259,6 +276,8 @@ def vlans_on_switch(request, switch_name):
 
     if request.path[-3:] == 'txt':
         return render(request, 'switchinfo/vlans_cli.html', context, content_type='text/plain')
+    if request.path[-4:] == 'json':
+        return JsonResponse([{'id': vlan.vlan, 'name': vlan.name} for vlan in switch.vlan.filter(vlan__gt=1)], safe=False)
     else:
         return render(request, 'switchinfo/vlans_on_switch.html', context)
 
