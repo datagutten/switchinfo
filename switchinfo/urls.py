@@ -26,6 +26,7 @@ urlpatterns = [
     path('series/<str:series>', views.switch_model, name='switch_series'),
     path('search', views.search_form, name='search'),
     path('mac/<str:mac>', views.mac_search, name='mac'),
+    path('mac.json/<str:mac>', views.mac_search_json, name='mac_json'),
     path('ip/<str:ip>', views.ip_search, name='ip'),
     path('hosts', views.hosts, name='hosts'),
 ]

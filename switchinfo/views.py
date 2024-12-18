@@ -151,7 +151,7 @@ def search_form(request):
 
 
 def mac_search(request, mac):
-    mac = mac.lower()
+    mac = mac.lower().replace(':', '').replace('.', '')
     macs = Mac.objects.filter(mac__startswith=mac).\
         order_by('interface__switch').order_by('interface__index')
 
@@ -165,6 +165,23 @@ def mac_search(request, mac):
     return render(request, 'switchinfo/vlan.html',
                   context={'switches': mac_switch.items(),
                            'title': 'MAC addresses starting with %s' % mac})
+
+
+def mac_search_json(request, mac):
+    mac = mac.lower().replace(':', '').replace('.', '')
+    macs = Mac.objects.filter(mac__startswith=mac). \
+        order_by('interface__switch').order_by('interface__index')
+    mac_list = []
+    for mac in macs:
+        mac_list.append({
+            'switch_name': mac.interface.switch.name,
+            'switch_ip': mac.interface.switch.ip,
+            'interface': mac.interface.interface,
+            'mac': mac.mac,
+            'vendor': mac.oui()
+        })
+
+    return JsonResponse(mac_list, safe=False)
 
 
 def neighbor_search(request, neighbor):
