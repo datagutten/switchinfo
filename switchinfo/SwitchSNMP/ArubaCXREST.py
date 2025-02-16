@@ -130,7 +130,11 @@ class ArubaCXREST(ArubaCX):
                 info['status'][key] = link_status(interface['link_state'])
                 if interface['link_speed']:
                     info['high_speed'][key] = interface['link_speed'] / math.pow(10, 6)
-                info['admin_status'][key] = link_status(interface['admin_state'])
+
+                if interface['error'] == 'Administratively down':
+                    info['admin_status'][key] = 2
+                else:
+                    info['admin_status'][key] = 1
 
             if 'lacp_current' in interface and interface['lacp_current']:
                 continue
@@ -150,7 +154,7 @@ class ArubaCXREST(ArubaCX):
 
 
 def link_status(status: str) -> int:
-    status_mappings = {'up': 1, 'down': 0}
+    status_mappings = {'up': 1, 'down': 2}
     if status in status_mappings:
         return status_mappings[status]
     else:  # Unmapped link state
