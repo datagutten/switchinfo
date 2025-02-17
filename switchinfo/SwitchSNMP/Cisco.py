@@ -2,6 +2,7 @@ import re
 
 from switchinfo.SwitchSNMP import SNMPVariable, exceptions, utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
+from . import mibs
 
 
 class Cisco(SwitchSNMP):
@@ -108,3 +109,19 @@ class Cisco(SwitchSNMP):
             print('Untagged :', untagged_vlan)
 
         return [port_vlan, tagged_vlans, untagged_vlan]
+
+    def interface_poe(self):
+        cisco_poe_mib = mibs.CiscoPowerEthernetMIB(self)
+        poe_mib = mibs.powerEthernetMIB(self)
+        entity_mib = mibs.entityMIB(self)
+        poe_ports_cisco = cisco_poe_mib.cpeExtPsePortTable()  # TODO: Get only pethPsePortDetectionStatus
+        poe_ports = poe_mib.pethPsePortTable()
+        phys_ports = entity_mib.entPhysicalTable()
+
+        ports = {}
+        for key, port in poe_ports.items():
+            cisco_port = poe_ports_cisco[key]
+            phys_port = phys_ports[cisco_port['cpeExtPsePortEntPhyIndex']]
+            port['pethPsePortDetectionStatus'] = poe_mib.states[port['pethPsePortDetectionStatus']]
+            ports[int(phys_port['entPhysicalAlias'])] = port
+        return ports

@@ -23,14 +23,3 @@ class CiscoIOS(Cisco):
         if remainder > 1:
             return [None, None]
         return [quotient + 1, port]
-
-    def interface_poe(self):
-        interfaces = super().interface_poe()
-        interfaces_converted = {}
-        for key, interface in interfaces.items():
-            module, index = key.split('.')
-            if_index = self.module_to_ifindex(int(module), int(index))
-            interfaces_converted[if_index] = interface
-
-        return interfaces_converted
-
