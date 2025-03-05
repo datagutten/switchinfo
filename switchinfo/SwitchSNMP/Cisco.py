@@ -123,5 +123,7 @@ class Cisco(SwitchSNMP):
             cisco_port = poe_ports_cisco[key]
             phys_port = phys_ports[cisco_port['cpeExtPsePortEntPhyIndex']]
             port['pethPsePortDetectionStatus'] = poe_mib.states[port['pethPsePortDetectionStatus']]
-            ports[int(phys_port['entPhysicalAlias'])] = port
+            if phys_port['entPhysicalAlias']:
+                ports[int(phys_port['entPhysicalAlias'])] = port
+
         return ports
