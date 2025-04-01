@@ -45,6 +45,7 @@ def switch_json(request, name):
         'name': switch.name,
         'description': switch.description,
         'model': switch.model,
+        'community': switch.community,
         'interfaces': {},
     }
     for interface in switch.interfaces.all():
