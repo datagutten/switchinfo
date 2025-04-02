@@ -96,7 +96,7 @@ def switches_json(request):
             'model': switch.model,
             'description': switch.description,
             'software': switch.software(),
-
+            'community': switch.community,
         })
     return JsonResponse(switch_list, safe=False)
 
