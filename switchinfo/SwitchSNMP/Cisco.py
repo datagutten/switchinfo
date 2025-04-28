@@ -120,9 +120,9 @@ class Cisco(SwitchSNMP):
         cisco_poe_mib = mibs.CiscoPowerEthernetMIB(self)
         poe_mib = mibs.powerEthernetMIB(self)
         entity_mib = mibs.entityMIB(self)
-        poe_ports_cisco = cisco_poe_mib.cpeExtPsePortTable()  # TODO: Get only pethPsePortDetectionStatus
+        poe_ports_cisco = cisco_poe_mib.cpeExtPsePortTable(['cpeExtPsePortEntPhyIndex'])
         poe_ports = poe_mib.pethPsePortTable()
-        phys_ports = entity_mib.entPhysicalTable()
+        phys_ports = entity_mib.entPhysicalTable([self.poe_snmp_key])
 
         ports = {}
         for key, port in poe_ports.items():

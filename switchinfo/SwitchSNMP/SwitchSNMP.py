@@ -488,27 +488,32 @@ class SwitchSNMP:
 
         return items
 
-    def snmp_table(self, oid: str, key_mappings: dict) -> dict:
+    def snmp_table(self, oid: str, key_mappings: dict, field_filter: list = None) -> dict:
         """
         Fetch an SNMP table as a dict
         :param oid: Base OID to walk
         :param key_mappings: OID as key, name as value
+        :param field_filter: Fetch only given OID names or numbers to improve performance
         :return: Dict with table values
         """
         session = self.get_session()
         data = {}
-        for item in session.walk(oid):
-            row, col = utils.table_index(oid, item.oid)
+        for key, name in key_mappings.items():
+            if field_filter and (key not in field_filter and name not in field_filter):
+                continue
 
-            try:
-                field_name = key_mappings[col]
-            except KeyError:
-                field_name = col
+            for item in session.walk('%s.%d' % (oid, key)):
+                row, col = utils.table_index(oid, item.oid)
 
-            if row not in data.keys():
-                data[row] = {}
+                try:
+                    field_name = key_mappings[col]
+                except KeyError:
+                    field_name = col
 
-            data[row][field_name] = item.typed_value()
+                if row not in data.keys():
+                    data[row] = {}
+
+                data[row][field_name] = item.typed_value()
 
         return data
 
