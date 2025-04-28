@@ -7,7 +7,9 @@ class CiscoIOS(Cisco):
     """
     Cisco IOS 12 or 15
     """
-    poe_absolute_index = False
+    poe_snmp_key = 'entPhysicalAlias'
+    poe_db_key = 'index'
+
 
     @staticmethod
     def module_to_ifindex(module: int, index: int):

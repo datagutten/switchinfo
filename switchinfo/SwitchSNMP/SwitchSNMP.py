@@ -31,12 +31,7 @@ class SwitchSNMP:
     snmp_library = None
     ignore_unknown_vlans = False
     """Should tagged vlans not defined on switch be ignored?"""
-    poe_absolute_index = True  # TODO: Remove this
-    """
-    POWER-ETHERNET-MIB
-    Is pethPsePortIndex in pethPsePortTable absolute for all ports in the stack or relative to the stack member?
-    """
-    poe_key = 'index'
+    poe_db_key = 'index'
     """
     Field in Interface model used as key for interface_poe return dict
     """
@@ -261,10 +256,7 @@ class SwitchSNMP:
         POWER-ETHERNET-MIB::PethPsePortEntry
         Return key: bridgePort
         """
-        if self.poe_absolute_index:
-            keys = ['pethPsePortIndex']
-        else:
-            keys = ['pethPsePortGroupIndex', 'pethPsePortIndex']
+        keys = ['pethPsePortIndex']
 
         ports = self.build_dict_multikeys(
             '.1.3.6.1.2.1.105.1.1.1',

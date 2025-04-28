@@ -11,6 +11,12 @@ class Cisco(SwitchSNMP):
     """
     lldp_key = 'bridge_port'
 
+    poe_snmp_key = None
+    """Field in entityMIB::entPhysicalTable containing the key to use to match interface"""
+
+    poe_db_key = None
+    """Database field that matches the key for the PoE value from SNMP"""
+
     def vlans(self):
         # CISCO-VTP-MIB::vtpVlanState
         oid = '.1.3.6.1.4.1.9.9.46.1.3.1.1.2'
@@ -123,7 +129,10 @@ class Cisco(SwitchSNMP):
             cisco_port = poe_ports_cisco[key]
             phys_port = phys_ports[cisco_port['cpeExtPsePortEntPhyIndex']]
             port['pethPsePortDetectionStatus'] = poe_mib.states[port['pethPsePortDetectionStatus']]
-            if phys_port['entPhysicalAlias']:
-                ports[int(phys_port['entPhysicalAlias'])] = port
+            if phys_port[self.poe_snmp_key]:
+                try:  # TODO: No need to convert value when new SNMP compat is implemented
+                    ports[int(phys_port[self.poe_snmp_key])] = port
+                except ValueError:
+                    ports[phys_port[self.poe_snmp_key]] = port
 
         return ports

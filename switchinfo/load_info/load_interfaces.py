@@ -224,14 +224,14 @@ def load_interfaces(switch: Switch, now=None):
 
         interface.poe_status = None
 
-        if device.poe_absolute_index and bridge_port in poe_interfaces:
+        if hasattr(device, 'poe_db_key'):
+            poe_key = getattr(interface, device.poe_db_key)
+            if poe_key in poe_interfaces:
+                interface.poe_status = poe_interfaces[poe_key]['pethPsePortDetectionStatus']
+        elif bridge_port in poe_interfaces:
             interface.poe_status = poe_interfaces[bridge_port]['pethPsePortDetectionStatus']
         elif if_index_int in poe_interfaces:
             interface.poe_status = poe_interfaces[if_index_int]['pethPsePortDetectionStatus']
-        elif not device.poe_absolute_index:
-            normalized_port = SwitchSNMP.utils.normalize_interface(name)
-            if normalized_port and normalized_port in poe_interfaces:
-                interface.poe_status = poe_interfaces[normalized_port]['pethPsePortDetectionStatus']
 
         neighbor = None
         if lldp:  # LLDP on Cisco is indexed by bridge port

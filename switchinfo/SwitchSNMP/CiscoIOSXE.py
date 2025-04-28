@@ -6,8 +6,9 @@ class CiscoIOSXE(Cisco):
     """
     Cisco IOS XE
     """
-    poe_absolute_index = False
     lldp_key = 'interface_name'
+    poe_snmp_key = 'entPhysicalDescr'
+    poe_db_key = 'interface'
 
     def lldp(self):
         lldp_mib = mibs.lldpMIB(self)
