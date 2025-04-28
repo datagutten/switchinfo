@@ -161,7 +161,7 @@ class Interface(models.Model):
         default=False)
     aggregation = models.ForeignKey(
         'self',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='aggregation_members',
         help_text='Aggregation virtual interface',
