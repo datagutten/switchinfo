@@ -3,7 +3,7 @@ from .SNMPMib import SNMPMib
 
 # noinspection PyPep8Naming
 class CiscoPowerEthernetMIB(SNMPMib):
-    def cpeExtPsePortTable(self):
+    def cpeExtPsePortTable(self, field_filter: list = None):
         fields = {
             1: "cpeExtPsePortEnable",
             2: "cpeExtPsePortDiscoverMode",
@@ -22,4 +22,4 @@ class CiscoPowerEthernetMIB(SNMPMib):
             15: "cpeExtPsePortPwrManAlloc",
             16: "cpeExtPsePortCapabilities"
         }
-        return self.snmp.snmp_table('.1.3.6.1.4.1.9.9.402.1.2.1', fields)
+        return self.snmp.snmp_table('.1.3.6.1.4.1.9.9.402.1.2.1', fields, field_filter)
