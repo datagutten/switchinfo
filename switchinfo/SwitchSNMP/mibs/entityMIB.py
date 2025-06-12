@@ -3,7 +3,7 @@ from .SNMPMib import SNMPMib
 
 # noinspection PyPep8Naming
 class entityMIB(SNMPMib):
-    def entPhysicalTable(self):
+    def entPhysicalTable(self, field_filter: list = None):
         fields = {
             1: "entPhysicalIndex",
             2: "entPhysicalDescr",
@@ -24,4 +24,4 @@ class entityMIB(SNMPMib):
             17: "entPhysicalMfgDate",
             18: "entPhysicalUris",
         }
-        return self.snmp.build_dict_multikeys('.1.3.6.1.2.1.47.1.1.1.1', ['entPhysicalIndex'], fields)
+        return self.snmp.snmp_table('.1.3.6.1.2.1.47.1.1.1.1', fields, field_filter)

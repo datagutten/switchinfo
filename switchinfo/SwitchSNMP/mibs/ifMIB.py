@@ -2,7 +2,7 @@ from .SNMPMib import SNMPMib
 
 
 class ifMIB(SNMPMib):
-    def ifXTable(self) -> dict:
+    def ifXTable(self, field_filter=None) -> dict:
         """
         IF-MIB::ifXTable
         :return:
@@ -27,9 +27,9 @@ class ifMIB(SNMPMib):
             17: 'ifConnectorPresent',
             18: 'ifAlias',
             19: 'ifCounterDiscontinuityTime',
-        })
+        }, field_filter)
 
-    def ifTable(self):
+    def ifTable(self, field_filter=None):
         return self.snmp.snmp_table('.1.3.6.1.2.1.2.2.1', {
             1: 'ifIndex',
             2: 'ifDescr',
@@ -53,4 +53,4 @@ class ifMIB(SNMPMib):
             20: 'ifOutErrors',
             21: 'ifOutQLen',
             22: 'ifSpecific',
-        })
+        }, field_filter)
