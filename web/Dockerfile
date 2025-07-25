@@ -21,7 +21,7 @@ RUN a2enmod proxy_http
 
 COPY launcher.sh /home/launcher.sh
 RUN chmod +x /home/launcher.sh
-COPY --from=datagutten/switchinfo:latest /home/switch_info/static ${APACHE_DOCUMENT_ROOT}/static
+COPY --from=datagutten/switchinfo:latest /home/switch_info/static /var/www/html/static
 
 # Expose the port Apache listens on
 EXPOSE 80
