@@ -87,3 +87,24 @@ class Extreme(SwitchSNMP):
                     port_vlan[index] = None
 
         return [port_vlan, tagged_vlans, untagged_vlan]
+
+    def aggregations(self):
+        oid = '.1.3.6.1.4.1.1916.1.19.1.1.1'
+        session = self.get_session()
+        aggregations = {}
+        try:
+            for entry in session.walk(oid):
+                interface = int(utils.last_section(entry.oid))
+                aggregation = int(entry.value) + 1000
+                if aggregation == 0:
+                    continue  # Interface is not member of an aggregation
+                pass
+                if aggregation not in aggregations:
+                    aggregations[aggregation] = []
+                aggregations[aggregation].append(interface)
+
+        except snmp_exceptions.SNMPError as e:
+            e.message = 'Error fetching aggregations'
+            raise e
+
+        return aggregations
