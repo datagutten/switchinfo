@@ -5,8 +5,8 @@ import unittest
 from switchinfo import SwitchSNMP
 from .snmp_data import get_file
 
-session = SwitchSNMP.Cisco(*get_file('cisco'))
-session_lldp = SwitchSNMP.Cisco(*get_file('lldp_cisco'))
+session = SwitchSNMP.CiscoIOS(*get_file('cisco'))
+session_lldp = SwitchSNMP.CiscoIOS(*get_file('lldp_cisco'))
 
 
 class CiscoIOSTestCase(unittest.TestCase):

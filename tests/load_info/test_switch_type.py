@@ -12,13 +12,13 @@ class SwitchTypeTestCase(TestCase):
         desc = 'Cisco IOS Software, C2960 Software (C2960-LANLITEK9-M), Version 12.2(55)SE12, RELEASE SOFTWARE (fc2)'
         self.assertEqual('Cisco', switch_type(desc))
         switch = models.Switch(ip='127.0.0.1', community='cisco', type=switch_type(desc))
-        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.Cisco)
+        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.CiscoIOS)
 
     def test_cisco_ios15(self):
         desc = 'Cisco IOS Software, C2960X Software (C2960X-UNIVERSALK9-M), Version 15.2(7)E6, RELEASE SOFTWARE (fc2)'
         self.assertEqual('Cisco', switch_type(desc))
         switch = models.Switch(ip='127.0.0.1', community='cisco', type=switch_type(desc))
-        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.Cisco)
+        self.assertIsInstance(select.get_switch(switch), SwitchSNMP.CiscoIOS)
 
     def test_cisco_ios16(self):
         desc = 'Cisco IOS Software [Fuji], Catalyst L3 Switch Software (CAT9K_IOSXE), Version 16.9.4, RELEASE SOFTWARE (fc2)'

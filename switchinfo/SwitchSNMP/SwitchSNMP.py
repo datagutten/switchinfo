@@ -1,23 +1,16 @@
 import datetime
-import os
 import re
 
-from . import exceptions, mibs, utils
-from .compat.SNMPCompat import SNMPCompat
+import snmp_compat.compat as snmp_compat
+from snmp_compat import snmp_exceptions
+from . import mibs, utils
 
 
-def select_library(library):
-    if library == 'netsnmp':
-        from .NetSNMPCompat import NetSNMPCompat
-        return NetSNMPCompat
-    elif library == 'easysnmp':
-        from .EasySNMPCompat import EasySNMPCompat
-        return EasySNMPCompat
-    elif library == 'pynetsnmp':
-        from .pynetsnmpCompat import PynetsnmpCompat
-        return PynetsnmpCompat
-    else:
-        raise ValueError('Invalid SNMP library "%s"' % library)
+def _int(value):
+    try:
+        return int(value)
+    except ValueError:
+        return None
 
 
 class SwitchSNMP:
@@ -50,15 +43,12 @@ class SwitchSNMP:
         self.community = community
         self.device = device
         self.switch = switch
-        if snmp_library:
-            self.snmp_library = select_library(snmp_library)
-        else:
-            self.snmp_library = select_library(os.environ.get('SNMP_LIBRARY') or 'netsnmp')
+        self.snmp_library = snmp_compat.select(snmp_library or 'ezsnmp')
 
     def __del__(self):
         self.sessions = None
 
-    def get_session(self, device: str = None, vlan: int = None) -> SNMPCompat:
+    def get_session(self, device: str = None, vlan: int = None) -> snmp_compat.SNMPCompat:
         if not vlan:
             vlan = 0
             community = self.community
@@ -91,7 +81,7 @@ class SwitchSNMP:
             try:
                 alias = session.get(oid + key)
                 values[key] = alias.value
-            except exceptions.SNMPNoData:
+            except snmp_exceptions.SNMPNoData:
                 values[key] = None
         return values
 
@@ -106,7 +96,7 @@ class SwitchSNMP:
         indexes = dict()
         items = session.walk(oid)
         if not items:
-            raise exceptions.SNMPNoData(session=session, oid=oid)
+            raise snmp_exceptions.SNMPNoData(session=session, oid=oid)
         for item in items:
             index = utils.last_section(item.oid)
             if not index:
@@ -155,12 +145,12 @@ class SwitchSNMP:
                     break
             # info['model'] =\
             #    session.get('.1.3.6.1.2.1.47.1.1.1.1.13.1001').value
-        except exceptions.SNMPNoData:
+        except snmp_exceptions.SNMPNoData:
             info['model'] = ''
         try:
             location = session.get('1.3.6.1.2.1.1.6.0').value
             info['location'] = location.encode('iso-8859-1').decode('utf8')
-        except exceptions.SNMPNoData:
+        except snmp_exceptions.SNMPNoData:
             info['location'] = ''
 
         return info
@@ -197,7 +187,7 @@ class SwitchSNMP:
         # EtherLike-MIB::dot3StatsDuplexStatus
         try:
             info['duplex'] = self.create_dict(oid='.1.3.6.1.2.1.10.7.2.1.19')
-        except exceptions.SNMPNoData:
+        except snmp_exceptions.SNMPNoData:
             info['duplex'] = {}
 
         return info
@@ -240,7 +230,7 @@ class SwitchSNMP:
         else:
             try:
                 return self.create_dict(vlan=vlan, oid=oid)
-            except exceptions.SNMPError as e:
+            except snmp_exceptions.SNMPError as e:
                 if not vlan:
                     vlan = 0
                 e.message = 'Unable to get bridgePort to ' \
@@ -297,7 +287,7 @@ class SwitchSNMP:
         oid = '.1.3.6.1.2.1.17.7.1.4.3.1.1'
         try:
             return self.create_dict(oid=oid, int_index=True)
-        except exceptions.SNMPError as e:
+        except snmp_exceptions.SNMPError as e:
             e.message = 'Unable to get VLAN names'
             raise e
 
@@ -447,8 +437,12 @@ class SwitchSNMP:
             # print('%s=%s' % (item.oid, item.value))
             # continue
             keys = {}
-
-            key_pos = len('iso' + oid[2:])
+            if item.oid.find('iso') > -1:
+                key_pos = len('iso' + oid[2:])
+            elif item.oid[0:2] == '.1':
+                key_pos = len(oid)
+            else:
+                raise ValueError('Unable to find key from oid %s' % item.oid)
             # print('Keys', item.oid[key_pos:])
             matches = re.match(r'\.([0-9]+)\.(.+)', item.oid[key_pos:])
             # print(item.oid[key_pos:])
@@ -523,7 +517,7 @@ class SwitchSNMP:
         remotes = lldp_mib.lldpRemTable()
         try:
             addresses = lldp_mib.lldpRemManAddrTable()
-        except exceptions.SNMPError:
+        except snmp_exceptions.SNMPError:
             addresses = {}
 
         neighbors = {}
@@ -628,7 +622,7 @@ class SwitchSNMP:
                     aggregations[aggregation] = []
                 aggregations[aggregation].append(interface)
 
-        except exceptions.SNMPError as e:
+        except snmp_exceptions.SNMPError as e:
             e.message = 'Error fetching aggregations'
             raise e
 
@@ -654,7 +648,7 @@ class SwitchSNMP:
                     mac.append(utils.mac_string(item.value))
                 else:
                     print('No match: ' + item.oid)
-        except exceptions.SNMPError as e:
+        except snmp_exceptions.SNMPError as e:
             e.message = 'Error fetching ARP'
             raise e
 

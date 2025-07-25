@@ -6,8 +6,8 @@ authors = ["Anders Birkenes <datagutten@datagutten.net>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
-Django = "^3|^4"
+python = ">=3.10,<4.0"
+Django = "^5.2"
 
 [tool.poetry.group.aoscx.dependencies]
 pyaoscx = "^2.4.0"
@@ -24,17 +24,12 @@ mysqlclient = "^2"
 [tool.poetry.group.postgres.dependencies]
 psycopg2-binary = "^2"
 
-[tool.poetry.group.easysnmp.dependencies]
-easysnmp = "^0.2.6"
-
-
-[tool.poetry.group.netsnmp.dependencies]
-netsnmp-py = "^0.5.2"
-pyzmq = "*"
-
+[tool.poetry.group.snmp.dependencies]
+snmp-helper = { git = "https://github.com/datagutten/SNMP-helper-py.git" }
+ezsnmp = "^1.0.0"
 
 [tool.poetry.group.backup.dependencies]
-django-switch-config-backup = { git = "https://github.com/datagutten/django-switch-config-backup" }
+config-backup = { git = "https://github.com/datagutten/django-switch-config-backup.git" }
 
 [build-system]
 requires = ["poetry-core"]

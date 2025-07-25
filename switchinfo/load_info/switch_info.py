@@ -2,8 +2,8 @@ import re
 from pprint import pprint
 from typing import Optional
 
+from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
-from switchinfo.SwitchSNMP.exceptions import SNMPError
 from switchinfo.models import Switch
 
 pattern_hp_series = re.compile(r'(HP|Aruba) (Switch|[A-Z]{1,2}\d{3,4}[A-Z]) [A-Z]?([0-9]+)')
@@ -17,7 +17,7 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
         community = device.community
     try:
         info = device.switch_info()
-    except SNMPError as e:
+    except snmp_exceptions.SNMPError as e:
         e.message = 'Unable to get switch info: %s' % e
         raise e
 

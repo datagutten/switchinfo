@@ -15,19 +15,10 @@ from switchinfo import SwitchAPI
 from switchinfo.models import Switch
 
 
-def select_snmp_library():
-    if hasattr(settings, 'SNMP_LIBRARY'):
-        return settings.SNMP_LIBRARY
-    elif hasattr(settings, 'USE_NETSNMP') and settings.USE_NETSNMP is True:
-        return 'netsnmp'
-    else:
-        return 'easysnmp'
-
-
 def get_login(switch: Switch):
     try:
         from config_backup import ConfigBackup
-    except ImportError:
+    except (ImportError, RuntimeError) as e:
         return None, None
 
     try:
@@ -66,10 +57,8 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     for snmp_class in snmp:
         try:
             return snmp_class(community=switch.community, device=switch.ip, switch=switch,
-                              snmp_library=select_snmp_library(),
                               username=username, password=password)
-        except SwitchAPI.api_exceptions.APIError:
+        except SwitchAPI.api_exceptions.APIError as e:
             continue  # Login or API initialization failed
         except TypeError:  # SNMP class without username and password arguments
-            return snmp_class(community=switch.community, device=switch.ip, switch=switch,
-                              snmp_library=select_snmp_library())
+            return snmp_class(community=switch.community, device=switch.ip, switch=switch)
