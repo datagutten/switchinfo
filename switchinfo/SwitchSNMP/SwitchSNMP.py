@@ -437,8 +437,12 @@ class SwitchSNMP:
             # print('%s=%s' % (item.oid, item.value))
             # continue
             keys = {}
-
-            key_pos = len('iso' + oid[2:])
+            if item.oid.find('iso') > -1:
+                key_pos = len('iso' + oid[2:])
+            elif item.oid[0:2] == '.1':
+                key_pos = len(oid)
+            else:
+                raise ValueError('Unable to find key from oid %s' % item.oid)
             # print('Keys', item.oid[key_pos:])
             matches = re.match(r'\.([0-9]+)\.(.+)', item.oid[key_pos:])
             # print(item.oid[key_pos:])
