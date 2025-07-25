@@ -13,8 +13,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends git
 
 COPY --from=builder /home/gitlist /var/www/html
-
+COPY ./config/config.yml /var/www/html/config/config.yml
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
+
 RUN a2enmod rewrite
 RUN a2enmod proxy
 RUN a2enmod proxy_http
