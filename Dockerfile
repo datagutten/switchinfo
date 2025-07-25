@@ -19,8 +19,6 @@ RUN pip install --upgrade pip poetry poetry-plugin-export
 
 COPY switchinfo switchinfo
 COPY pyproject.toml switchinfo/pyproject.toml
-RUN sed -i 's/python.*/python = ">=3.11"/' switchinfo/pyproject.toml
-RUN sed -i 's/Django.*/Django = "^5"/' switchinfo/pyproject.toml
 RUN git clone https://github.com/datagutten/django-switch-config-backup.git
 
 RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with aoscx --with snmp
