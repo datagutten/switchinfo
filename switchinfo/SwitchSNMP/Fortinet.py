@@ -24,7 +24,7 @@ class Fortinet(SwitchSNMP):
         return aggregations
 
     def mac_on_port(self, vlan=None, use_q_bridge_mib=None):
-        oid = '.1.3.6.1.2.1.17.4.3'  # BRIDGE-MIB::dot1dTpFdbTable
+        oid = '.1.3.6.1.2.1.17.4.3.1'  # BRIDGE-MIB::dot1dTpFdbTable
         data = self.snmp_table(oid, {
             1: 'dot1dTpFdbAddress',
             2: 'dot1dTpFdbPort',
@@ -33,5 +33,7 @@ class Fortinet(SwitchSNMP):
         macs = {}
 
         for entry in data.values():
+            if 'dot1dTpFdbAddress' not in entry:
+                continue
             macs[entry['dot1dTpFdbAddress']] = int(entry['dot1dTpFdbPort'])
         return macs
