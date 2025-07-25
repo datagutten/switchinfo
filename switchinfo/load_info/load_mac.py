@@ -22,7 +22,7 @@ def load_mac(switch: Switch, vlan=None):
     for vlan in vlans:
         try:
             mac_on_port = device.mac_on_port(vlan=vlan.vlan or None,
-                                             use_q_bridge_mib=switch.type == 'Comware')
+                                             use_q_bridge_mib=switch.type == 'Comware')  # TODO: Add class property for q_Bridge_mib
             if not mac_on_port:
                 print('No ports in vlan %s' % vlan)
                 continue
@@ -81,7 +81,7 @@ def load_mac(switch: Switch, vlan=None):
             except Mac.MultipleObjectsReturned:
                 print('Multiple MAC')
                 print(Mac.objects.filter(mac=mac_string(mac)))
-            except exceptions.SNMPError as e:
+            except snmp_exceptions.SNMPError as e:
                 print(e)
 
     if mac_on_port:
