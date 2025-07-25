@@ -4,9 +4,8 @@
 name: Unit tests
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   test_multilib:
