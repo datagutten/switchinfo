@@ -1,5 +1,6 @@
 import datetime
 import re
+import warnings
 
 import snmp_compat.compat as snmp_compat
 from snmp_compat import snmp_exceptions
@@ -247,6 +248,7 @@ class SwitchSNMP:
         Return key: bridgePort
         """
         keys = ['pethPsePortIndex']
+        warnings.warn('Use MIB class', DeprecationWarning)
 
         ports = self.build_dict_multikeys(
             '.1.3.6.1.2.1.105.1.1.1',
@@ -355,9 +357,6 @@ class SwitchSNMP:
                     port_vlan[index] = None
 
         return [port_vlan, tagged_vlans, untagged_vlan]
-
-    def vlan_ports_static(self):
-        return self.vlan_ports(static=True)
 
     def vlan_ports_pvid(self):
         # Q-BRIDGE-MIB::dot1qPvid
