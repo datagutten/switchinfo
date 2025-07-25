@@ -1,10 +1,12 @@
+from abc import ABC
+
 from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP import utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from . import mibs
 
 
-class Cisco(SwitchSNMP):
+class Cisco(SwitchSNMP, ABC):
     """
     Common stuff for Cisco IOS and IOS XE
     """
@@ -125,7 +127,11 @@ class Cisco(SwitchSNMP):
 
         ports = {}
         for key, port in poe_ports.items():
+            if key not in poe_ports_cisco:
+                continue
             cisco_port = poe_ports_cisco[key]
+            if cisco_port['cpeExtPsePortEntPhyIndex'] not in phys_ports:
+                continue
             phys_port = phys_ports[cisco_port['cpeExtPsePortEntPhyIndex']]
             port['pethPsePortDetectionStatus'] = poe_mib.states[port['pethPsePortDetectionStatus']]
             if phys_port[self.poe_snmp_key]:
