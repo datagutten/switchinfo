@@ -8,51 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test_multilib:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ '3.10', '3.11', '3.12', '3.13' ]
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Start snmpsim
-      run: |
-        docker pull tandrup/snmpsim
-        docker run -d -v $(pwd)/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install libsnmp-dev libczmq-dev
-        python -m pip install --upgrade pip poetry poetry-plugin-export
-        python -m pip install flake8 coverage parameterized
-        poetry export -f requirements.txt --without-hashes --with snmp -o requirements.txt
-        pip install -r requirements.txt
-
-    - name: Run tests
-      run: |
-        coverage run -p runtests.py tests.test_select_snmp
-        coverage run -m tests_unittest.SwitchSNMP.test_value_type
-      env:
-        SNMP_LIBRARY: ${{ matrix.snmp_library }}
-
-    - name: Combine coverage
-      run: coverage combine
-
-    - uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-
   tests:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
