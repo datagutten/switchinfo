@@ -2,9 +2,11 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.db.utils import DataError
+
+from snmp_compat import snmp_exceptions
 from switchinfo import SwitchSNMP
 
-from switchinfo.SwitchSNMP.exceptions import SNMPError, SNMPNoData
+from snmp_compat.snmp_exceptions import SNMPError, SNMPNoData
 from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.models import Interface, Switch, Vlan, trunk_force_mac
 
@@ -126,7 +128,7 @@ def load_interfaces(switch: Switch, now=None):
             ports = device.bridgePort_to_ifIndex()
             for bridge_port, if_index in ports.items():
                 ports_rev[if_index] = bridge_port
-        except SNMPNoData:
+        except snmp_exceptions.SNMPNoData:
             ports = {}
             ports_rev = {}
 

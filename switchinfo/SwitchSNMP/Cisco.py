@@ -1,6 +1,5 @@
-import re
-
-from switchinfo.SwitchSNMP import SNMPVariable, exceptions, utils
+from snmp_compat import snmp_exceptions
+from switchinfo.SwitchSNMP import utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from . import mibs
 
@@ -104,7 +103,7 @@ class Cisco(SwitchSNMP):
             for index, vlan in self.port_vlan().items():
                 if index not in untagged_vlan:
                     untagged_vlan[index] = vlan
-        except exceptions.SNMPError:
+        except snmp_exceptions.SNMPError:
             print('No untagged vlans')
             pass
 

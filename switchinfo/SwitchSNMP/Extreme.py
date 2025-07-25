@@ -1,6 +1,7 @@
 import re
 
-from switchinfo.SwitchSNMP import exceptions, utils
+from snmp_compat import snmp_exceptions
+from switchinfo.SwitchSNMP import utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 
 
@@ -27,7 +28,7 @@ class Extreme(SwitchSNMP):
             vlans = self.vlan_index()
             names = self.create_dict(oid=oid, int_index=True)
             return dict(zip(vlans.values(), names.values()))
-        except exceptions.SNMPError as e:
+        except snmp_exceptions.SNMPError as e:
             e.message = 'Unable to get VLAN names'
             raise e
 
@@ -40,7 +41,7 @@ class Extreme(SwitchSNMP):
         indexes = dict()
         items = session.walk(oid)
         if not items:
-            raise exceptions.SNMPNoData(session=session, oid=oid)
+            raise snmp_exceptions.SNMPNoData(session=session, oid=oid)
         for item in items:
             index = re.sub(r'.+\.(\d+)\.\d+', r'\1', item.oid)
             if not index:

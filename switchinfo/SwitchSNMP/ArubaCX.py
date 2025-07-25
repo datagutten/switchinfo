@@ -1,6 +1,6 @@
+from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP import utils
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
-from switchinfo.SwitchSNMP.exceptions import SNMPNoData
 
 
 class ArubaCX(SwitchSNMP):
@@ -36,7 +36,7 @@ class ArubaCX(SwitchSNMP):
             try:
                 alias = session.get('.1.3.6.1.2.1.31.1.1.1.18.' + key)
                 info['alias'][key] = alias.value
-            except SNMPNoData:
+            except snmp_exceptions.SNMPNoData:
                 info['alias'][key] = None
 
         return info

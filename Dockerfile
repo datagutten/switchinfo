@@ -23,7 +23,7 @@ RUN sed -i 's/python.*/python = ">=3.11"/' switchinfo/pyproject.toml
 RUN sed -i 's/Django.*/Django = "^5"/' switchinfo/pyproject.toml
 RUN git clone https://github.com/datagutten/django-switch-config-backup.git
 
-RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with aoscx --with easysnmp
+RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with aoscx --with snmp
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r switchinfo/requirements.txt
 # RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r django-switch-config-backup/requirements.txt
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels paramiko scp netmiko
@@ -38,7 +38,7 @@ FROM python:3.11
 
 # create the appropriate directories
 ENV APP_HOME=/home/switch_info
-ENV SNMP_LIBRARY=easysnmp
+ENV SNMP_LIBRARY=ezsnmp
 
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME

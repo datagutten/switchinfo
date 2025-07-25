@@ -1,5 +1,6 @@
+from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP import Cisco
-from . import mibs, utils, exceptions
+from . import mibs, utils
 
 
 class CiscoIOSXE(Cisco):
@@ -16,7 +17,7 @@ class CiscoIOSXE(Cisco):
         remotes = lldp_mib.lldpRemTable()
         try:
             addresses = lldp_mib.lldpRemManAddrTable()
-        except exceptions.SNMPError:
+        except snmp_exceptions.SNMPError:
             addresses = {}
 
         neighbors = {}
