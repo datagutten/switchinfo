@@ -29,7 +29,7 @@ snmp-helper = { git = "https://github.com/datagutten/SNMP-helper-py.git" }
 ezsnmp = "^1.0.0"
 
 [tool.poetry.group.backup.dependencies]
-django-switch-config-backup = { git = "https://github.com/datagutten/django-switch-config-backup" }
+config-backup = { git = "https://github.com/datagutten/django-switch-config-backup.git" }
 
 [build-system]
 requires = ["poetry-core"]

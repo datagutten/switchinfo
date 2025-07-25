@@ -19,12 +19,9 @@ RUN pip install --upgrade pip poetry poetry-plugin-export
 
 COPY switchinfo switchinfo
 COPY pyproject.toml switchinfo/pyproject.toml
-RUN git clone https://github.com/datagutten/django-switch-config-backup.git
 
-RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with aoscx --with snmp
+RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with backup --with aoscx --with snmp
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r switchinfo/requirements.txt
-# RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r django-switch-config-backup/requirements.txt
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels paramiko scp netmiko
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels gunicorn
 
@@ -53,7 +50,6 @@ RUN apt-get update && \
 COPY switch_info $APP_HOME
 COPY switchinfo $APP_HOME/switchinfo
 COPY launcher.sh $APP_HOME
-COPY --from=builder /usr/src/app/django-switch-config-backup/config_backup $APP_HOME/config_backup
 
 # Set up git repository for config backup
 RUN mkdir /home/config_backup
