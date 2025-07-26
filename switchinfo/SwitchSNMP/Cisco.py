@@ -18,6 +18,8 @@ class Cisco(SwitchSNMP, ABC):
     poe_db_key = None
     """Database field that matches the key for the PoE value from SNMP"""
 
+    mac_per_vlan = True
+
     def vlans(self):
         # CISCO-VTP-MIB::vtpVlanState
         oid = '.1.3.6.1.4.1.9.9.46.1.3.1.1.2'

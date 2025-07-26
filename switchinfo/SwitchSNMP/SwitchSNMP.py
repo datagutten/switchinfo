@@ -25,6 +25,12 @@ class SwitchSNMP:
     snmp_library = None
     ignore_unknown_vlans = False
     """Should tagged vlans not defined on switch be ignored?"""
+
+    mac_per_vlan = False
+    """
+    Query MAC addresses per vlan (Used by Cisco and Aruba CX REST API)
+    """
+
     poe_db_key = 'index'
     """
     Field in Interface model used as key for interface_poe return dict

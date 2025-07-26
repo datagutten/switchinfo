@@ -11,6 +11,7 @@ class ArubaCXREST(ArubaCX):
     aos_session = None
     lldp_key = 'interface_name'
     interface_key = 'interface_name'
+    mac_per_vlan = True
 
     def __init__(self, username, password, **kwargs):
         if not username or not password:
