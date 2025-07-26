@@ -1,0 +1,23 @@
+services:
+  switchinfo:
+    image: ghcr.io/datagutten/switchinfo:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+    - config_backup_volume:/home/config_backup
+    env_file:
+    - ./.env
+
+  web:
+    image: ghcr.io/datagutten/switchinfo_apache_gitlist:latest
+    pull_policy: always
+    restart: unless-stopped
+    volumes:
+    - config_backup_volume:/var/www/Config
+
+    ports:
+    - "8001:80"
+
+
+volumes:
+  config_backup_volume:
