@@ -97,6 +97,12 @@ class SwitchGroup(models.Model):
     def members(self):
         return Switch.objects.filter(name__istartswith=self.grouping_key)
 
+    def switches(self):
+        items = []
+        for group in SwitchGroup.objects.filter(name=self.name):
+            items += group.members()
+        return items
+
 
 class Vlan(models.Model):
     vlan = models.IntegerField(unique=True)
