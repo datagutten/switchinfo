@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 import switchinfo.load_info.switch_info as switch_info
-from switchinfo.SwitchSNMP.exceptions import SNMPError
+from snmp_compat import snmp_exceptions
 
 
 class Command(BaseCommand):
@@ -15,5 +15,5 @@ class Command(BaseCommand):
         community = options['switch'][1]
         try:
             print(switch_info.switch_info(ip, community, silent=False))
-        except SNMPError as e:
+        except snmp_exceptions.SNMPError as e:
             print(e)

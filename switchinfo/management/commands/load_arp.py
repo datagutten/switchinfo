@@ -1,10 +1,10 @@
 from django.db.utils import DataError
-from switchinfo.SwitchSNMP.exceptions import SNMPError
 
 import switchinfo.SwitchSNMP.utils as utils
+from snmp_compat import snmp_exceptions
+from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.management.commands import SwitchBaseCommand
 from switchinfo.models import Arp, Switch
-from switchinfo.SwitchSNMP.select import get_switch
 
 
 class Command(SwitchBaseCommand):
@@ -17,7 +17,7 @@ class Command(SwitchBaseCommand):
             device = get_switch(switch)
             try:
                 arp = device.arp()
-            except SNMPError as e:
+            except snmp_exceptions.SNMPError as e:
                 print(e)
                 continue
 

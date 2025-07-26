@@ -1,4 +1,4 @@
-from switchinfo.SwitchSNMP.exceptions import SNMPError
+from snmp_compat import snmp_exceptions
 from switchinfo.load_info.load_mac import load_mac
 from switchinfo.management.commands import SwitchBaseCommand
 from switchinfo.models import Vlan
@@ -21,6 +21,6 @@ class Command(SwitchBaseCommand):
             print(switch)
             try:
                 load_mac(switch)
-            except SNMPError as e:
+            except snmp_exceptions.SNMPError as e:
                 print(e)
                 continue

@@ -1,5 +1,5 @@
 import switchinfo.load_info.switch_info as switch_info
-from switchinfo.SwitchSNMP.exceptions import SNMPError
+from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP.select import get_switch
 from switchinfo.management.commands import SwitchBaseCommand
 
@@ -14,6 +14,6 @@ class Command(SwitchBaseCommand):
             try:
                 device = get_switch(switch)
                 print(switch_info.switch_info(device=device))
-            except SNMPError as e:
+            except snmp_exceptions.SNMPError as e:
                 print(switch, e)
                 continue
