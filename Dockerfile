@@ -20,7 +20,7 @@ RUN pip install --upgrade pip poetry poetry-plugin-export
 COPY switchinfo switchinfo
 COPY pyproject.toml switchinfo/pyproject.toml
 
-RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with backup --with aoscx --with snmp
+RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with backup --with aoscx --with snmp
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r switchinfo/requirements.txt
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels gunicorn
