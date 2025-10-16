@@ -21,7 +21,7 @@ class SwitchSNMP:
     device = None
     info_dicts = dict()
     community = None
-    timeout = 0.5
+    timeout = 2  # TODO: Add environment variable
     snmp_library = None
     ignore_unknown_vlans = False
     """Should tagged vlans not defined on switch be ignored?"""
