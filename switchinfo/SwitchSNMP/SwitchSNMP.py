@@ -1,4 +1,5 @@
 import datetime
+import os
 import re
 import warnings
 
@@ -21,7 +22,7 @@ class SwitchSNMP:
     device = None
     info_dicts = dict()
     community = None
-    timeout = 2  # TODO: Add environment variable
+    timeout = 2
     snmp_library = None
     ignore_unknown_vlans = False
     """Should tagged vlans not defined on switch be ignored?"""
@@ -51,6 +52,7 @@ class SwitchSNMP:
         self.device = device
         self.switch = switch
         self.snmp_library = snmp_compat.select(snmp_library or 'ezsnmp')
+        self.timeout = os.environ.get('SNMP_TIMEOUT', 2)
 
     def __del__(self):
         self.sessions = None
