@@ -1,4 +1,5 @@
 from .SNMPMib import SNMPMib
+from .. import utils
 
 
 # noinspection PyPep8Naming
@@ -42,3 +43,43 @@ class lldpMIB(SNMPMib):
                                                   5: 'lldpRemManAddrOID',
                                               },
                                               key='lldpRemLocalPortNum')
+
+    @staticmethod
+    def remote_helper(remote: dict) -> dict:
+        """
+        Get values from an entry from lldpRemTable
+        :param remote: Entry from lldpRemTable
+        :return: Parsed data
+        """
+        neighbor = {
+            'device_id': remote['lldpRemSysName'],
+            'platform': remote['lldpRemSysDesc'],
+            'local_port_num': remote['lldpRemLocalPortNum'],
+        }
+
+        if remote['lldpRemPortIdSubtype'] == 3:  # macAddress
+            neighbor['remote_port'] = utils.mac_string(remote['lldpRemPortId'])
+        else:
+            neighbor['remote_port'] = remote['lldpRemPortId']
+
+        if remote['lldpRemChassisIdSubtype'] == 4:  # macAddress
+            neighbor['mac'] = utils.mac_string(remote['lldpRemChassisId'])
+
+        return neighbor
+
+    @staticmethod
+    def remote_address_helper(address: dict):
+        """
+        Get values from an entry from lldpRemManAddrTable
+        :param address: Entry from lldpRemManAddrTable
+        :return: Parsed MAC address and IP
+        """
+        neighbor = {}
+        if address['lldpRemManAddrSubtype'] == 6:  # all802
+            neighbor['mac'] = utils.mac_parse_oid(address['lldpRemManAddr'])
+        elif address['lldpRemManAddrSubtype'] == 1 and utils.validate_ip(address['lldpRemManAddr']):  # ipV4
+            neighbor['ip'] = address['lldpRemManAddr']
+        else:
+            print('Unknown address type %d' % address['lldpRemManAddrSubtype'], address['lldpRemManAddr'])
+            neighbor['unknown'] = address['lldpRemManAddr']
+        return neighbor

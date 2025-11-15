@@ -534,29 +534,14 @@ class SwitchSNMP:
                     remotes[key]['lldpRemSysName'], key))
                 continue
 
-            neighbor = {
-                'device_id': remote['lldpRemSysName'],
-                'platform': remote['lldpRemSysDesc'],
-                'local_port_num': remote['lldpRemLocalPortNum'],
-                'local_port': ports[key],
-            }
-
-            if remote['lldpRemPortIdSubtype'] == 3:  # macAddress
-                neighbor['remote_port'] = utils.mac_string(remote['lldpRemPortId'])
-            else:
-                neighbor['remote_port'] = remote['lldpRemPortId']
-
-            if remote['lldpRemChassisIdSubtype'] == 4:
-                neighbor['mac'] = utils.mac_string(remote['lldpRemChassisId'])
+            neighbor = lldp_mib.remote_helper(remote)
+            neighbor['local_port'] = ports[key]
 
             if key in addresses:
-                address = addresses[key]
-                if address['lldpRemManAddrSubtype'] == 6:
-                    neighbor['mac'] = utils.mac_parse_oid(address['lldpRemManAddr'])
-                elif address['lldpRemManAddrSubtype'] == 1:
-                    neighbor['ip'] = address['lldpRemManAddr']
+                address_fields = mibs.lldpMIB.remote_address_helper(addresses[key])
+                neighbor.update(address_fields)
 
-            neighbors[key] = {0: neighbor}
+            neighbors[key] = {0: neighbor}  # TODO: Handle multiple neighbors
 
         return neighbors
 

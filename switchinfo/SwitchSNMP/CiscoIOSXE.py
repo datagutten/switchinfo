@@ -26,29 +26,15 @@ class CiscoIOSXE(Cisco):
                 print('LLDP neighbor %s found on non-existing port %d' % (
                     remotes[key]['lldpRemSysName'], key))
                 continue
-            else:
-                port_id = ports[key]['lldpLocPortId']
 
-            if remote['lldpRemChassisIdSubtype'] == '4':
-                mac = utils.mac_string(remote['lldpRemChassisId'])
-            else:
-                mac = None
-
-            neighbors[port_id] = {0: {
-                'device_id': remotes[key]['lldpRemSysName'],
-                'platform': remotes[key]['lldpRemSysDesc'],
-                'local_port_num': remotes[key]['lldpRemLocalPortNum'],
-                'local_port': ports[key],
-                'remote_port': remotes[key]['lldpRemPortId'],
-                'mac': mac,
-            }}
+            neighbor = lldp_mib.remote_helper(remote)
+            neighbor['local_port'] = ports[key]
 
             if key in addresses:
-                if addresses[key]['lldpRemManAddr'][0] not in ['1', '2']:
-                    neighbors[port_id][0]['ip'] = utils.ip_string(addresses[key]['lldpRemManAddr'])
-                else:
-                    neighbors[port_id][0]['ip'] = addresses[key]['lldpRemManAddr']
-            else:
-                neighbors[port_id][0]['ip'] = None
+                address_fields = mibs.lldpMIB.remote_address_helper(addresses[key])
+                neighbor.update(address_fields)
+
+            port_id = ports[key]['lldpLocPortId']
+            neighbors[port_id] = {0: neighbor}  # TODO: Handle multiple neighbors
 
         return neighbors
