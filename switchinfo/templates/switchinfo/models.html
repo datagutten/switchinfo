@@ -12,7 +12,7 @@
         {% for model in series %}
             <tr>
                 <td>
-                    <a href="{% url 'switchinfo:switches' %}?series={{ model.series|urlencode }}">{{ model.type }}&nbsp;{{ model.series }}</a>
+                    <a href="{% url 'switchinfo:switches' %}?series={{ model.series|urlencode }}">{{ model.series }}</a>
                 </td>
                 <td>{{ model.count }}</td>
             </tr>
