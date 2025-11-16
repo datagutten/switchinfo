@@ -1,5 +1,5 @@
 from . import SwitchSNMP
-from .mibs.RFC1213MIB import RFC1213MIB
+from .mibs import RFC1213MIB
 
 
 class RacomMidge(SwitchSNMP):

@@ -1,18 +1,8 @@
 from typing import Type
 
-from django.conf import settings
-
-from switchinfo.SwitchSNMP.Cisco import Cisco
-from switchinfo.SwitchSNMP.Extreme import Extreme
-from switchinfo.SwitchSNMP.Fortinet import Fortinet
-from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
-from switchinfo.SwitchSNMP.ArubaVSF import ArubaVSF
-from switchinfo.SwitchSNMP.ArubaCX import ArubaCX
-from switchinfo.SwitchSNMP.ArubaCXREST import ArubaCXREST
-from switchinfo.SwitchSNMP.Racom import RacomMidge
-from switchinfo import SwitchSNMP as SwitchSNMPModule
 from switchinfo import SwitchAPI
-
+from switchinfo import SwitchSNMP as SwitchSNMPModule
+from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.models import Switch
 
 
@@ -35,21 +25,21 @@ def get_switch(switch: Switch) -> SwitchSNMP:
     elif switch.type == 'Cisco IOS XE':
         snmp = SwitchSNMPModule.CiscoIOSXE
     elif switch.type == 'Extreme':
-        snmp = Extreme
+        snmp = SwitchSNMPModule.Extreme
     elif switch.type == 'Fortinet':
-        snmp = [SwitchAPI.FortinetAPI, Fortinet]
+        snmp = [SwitchAPI.FortinetAPI, SwitchSNMPModule.Fortinet]
     elif switch.type == 'Aruba':
-        snmp = ArubaVSF
+        snmp = SwitchSNMPModule.ArubaVSF
     elif switch.type == 'Aruba CX':
-        snmp = [ArubaCXREST, ArubaCX]
+        snmp = [SwitchSNMPModule.ArubaCXREST, SwitchSNMPModule.ArubaCX]
     elif switch.type == 'Aruba CX REST API':
-        snmp = ArubaCXREST
+        snmp = SwitchSNMPModule.ArubaCXREST
     elif switch.type == 'Westermo':
         snmp = SwitchSNMPModule.Westermo
     elif switch.type == 'pfSense':
         snmp = SwitchSNMPModule.PfSense
     elif switch.type == 'Racom':
-        snmp = RacomMidge
+        snmp = SwitchSNMPModule.RacomMidge
     else:
         snmp = SwitchSNMP
 

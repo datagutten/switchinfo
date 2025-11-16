@@ -5,6 +5,7 @@ from .Cisco import Cisco
 from .CiscoIOS import CiscoIOS
 from .CiscoIOSXE import CiscoIOSXE
 from .Extreme import Extreme
+from .Fortinet import Fortinet
 from .PfSense import PfSense
 from .Racom import RacomMidge
 from .ArubaCX import ArubaCX
