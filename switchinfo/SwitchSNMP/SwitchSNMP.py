@@ -372,7 +372,7 @@ class SwitchSNMP:
         # Q-BRIDGE-MIB::dot1qVlanFdbId
         oid = '.1.3.6.1.2.1.17.7.1.4.2.1.3'
         vlans = self.create_dict(oid=oid, int_index=True)
-        return vlans.values()
+        return list(vlans.keys())
 
     def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session=None):
         """
