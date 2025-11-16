@@ -53,7 +53,7 @@ def load_mac(switch: Switch, vlan=None):
                 if_index = bridge_port_to_ifindex[bridge_port]
 
             try:
-                if if_index.isnumeric():
+                if type(if_index) is int or if_index.isnumeric():
                     interface_obj = Interface.objects.get(switch=switch, index=if_index)
                 else:  # Interface name
                     interface_obj = Interface.objects.get(switch=switch, interface=if_index)
