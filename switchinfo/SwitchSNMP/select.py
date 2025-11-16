@@ -9,6 +9,7 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.SwitchSNMP.ArubaVSF import ArubaVSF
 from switchinfo.SwitchSNMP.ArubaCX import ArubaCX
 from switchinfo.SwitchSNMP.ArubaCXREST import ArubaCXREST
+from switchinfo.SwitchSNMP.Racom import RacomMidge
 from switchinfo import SwitchSNMP as SwitchSNMPModule
 from switchinfo import SwitchAPI
 
@@ -47,6 +48,8 @@ def get_switch(switch: Switch) -> SwitchSNMP:
         snmp = SwitchSNMPModule.Westermo
     elif switch.type == 'pfSense':
         snmp = SwitchSNMPModule.PfSense
+    elif switch.type == 'Racom':
+        snmp = RacomMidge
     else:
         snmp = SwitchSNMP
 

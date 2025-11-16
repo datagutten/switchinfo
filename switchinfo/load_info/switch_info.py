@@ -24,6 +24,8 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
     switch, new = Switch.objects.get_or_create(ip=ip)
     switch.community = community
     switch.type = switch_type(info['descr'])
+    if not switch.type:
+        switch.type = switch_type_oid(info['objectID'])
     switch.name = info['name'].split('.')[0]
     switch.description = info['descr']
     switch.location = info['location']
@@ -45,6 +47,19 @@ def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None
 
     switch.save()
     return switch
+
+
+def switch_type_oid(oid: str):
+    vendor_oid = {
+        8072: 'Racom',
+    }
+
+    oid = oid.replace('1.3.6.1.4.1', '')
+    vendor = int(re.sub(r'\.*(\d+)\..+', r'\1', oid))
+    if vendor in vendor_oid:
+        return vendor_oid[vendor]
+    else:
+        return None
 
 
 def switch_type(description: str) -> str:
