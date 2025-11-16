@@ -68,9 +68,9 @@ class Cisco(SwitchSNMP, ABC):
         return self.create_dict(oid=oid, int_index=True)
 
     def vlan_ports(self, debug=False, **kwargs):
-        vtp_mib = mibs.CiscoVTP(self)
-        vlans = vtp_mib.vlanTrunkPortTable(
-            ['vlanTrunkPortNativeVlan', 'vlanTrunkPortVlansEnabled', 'vlanTrunkPortDynamicState'])
+        # vtp_mib = mibs.CiscoVTP(self)
+        # vlans = vtp_mib.vlanTrunkPortTable(
+        #     ['vlanTrunkPortNativeVlan', 'vlanTrunkPortVlansEnabled', 'vlanTrunkPortDynamicState'])
 
         from pprint import pprint
 
