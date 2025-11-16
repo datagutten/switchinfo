@@ -23,11 +23,12 @@ class Cisco(SwitchSNMP, ABC):
     def vlans(self):
         # CISCO-VTP-MIB::vtpVlanState
         oid = '.1.3.6.1.4.1.9.9.46.1.3.1.1.2'
-        vlans = self.create_dict(oid=oid)
+        vlans = self.create_dict(oid=oid, int_index=True)
         if not vlans:
             return False
         vlan_list = []
-        for vlan in vlans:
+        for vlan in vlans.keys():
+            assert type(vlan) is int
             if vlan not in [1002, 1003, 1004, 1005, 4095]:
                 vlan_list.append(vlan)
         return vlan_list
