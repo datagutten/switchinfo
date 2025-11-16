@@ -4,6 +4,12 @@ from . import SwitchSNMP, mibs
 
 
 class Fortinet(SwitchSNMP):
+    interface_types = [
+        6,  # ethernetCsmacd
+        117,  # gigabitEthernet
+        54,  # propMultiplexor
+    ]
+
     def interfaces_rfc(self):
         interfaces = super().interfaces_rfc()
         interfaces['alias'] = interfaces['descr']

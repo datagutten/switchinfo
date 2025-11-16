@@ -43,6 +43,16 @@ class SwitchSNMP:
     """
     Field in RFC1213-MIB to use for ARP fetching
     """
+
+    interface_types = [
+        6,  # ethernetCsmacd
+        117,  # gigabitEthernet
+    ]
+    """
+    ifTypes of valid interfaces (OID .1.3.6.1.2.1.2.2.1.3)
+    Used to skip loopback and virtual interfaces
+    """
+
     lldp_key = 'interface_index'
     """
     Key to use for matching description and vlan to interface

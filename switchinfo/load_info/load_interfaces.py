@@ -177,15 +177,7 @@ def load_interfaces(switch: Switch, now=None):
             elif interfaces['type'][if_index] == '169':
                 name = 'SHDSL DSL %s' % name
 
-        """
-        117 is gigabitEthernet on HP
-        169 is DSL
-        """
-        allowed_types = ['6', '117', '169', 'ethernetCsmacd', 'shdsl']
-        if switch.type == 'Fortinet':
-            allowed_types.append('54')
-
-        if not interfaces['type'][if_index] in allowed_types and \
+        if not int(interfaces['type'][if_index]) in device.interface_types and \
                 int(if_index) not in aggregations.keys():
             # print('Interface %s type %s' % (if_index, interfaces['type'][if_index]))
             continue
