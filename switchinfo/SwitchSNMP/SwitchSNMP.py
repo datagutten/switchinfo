@@ -271,28 +271,8 @@ class SwitchSNMP:
         POWER-ETHERNET-MIB::PethPsePortEntry
         Return key: bridgePort
         """
-        keys = ['pethPsePortIndex']
-        warnings.warn('Use MIB class', DeprecationWarning)
+        poe_mib = mibs.powerEthernetMIB(self)
 
-        ports = self.build_dict_multikeys(
-            '.1.3.6.1.2.1.105.1.1.1',
-            keys,
-            {
-                1: 'pethPsePortGroupIndex',
-                2: 'pethPsePortIndex',
-                3: 'pethPsePortAdminEnable',
-                4: 'pethPsePortPowerPairsControlAbility',
-                5: 'pethPsePortPowerPairs',
-                6: 'pethPsePortDetectionStatus',
-                7: 'pethPsePortPowerPriority',
-                8: 'pethPsePortMPSAbsentCounter',
-                9: 'pethPsePortType',
-                10: 'pethPsePortPowerClassifications',
-                11: 'pethPsePortInvalidSignatureCounter',
-                12: 'pethPsePortPowerDeniedCounter',
-                13: 'pethPsePortOverLoadCounter',
-                14: 'pethPsePortShortCounter',
-            })
         states = {
             0: 'disabled',  # Extreme use 0 for disabled
             1: 'disabled',
@@ -302,8 +282,11 @@ class SwitchSNMP:
             5: 'test',
             6: 'otherFault'
         }
-        for key, value in ports.items():
-            # noinspection PyTypeChecker
+
+        ports = {}
+        for value in poe_mib.pethPsePortTable().values():
+            key = value['pethPsePortIndex']
+            ports[key] = value
             ports[key]['pethPsePortDetectionStatus'] = states[value['pethPsePortDetectionStatus']]
 
         return ports
