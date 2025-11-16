@@ -66,12 +66,9 @@ def load_interfaces(switch: Switch, now=None):
             untagged_vlan = interfaces['untagged']
             tagged_vlans = interfaces['tagged']
         elif switch.type in ['Fortinet']:
-            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True,
-                                                                            vlan_index=True)
-        elif switch.type in ['Aruba CX', 'Aruba']:
-            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=False)
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(vlan_index=True)
         else:
-            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports(static=True)
+            interface_vlan, tagged_vlans, untagged_vlan = device.vlan_ports()
 
     except SNMPNoData as e:  # HP 1910
         if switch.type in ['Cisco', 'Aruba CX', 'Extreme']:

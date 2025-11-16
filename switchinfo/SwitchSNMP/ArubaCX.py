@@ -4,6 +4,8 @@ from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 
 
 class ArubaCX(SwitchSNMP):
+    static_vlan = False
+
     def interfaces_rfc(self):
         info = dict()
         # IF-MIB::ifName

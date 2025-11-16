@@ -27,6 +27,9 @@ class SwitchSNMP:
     ignore_unknown_vlans = False
     """Should tagged vlans not defined on switch be ignored?"""
 
+    static_vlan = True
+    """Use static vlan tables from Q-BRIDGE-MIB"""
+
     mac_per_vlan = False
     """
     Query MAC addresses per vlan (Used by Cisco and Aruba CX REST API)
@@ -304,20 +307,20 @@ class SwitchSNMP:
             e.message = 'Unable to get VLAN names'
             raise e
 
-    def egress_ports(self, static=False):
+    def egress_ports(self):
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
-        if not static:
+        if not self.static_vlan:
             values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
             values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True)
         return values
 
-    def untagged_ports(self, static=False):
+    def untagged_ports(self):
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentUntaggedPorts
-        if not static:
+        if not self.static_vlan:
             values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticUntaggedPorts
@@ -325,11 +328,11 @@ class SwitchSNMP:
         return values
 
     # Return vlan number or None if the interface is trunk
-    def vlan_ports(self, static=False, vlan_index=False):
+    def vlan_ports(self, vlan_index=False):
         # If a port has egress vlan, but not untagged, the port is a trunk port
         # If a port has egress multiple vlans, the port is a trunk port
-        egress = self.egress_ports(static)
-        untagged = self.untagged_ports(static)
+        egress = self.egress_ports()
+        untagged = self.untagged_ports()
         port_vlan = dict()
         tagged_vlans = dict()
         untagged_vlan = dict()
