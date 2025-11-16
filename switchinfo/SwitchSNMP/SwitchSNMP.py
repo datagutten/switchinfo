@@ -374,42 +374,6 @@ class SwitchSNMP:
         vlans = self.create_dict(oid=oid, int_index=True)
         return vlans.values()
 
-    def build_dict(self, oid, key_names: list, fields, key=None, session=None):
-        """
-
-        :param oid: Base OID to walk
-        :param key_names: Key fields appended to the oid
-        :param fields: Field names
-        :param key: Key field to use as key for a returned dict
-        :param session:
-        """
-        if not session:
-            session = self.get_session()
-
-        if not key:
-            if len(key_names) == 1:
-                key = key_names[0]
-            else:
-                raise NotImplementedError()
-
-        items = {}
-
-        for item in session.walk(oid):
-            key_pos = len('iso' + oid[2:])
-            matches = re.match(r'\.([0-9]+)\.(.+)', item.oid[key_pos:])
-            field = int(matches.group(1))
-            sub_key = matches.group(2).split('.')
-            keys = dict(zip(key_names, sub_key))
-
-            if not key:
-                raise NotImplementedError()
-            if keys[key] not in items:
-                items[keys[key]] = {}
-
-            items[keys[key]][fields[field]] = item.value
-
-        return items
-
     def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session=None):
         """
 

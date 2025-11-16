@@ -62,7 +62,7 @@ def switch_type_oid(oid: str):
         return None
 
 
-def switch_type(description: str) -> str:
+def switch_type(description: str) -> Optional[str]:
     matches_hp = pattern_hp_series.search(description)
     if description.find('Cisco') == 0:
         version = re.search(r'Version (\d+)', description)
@@ -99,9 +99,11 @@ def switch_type(description: str) -> str:
         return 'Schneider'
     elif description.find('pfSense') == 0:
         return 'pfSense'
+    else:
+        return None
 
 
-def switch_series(switch: Switch) -> str:
+def switch_series(switch: Switch) -> Optional[str]:
     series = None
     matches_hp = pattern_hp_series.search(switch.description)
     if switch.type == 'Cisco':
