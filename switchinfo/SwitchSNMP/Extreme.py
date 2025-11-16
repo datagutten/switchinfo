@@ -17,7 +17,7 @@ class Extreme(SwitchSNMP):
     def vlan_index(self):
         # EXTREME-VLAN-MIB::extremeVlanIfVlanId
         oid = '.1.3.6.1.4.1.1916.1.2.1.2.1.10'
-        return self.create_dict(oid=oid, int_value=True, int_index=True)
+        return self.create_dict(oid=oid, int_index=True)
 
     def vlans(self):
         return list(self.vlan_index().values())

@@ -28,8 +28,8 @@ class Cisco(SwitchSNMP, ABC):
             return False
         vlan_list = []
         for vlan in vlans:
-            if int(vlan) not in [1002, 1003, 1004, 1005, 4095]:
-                vlan_list.append(int(vlan))
+            if vlan not in [1002, 1003, 1004, 1005, 4095]:
+                vlan_list.append(vlan)
         return vlan_list
 
     # Return key: vlan number
@@ -41,7 +41,6 @@ class Cisco(SwitchSNMP, ABC):
     def trunk_status(self):
         """
         Check if the port is trunk or not
-        :param device:
         :return dict: Key interfaceIndex Value:  INTEGER {on(1),
                                                           off(2),
                                                           desirable(3),
@@ -50,17 +49,17 @@ class Cisco(SwitchSNMP, ABC):
                                                           }
         """
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.13'  # CISCO-VTP-MIB::vlanTrunkPortDynamicState
-        return self.create_dict(oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True)
 
     def port_vlan(self):
         # CISCO-VLAN-MEMBERSHIP-MIB::vmVlan
         oid = '.1.3.6.1.4.1.9.9.68.1.2.2.1.2'
-        return self.create_dict(oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True)
 
     def native_vlan(self):
         #  vlanTrunkPortNativeVlan
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.5'
-        return self.create_dict(oid=oid, int_index=True, int_value=True)
+        return self.create_dict(oid=oid, int_index=True)
 
     def tagged_vlans(self):
         # CISCO-VTP-MIB::vlanTrunkPortVlansEnabled
@@ -68,6 +67,10 @@ class Cisco(SwitchSNMP, ABC):
         return self.create_dict(oid=oid, int_index=True)
 
     def vlan_ports(self, debug=False, **kwargs):
+        vtp_mib = mibs.CiscoVTP(self)
+        vlans = vtp_mib.vlanTrunkPortTable(
+            ['vlanTrunkPortNativeVlan', 'vlanTrunkPortVlansEnabled', 'vlanTrunkPortDynamicState'])
+
         from pprint import pprint
 
         trunk_status = self.trunk_status()

@@ -108,7 +108,7 @@ class SwitchSNMP:
         return values
 
     def create_dict(self, oid=None, vlan=None,
-                    int_value=False, int_index=False, typed_value=False,
+                    int_index=False, typed_value=True,
                     value_translator: callable = None):
         if not oid:
             oid = False
@@ -125,8 +125,6 @@ class SwitchSNMP:
                 index = item.oid_index
             if value_translator:
                 value = value_translator(item.value)
-            elif int_value:
-                value = int(item.value)
             elif typed_value:
                 value = item.typed_value()
             else:
@@ -249,12 +247,12 @@ class SwitchSNMP:
         info = dict()
         if vlan == 'all':
             for vlan in self.vlans():
-                info_temp = self.create_dict(vlan=vlan, oid=oid)
+                info_temp = self.create_dict(vlan=vlan, oid=oid, typed_value=False)
                 info.update(info_temp)
             return info
         else:
             try:
-                return self.create_dict(vlan=vlan, oid=oid)
+                return self.create_dict(vlan=vlan, oid=oid, typed_value=False)
             except snmp_exceptions.SNMPError as e:
                 if not vlan:
                     vlan = 0
@@ -304,20 +302,20 @@ class SwitchSNMP:
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
         if not self.static_vlan:
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True, typed_value=False)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True, typed_value=False)
         return values
 
     def untagged_ports(self):
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentUntaggedPorts
         if not self.static_vlan:
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True, typed_value=False)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticUntaggedPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.4', int_index=True)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.4', int_index=True, typed_value=False)
         return values
 
     # Return vlan number or None if the interface is trunk
@@ -373,12 +371,8 @@ class SwitchSNMP:
     def vlans(self):
         # Q-BRIDGE-MIB::dot1qVlanFdbId
         oid = '.1.3.6.1.2.1.17.7.1.4.2.1.3'
-        vlans = self.create_dict(oid=oid)
-
-        vlan_list = []
-        for vlan in vlans:
-            vlan_list.append(int(vlan))
-        return vlan_list
+        vlans = self.create_dict(oid=oid, int_index=True)
+        return vlans.values()
 
     def build_dict(self, oid, key_names: list, fields, key=None, session=None):
         """

@@ -51,19 +51,19 @@ class ArubaCX(SwitchSNMP):
     def egress_ports(self, static=False):
         if not static:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentEgressPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5', int_index=True)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5', int_index=True, typed_value=False)
         else:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.4', int_index=True)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.4', int_index=True, typed_value=False)
         return values
 
     def untagged_ports(self, static=False):
         if not static:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6', int_index=True)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6', int_index=True, typed_value=False)
         else:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanStaticUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.6', int_index=True)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.6', int_index=True, typed_value=False)
         return values
 
     def vlans(self):

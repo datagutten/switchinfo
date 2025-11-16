@@ -8,6 +8,4 @@ class qBridgeMIB(SNMPMib):
         dot1qVlanIndex
         :return:
         """
-        return self.snmp.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.2',
-                                     int_index=True,
-                                     int_value=True)
+        return self.snmp.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.2', int_index=True)
