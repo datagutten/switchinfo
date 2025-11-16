@@ -140,13 +140,7 @@ def load_interfaces(switch: Switch, now=None):
         switch.has_poe = True
         switch.save()
 
-    if switch.type == 'Aruba':
-        try:
-            stack = device.stack_ports()  # TODO: Correct type ArubaVSF
-        except SNMPNoData:
-            stack = []
-    else:
-        stack = []
+    stack = device.stack_ports()
 
     # for bridge_port, if_index in ports.items():
     for if_index in interfaces['type'].keys():

@@ -168,6 +168,9 @@ class SwitchSNMP:
         session = self.get_session()
         return session.get('.1.3.6.1.2.1.1.3.0').typed_value()
 
+    def stack_ports(self) -> list:
+        return []  # To be overridden by vendor classes with ethernet stacking
+
     def interfaces_rfc(self):
         info = dict()
         # IF-MIB::ifName
