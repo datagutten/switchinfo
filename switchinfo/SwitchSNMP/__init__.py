@@ -9,4 +9,5 @@ from .Fortinet import Fortinet
 from .PfSense import PfSense
 from .Racom import RacomMidge
 from .ArubaCX import ArubaCX
+from .ArubaCXREST import ArubaCXREST
 from .Westermo import Westermo
