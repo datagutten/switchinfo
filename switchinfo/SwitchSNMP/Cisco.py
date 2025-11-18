@@ -103,7 +103,7 @@ class Cisco(SwitchSNMP, ABC):
                 if tagged:
                     if debug:  # pragma: no cover
                         print('Vlan %s is tagged on port %s' % (vlan_id, index))
-                    if index not in tagged_vlans:
+                    if index not in tagged_vlans or 'all' in tagged_vlans[index]:
                         tagged_vlans[index] = []
                     tagged_vlans[index].append(vlan_id)
 
