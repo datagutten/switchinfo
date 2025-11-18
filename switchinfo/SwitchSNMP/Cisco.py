@@ -65,7 +65,7 @@ class Cisco(SwitchSNMP, ABC):
     def tagged_vlans(self):
         # CISCO-VTP-MIB::vlanTrunkPortVlansEnabled
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.4'
-        return self.create_dict(oid=oid, int_index=True)
+        return self.create_dict(oid=oid, int_index=True, typed_value=False)
 
     def vlan_ports(self, debug=False, **kwargs):
         # vtp_mib = mibs.CiscoVTP(self)
