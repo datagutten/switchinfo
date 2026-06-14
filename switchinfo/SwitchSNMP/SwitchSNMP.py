@@ -374,7 +374,7 @@ class SwitchSNMP:
         vlans = self.create_dict(oid=oid, int_index=True)
         return list(vlans.keys())
 
-    def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session=None):
+    def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session: snmp_compat.SNMPCompat = None):
         """
 
         :param oid: Base OID to walk

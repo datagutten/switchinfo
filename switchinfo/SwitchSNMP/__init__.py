@@ -1,4 +1,3 @@
-from .SNMPVariable import SNMPVariable
 from .SwitchSNMP import SwitchSNMP
 from .ArubaVSF import ArubaVSF
 from .Cisco import Cisco
