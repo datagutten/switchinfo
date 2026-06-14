@@ -1,8 +1,8 @@
 from datetime import datetime
 
 from snmp_compat import snmp_exceptions
+
 from switchinfo.SwitchSNMP.select import get_switch
-from switchinfo.SwitchSNMP.utils import mac_string
 from switchinfo.models import Interface, Mac, Switch, Vlan
 
 
@@ -80,7 +80,7 @@ def load_mac(switch: Switch, vlan=None):
                     mac.save()
             except Mac.MultipleObjectsReturned:
                 print('Multiple MAC')
-                print(Mac.objects.filter(mac=mac_string(mac)))
+                print(Mac.objects.filter(mac=mac))
             except snmp_exceptions.SNMPError as e:
                 print(e)
 
