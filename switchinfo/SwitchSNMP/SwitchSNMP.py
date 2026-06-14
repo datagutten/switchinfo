@@ -529,25 +529,20 @@ class SwitchSNMP:
                     cdp[if_index][device_index]['ip'] = ip_temp
             #  cdpCacheDeviceId
             elif item.oid.find('.9.9.23.1.2.1.1.6') >= 0:
-                cdp[if_index][device_index]['device_id'] = item.value
+                cdp[if_index][device_index]['device_id'] = item.typed_value()
             elif item.oid.find('.9.9.23.1.2.1.1.8') >= 0:
                 cdp[if_index][device_index]['platform'] = item.value
                 # Aruba got a weird deviceId
                 if item.value.find('Aruba') >= 0:
                     cdp[if_index][device_index]['device_id'] = None
             elif item.oid.find('.9.9.23.1.2.1.1.7') >= 0:
-                cdp[if_index][device_index]['remote_port'] = item.value
+                cdp[if_index][device_index]['remote_port'] = item.typed_value()
             if not cdp[if_index][device_index]:
                 cdp[if_index] = None
 
             # Windows computers send their MAC-address as LLDP remote port and device id
             try:
-                if len(cdp[if_index][device_index]['remote_port']) == 6 and \
-                        cdp[if_index][device_index]['device_id'] == \
-                        cdp[if_index][device_index]['remote_port']:
-                    mac = ''
-                    cdp[if_index][device_index]['device_id'] = utils.mac_string(
-                        cdp[if_index][device_index]['device_id'])
+                if cdp[if_index][device_index]['device_id'] == cdp[if_index][device_index]['remote_port']:
                     cdp[if_index][device_index]['remote_port'] = ''
             except KeyError:
                 pass
