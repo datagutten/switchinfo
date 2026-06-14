@@ -70,9 +70,6 @@ def validate_ip(ip: str):
         return False
 
 
-def check_and_set(data, snmp_object, oid, key):
-    if snmp_object.oid.find(oid) >= 0 and snmp_object.value:
-        data.update({key: snmp_object.value})
 
 
 def translate_status(status: str) -> int:
@@ -93,20 +90,3 @@ def translate_status(status: str) -> int:
             return 5
         else:
             return status_names[status]
-
-
-def parse_interface(interface):
-    matches = re.match(r'^(\D+)?(\d)(?:/\d)?/(\d+)', interface)
-    if not matches:
-        return None, None
-    return matches.group(2), matches.group(3)
-
-
-def normalize_interface(interface, include_module=True):
-    module, port = parse_interface(interface)
-    if not port:
-        return None
-    if include_module:
-        return '%s.%s' % (module, port)
-    else:
-        return int(port)

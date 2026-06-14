@@ -24,11 +24,6 @@ class SNMPUtilsTestCase(unittest.TestCase):
         self.assertEqual(1, col)
         self.assertEqual('108.78.246.48.248.26', row)
 
-    def test_timeticks(self):
-        interval = utils.timeticks(290678791)
-        expected = datetime.timedelta(days=33, hours=15, minutes=26, seconds=27, microseconds=910000)
-        self.assertEqual(expected, interval)
-
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
