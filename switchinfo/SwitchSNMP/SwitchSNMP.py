@@ -524,7 +524,7 @@ class SwitchSNMP:
                 cdp[if_index][device_index] = dict()
 
             if item.oid.find('.9.9.23.1.2.1.1.4') >= 0:
-                ip_temp = utils.ip_string(item.value)
+                ip_temp = item.ip_address()
                 if not ip_temp == '0.0.0.0':
                     cdp[if_index][device_index]['ip'] = ip_temp
             #  cdpCacheDeviceId
@@ -589,7 +589,7 @@ class SwitchSNMP:
                 ip_match = re.search(r'(?:[0-9]{1,3}\.?){4}$', item.oid)
                 if ip_match:
                     ip.append(ip_match.group(0))
-                    mac.append(utils.mac_string(item.value))
+                    mac.append(item.typed_value())
                 else:
                     print('No match: ' + item.oid)
         except snmp_exceptions.SNMPError as e:

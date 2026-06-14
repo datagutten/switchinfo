@@ -29,13 +29,6 @@ def parse_port_list(string, limit=None, zero_count=False):
     return ports
 
 
-def parse_mac(mac):
-    mac_address = []
-    for char in mac:
-        mac_address.append(ord(char))
-    return mac_address
-
-
 def table_index(base_oid, oid):
     """
     Get the row and col from an SNMP table entry oid
@@ -70,43 +63,11 @@ def mac_parse_oid(oid):
     return string
 
 
-def mac_string(mac_address):
-    string = ''
-    if len(mac_address) == 12:  # No conversion required
-        return mac_address
-
-    for octet in mac_address:
-        octet = ord(octet)
-        if octet <= 0x0f:
-            string += '0'
-        # Format as lower case hex digit without prefix
-        string += format(octet, 'x')
-    return string
-
-
-def timeticks(ticks: int) -> datetime.timedelta:
-    return datetime.timedelta(seconds=ticks / 100)
-
-
 def validate_ip(ip: str):
     if re.match(r'^(?:\b\.?(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){4}$', ip):
         return True
     else:
         return False
-
-
-def ip_string(ip):
-    string = ''
-    for section in ip:
-        string += '%s.' % ord(section)
-    return string[:-1]
-
-
-def name_string(name):
-    string = ''
-    for char in name:
-        string += '%s.' % ord(char)
-    return string
 
 
 def check_and_set(data, snmp_object, oid, key):
