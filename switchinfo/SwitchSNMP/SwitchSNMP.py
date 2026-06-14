@@ -67,7 +67,7 @@ class SwitchSNMP:
         self.device = device
         self.switch = switch
         self.snmp_library = snmp_compat.select(snmp_library or 'ezsnmp')
-        self.timeout = os.environ.get('SNMP_TIMEOUT', 2)
+        self.timeout = int(os.environ.get('SNMP_TIMEOUT', 2))
 
     def __del__(self):
         self.sessions = None
