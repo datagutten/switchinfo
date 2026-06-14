@@ -28,7 +28,7 @@ jobs:
         docker run -d -v $(pwd)/test_data/snmp_data:/usr/local/snmpsim/data -p 161:161/udp tandrup/snmpsim
     - name: Install dependencies
       run: |
-        sudo apt-get install libsnmp-dev libczmq-dev
+        sudo apt-get update && sudo apt-get install libsnmp-dev libczmq-dev
         python -m pip install --upgrade pip poetry poetry-plugin-export
         python -m pip install flake8 coverage parameterized
 
