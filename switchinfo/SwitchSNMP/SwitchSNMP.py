@@ -59,6 +59,8 @@ class SwitchSNMP:
     """
     interface_key = 'interface_index'
 
+    use_q_bridge_mib = False
+
     # TODO: Make arguments mandatory?
     def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None, **kwargs):
         self.community = community
@@ -374,7 +376,8 @@ class SwitchSNMP:
         vlans = self.create_dict(oid=oid, int_index=True)
         return list(vlans.keys())
 
-    def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session: snmp_compat.SNMPCompat = None):
+    def build_dict_multikeys(self, oid, key_names: list, fields, key=None, session: snmp_compat.SNMPCompat = None,
+                             value_obj=False):
         """
 
         :param oid: Base OID to walk
@@ -382,6 +385,7 @@ class SwitchSNMP:
         :param fields: Field names
         :param key: Key field to use as key for a returned dict
         :param session:
+        :param value_obj: Return SNMP value object
         """
         if not session:
             session = self.get_session()
@@ -437,12 +441,18 @@ class SwitchSNMP:
                 # for key_name, value in keys.items():
                 #     if key_name not in items[key]:
                 #         items[key][key_name] = value
-                items[key][column] = item.typed_value()
+                if value_obj:
+                    items[key][column] = item
+                else:
+                    items[key][column] = item.typed_value()
             else:
                 if keys[key] not in items:
                     items[keys[key]] = keys
 
-                items[keys[key]][column] = item.typed_value()
+                if value_obj:
+                    items[keys[key]][column] = item
+                else:
+                    items[keys[key]][column] = item.typed_value()
 
         return items
 

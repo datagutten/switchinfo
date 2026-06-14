@@ -1,5 +1,7 @@
 import warnings
 
+from snmp_compat import SNMPResponse
+
 from .SNMPMib import SNMPMib
 from .. import utils
 
@@ -14,8 +16,8 @@ class lldpMIB(SNMPMib):
             4: 'lldpLocPortDesc',
         })
 
-    def lldpRemTable(self):
-        return self.snmp.build_dict_multikeys('.1.0.8802.1.1.2.1.4.1.1',
+    def lldpRemTable(self) -> dict[int, dict]:
+        data = self.snmp.build_dict_multikeys('.1.0.8802.1.1.2.1.4.1.1',
                                               ['lldpRemTimeMark', 'lldpRemLocalPortNum', 'lldpRemIndex'],
                                               {1: 'lldpRemTimeMark',
                                                2: 'lldpRemLocalPortNum',
@@ -30,7 +32,21 @@ class lldpMIB(SNMPMib):
                                                11: 'lldpRemSysCapSupported',
                                                12: 'lldpRemSysCapEnabled'
                                                },
-                                              key='lldpRemLocalPortNum')
+                                              key='lldpRemLocalPortNum', value_obj=True)
+        for port, neighbor in data.items():
+            if neighbor['lldpRemPortIdSubtype'].typed_value() == 3:  # macAddress
+                neighbor['lldpRemPortId'] = neighbor['lldpRemPortId'].hex_string()
+            elif neighbor['lldpRemPortIdSubtype'].typed_value() == 4:  # networkAddress
+                neighbor['lldpRemPortId'] = neighbor['lldpRemPortId'].ip_address()
+            else:
+                neighbor['lldpRemPortId'] = neighbor['lldpRemPortId'].typed_value()
+
+            if neighbor['lldpRemChassisIdSubtype'] == 4:  # macAddress
+                neighbor['lldpRemChassisIdSubtype'] = neighbor['lldpRemChassisId'].hex_string()
+
+            neighbor.update({key: value.typed_value() for key, value in neighbor.items() if
+                             issubclass(type(value), SNMPResponse)})
+        return data
 
     def lldpRemManAddrTable(self):
         return self.snmp.build_dict_multikeys('.1.0.8802.1.1.2.1.4.2.1',
