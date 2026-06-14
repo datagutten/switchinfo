@@ -1,3 +1,5 @@
+import warnings
+
 from .SNMPMib import SNMPMib
 from .. import utils
 
@@ -57,13 +59,11 @@ class lldpMIB(SNMPMib):
             'local_port_num': remote['lldpRemLocalPortNum'],
         }
 
-        if remote['lldpRemPortIdSubtype'] == 3:  # macAddress
-            neighbor['remote_port'] = utils.mac_string(remote['lldpRemPortId'])
-        else:
-            neighbor['remote_port'] = remote['lldpRemPortId']
-
+        if remote['lldpRemPortIdSubtype'] == 3 and len(remote['lldpRemPortId']) != 12:  # macAddress
+            warnings.warn('Invalid MAC-address "%s"' % remote['lldpRemPortId'])
+        neighbor['remote_port'] = remote['lldpRemPortId']
         if remote['lldpRemChassisIdSubtype'] == 4:  # macAddress
-            neighbor['mac'] = utils.mac_string(remote['lldpRemChassisId'])
+            neighbor['mac'] = remote['lldpRemChassisId']
 
         return neighbor
 
