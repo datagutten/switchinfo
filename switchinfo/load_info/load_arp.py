@@ -1,7 +1,7 @@
 from django.db import DataError
 
-from SwitchSNMP.select import get_switch
 from switchinfo import models
+from switchinfo.SwitchSNMP.select import get_switch
 
 
 def load_arp(switch: models.Switch):
