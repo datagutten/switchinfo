@@ -1,7 +1,7 @@
-import load_info
-from tests.load_info.LoadInfoCommon import LoadInfoCommon
-from switchinfo import models
 from parameterized import parameterized
+
+from switchinfo import models, load_info
+from tests.load_info.LoadInfoCommon import LoadInfoCommon
 
 
 class LoadArpTestCase(LoadInfoCommon):
