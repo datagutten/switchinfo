@@ -39,11 +39,12 @@ WORKDIR $APP_HOME
 
 COPY --from=builder /usr/src/app/wheels /wheels
 RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+RUN pip install --no-cache /wheels/* && rm -r /wheels
 
 # install system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libsnmp-dev git
+    apt-get install -y --no-install-recommends libsnmp-dev git && \
+    apt-get clean
 
 # Set up git repository for config backup
 RUN mkdir /home/config_backup
