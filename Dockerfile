@@ -59,8 +59,6 @@ RUN git --git-dir /home/config_backup/.git config user.name "Config backup"
 
 EXPOSE 8000
 
-# Collect static and start gunicorn
-RUN python /home/switch_info/manage.py collectstatic
-
+# Start gunicorn
 RUN chmod +x launcher.sh
 CMD ["./launcher.sh"]

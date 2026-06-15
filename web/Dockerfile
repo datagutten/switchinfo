@@ -1,3 +1,6 @@
+FROM ghcr.io/datagutten/switchinfo:latest AS static
+RUN python /home/switch_info/manage.py collectstatic --noinput
+
 FROM debian:latest AS builder
 
 RUN apt-get update && \
@@ -22,7 +25,7 @@ RUN a2enmod proxy_http
 
 COPY launcher.sh /home/launcher.sh
 RUN chmod +x /home/launcher.sh
-COPY --from=datagutten/switchinfo:latest /home/switch_info/static /var/www/html/static
+COPY --from=static /home/switch_info/static /var/www/html/static
 
 # Expose the port Apache listens on
 EXPOSE 80
