@@ -126,7 +126,7 @@ class SwitchSNMP:
             if not index:
                 index = item.oid_index
             if value_translator:
-                value = value_translator(item.value)
+                value = value_translator(item)
             elif typed_value:
                 value = item.typed_value()
             else:
