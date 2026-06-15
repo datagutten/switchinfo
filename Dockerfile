@@ -17,11 +17,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends libsnmp-dev
 RUN pip install --upgrade pip poetry poetry-plugin-export
 
-COPY switchinfo switchinfo
-COPY pyproject.toml switchinfo/pyproject.toml
+COPY pyproject.toml pyproject.toml
 
-RUN poetry -C switchinfo export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with backup --with aoscx --with snmp
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r switchinfo/requirements.txt
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes --with postgres --with mysql --with backup --with aoscx --with snmp
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels gunicorn
 
@@ -46,16 +45,16 @@ RUN pip install --no-cache /wheels/*
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libsnmp-dev git
 
-# copy project
-COPY switch_info $APP_HOME
-COPY switchinfo $APP_HOME/switchinfo
-COPY launcher.sh $APP_HOME
-
 # Set up git repository for config backup
 RUN mkdir /home/config_backup
 RUN git --git-dir /home/config_backup/.git init
 RUN git --git-dir /home/config_backup/.git config user.email "config@backup.local"
 RUN git --git-dir /home/config_backup/.git config user.name "Config backup"
+
+# copy project
+COPY switch_info $APP_HOME
+COPY switchinfo $APP_HOME/switchinfo
+COPY launcher.sh $APP_HOME
 
 EXPOSE 8000
 
