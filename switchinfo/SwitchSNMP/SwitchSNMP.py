@@ -247,12 +247,12 @@ class SwitchSNMP:
         info = dict()
         if vlan == 'all':
             for vlan in self.vlans():
-                info_temp = self.create_dict(vlan=vlan, oid=oid)
+                info_temp = self.create_dict(vlan=vlan, oid=oid, int_index=True)
                 info.update(info_temp)
             return info
         else:
             try:
-                return self.create_dict(vlan=vlan, oid=oid)
+                return self.create_dict(vlan=vlan, oid=oid, int_index=True)
             except snmp_exceptions.SNMPError as e:
                 if not vlan:
                     vlan = 0

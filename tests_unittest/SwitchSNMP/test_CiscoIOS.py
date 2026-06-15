@@ -42,7 +42,7 @@ class CiscoIOSTestCase(unittest.TestCase):
 
     def test_bridgePort_to_ifIndex(self):
         table = session.bridgePort_to_ifIndex()
-        self.assertEqual('10124', table['24'])
+        self.assertEqual(10124, table[24])
 
     def test_interface_poe_status(self):
         status = session.interface_poe()
