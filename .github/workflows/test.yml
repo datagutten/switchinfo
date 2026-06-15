@@ -39,6 +39,10 @@ jobs:
     - name: Install requirements
       run: pip install -r requirements.txt
 
+    - name: Install pysnmp
+      if: ${{matrix.snmp-library == 'pysnmp'}}
+      run: pip install pysnmp
+
     - name: Run tests with django
       run: |
         coverage run -p runtests.py tests.load_info
