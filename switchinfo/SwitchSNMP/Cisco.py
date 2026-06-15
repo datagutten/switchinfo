@@ -65,7 +65,7 @@ class Cisco(SwitchSNMP, ABC):
     def tagged_vlans(self):
         # CISCO-VTP-MIB::vlanTrunkPortVlansEnabled
         oid = '.1.3.6.1.4.1.9.9.46.1.6.1.1.4'
-        return self.create_dict(oid=oid, int_index=True, typed_value=False)
+        return self.create_dict(oid=oid, int_index=True, value_translator=bytes)
 
     def vlan_ports(self, debug=False, **kwargs):
         # vtp_mib = mibs.CiscoVTP(self)
@@ -80,7 +80,7 @@ class Cisco(SwitchSNMP, ABC):
         port_vlan = dict()
         tagged_vlans = dict()
         untagged_vlan = dict()
-        all_tagged = chr(127) + chr(255) * 127
+        all_tagged = b'\x7f' + b'\xff' * 0x7f
 
         for index, vlans in self.tagged_vlans().items():
             if trunk_status[index] == 2:

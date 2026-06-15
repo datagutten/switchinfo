@@ -2,7 +2,7 @@ import datetime
 import re
 
 
-def parse_port_list(string, limit=None, zero_count=False):
+def parse_port_list(string: bytes, limit=None, zero_count=False):
     """
     Parse a binary port list
     :param string:
@@ -12,7 +12,7 @@ def parse_port_list(string, limit=None, zero_count=False):
     """
     ports = dict()
     for pos, byte in enumerate(string):
-        binary = format(ord(byte), '08b')
+        binary = format(byte, '08b')
         offset = 8 * pos
         for binpos, binbyte in enumerate(binary):
             if not zero_count:
