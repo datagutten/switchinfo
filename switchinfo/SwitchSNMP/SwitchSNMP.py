@@ -151,11 +151,11 @@ class SwitchSNMP:
         info = dict()
 
         # SNMPv2-MIB::sysName
-        info['name'] = session.get('.1.3.6.1.2.1.1.5.0').value
+        info['name'] = str(session.get('.1.3.6.1.2.1.1.5.0'))
         # SNMPv2-MIB::sysDescr
-        info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value
+        info['descr'] = str(session.get('.1.3.6.1.2.1.1.1.0'))
         # SNMPv2-MIB::sysObjectID
-        info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
+        info['objectID'] = str(session.get('.1.3.6.1.2.1.1.2.0'))
 
         try:
             # ENTITY-MIB::entPhysicalModelName
@@ -169,8 +169,7 @@ class SwitchSNMP:
         except snmp_exceptions.SNMPNoData:
             info['model'] = ''
         try:
-            location = session.get('1.3.6.1.2.1.1.6.0').value
-            info['location'] = location.encode('iso-8859-1').decode('utf8')
+            info['location'] = str(session.get('1.3.6.1.2.1.1.6.0'))
         except snmp_exceptions.SNMPNoData:
             info['location'] = ''
 
