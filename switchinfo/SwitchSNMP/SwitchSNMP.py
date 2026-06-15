@@ -96,19 +96,6 @@ class SwitchSNMP:
             session.close()
         del self.sessions[self.device]
 
-    def walk_keys(self, oid: str, keys: list) -> dict:
-        session = self.get_session()
-        if oid[-1] != '.':
-            oid = oid + '.'
-        values = {}
-        for key in keys:
-            try:
-                alias = session.get(oid + key)
-                values[key] = alias.value
-            except snmp_exceptions.SNMPNoData:
-                values[key] = None
-        return values
-
     def create_dict(self, oid=None, vlan=None,
                     int_index=False, typed_value=True,
                     value_translator: callable = None):
@@ -186,11 +173,10 @@ class SwitchSNMP:
         info = dict()
         # IF-MIB::ifName
         info['name'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.1')
-        keys = list(info['name'].keys())
         # IF-MIB::ifAlias
-        info['alias'] = self.walk_keys(oid='.1.3.6.1.2.1.31.1.1.1.18', keys=keys)
+        info['alias'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.18')
         # RFC1213-MIB::ifdescr
-        info['descr'] = self.walk_keys(oid='.1.3.6.1.2.1.2.2.1.2', keys=keys)
+        info['descr'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.2')
         # RFC1213-MIB::ifType
         info['type'] = self.create_dict(oid='.1.3.6.1.2.1.2.2.1.3')
         # ifLastChange
