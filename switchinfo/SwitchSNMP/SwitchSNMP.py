@@ -239,7 +239,7 @@ class SwitchSNMP:
             if not len(mac) == 12:
                 print('Invalid MAC %s' % mac)
                 continue
-            port[mac] = entry.value
+            port[mac] = int(entry)
         return port
 
     def bridgePort_to_ifIndex(self, vlan=None):
