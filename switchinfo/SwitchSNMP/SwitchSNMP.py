@@ -62,11 +62,11 @@ class SwitchSNMP:
     use_q_bridge_mib = False
 
     # TODO: Make arguments mandatory?
-    def __init__(self, community: str = None, device: str = None, switch=None, snmp_library=None, **kwargs):
+    def __init__(self, community: str = None, device: str = None, switch=None, **kwargs):
         self.community = community
         self.device = device
         self.switch = switch
-        self.snmp_library = snmp_compat.select(snmp_library or 'ezsnmp')
+        self.snmp_library = snmp_compat.select(os.environ.get('SNMP_LIBRARY', 'ezsnmp'))
         self.timeout = int(os.environ.get('SNMP_TIMEOUT', 2))
 
     def __del__(self):
