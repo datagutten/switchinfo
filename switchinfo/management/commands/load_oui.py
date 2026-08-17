@@ -10,7 +10,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import re
-        response = requests.get('https://standards-oui.ieee.org/')
+        response = requests.get('https://standards-oui.ieee.org/', headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36'})
+        response.raise_for_status()
 
         pattern = r'([A-F0-9]{6})\s+\(.+\)\s+(.+)'
         matches = re.findall(pattern, response.text)
