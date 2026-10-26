@@ -37,7 +37,7 @@ class ArubaCX(SwitchSNMP):
         for key in info['name'].keys():
             try:
                 alias = session.get('.1.3.6.1.2.1.31.1.1.1.18.' + key)
-                info['alias'][key] = alias.value
+                info['alias'][key] = alias.typed_value()
             except snmp_exceptions.SNMPNoData:
                 info['alias'][key] = None
 
@@ -51,22 +51,22 @@ class ArubaCX(SwitchSNMP):
     def egress_ports(self, static=False):
         if not static:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentEgressPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.5', int_index=True, value_translator=bytes)
         else:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.4', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.4', int_index=True, value_translator=bytes)
         return values
 
     def untagged_ports(self, static=False):
         if not static:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanCurrentUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.2.1.6', int_index=True, value_translator=bytes)
         else:
             # IEEE8021-Q-BRIDGE-MIB::ieee8021QBridgeVlanStaticUntaggedPorts
-            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.6', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.111.2.802.1.1.4.1.4.3.1.6', int_index=True, value_translator=bytes)
         return values
 
     def vlans(self):
         # ieee8021QBridgeMib::ieee8021QBridgeVlanCurrentEgressPorts
         oid = '.1.3.111.2.802.1.1.4.1.4.2.1.4'
-        return self.create_dict(oid=oid, typed_value=True, int_index=True)
+        return self.create_dict(oid=oid, int_index=True)
