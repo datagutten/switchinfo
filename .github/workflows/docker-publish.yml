@@ -50,7 +50,7 @@ jobs:
 
       - name: Build and push backend Docker image
         id: push_backend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           tags: | 
@@ -60,7 +60,7 @@ jobs:
 
       - name: Build and push frontend Docker image
         id: push_frontend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: web
           push: true
