@@ -6,7 +6,7 @@ from snmp_compat import snmp_exceptions
 from switchinfo.SwitchSNMP.SwitchSNMP import SwitchSNMP
 from switchinfo.models import Switch
 
-pattern_hp_series = re.compile(r'(HP|Aruba) (Switch|[A-Z]{1,2}\d{3,4}[A-Z]) [A-Z]?([0-9]+)')
+pattern_hp_series = re.compile(r'(HPE?|Aruba)(?: ANW)? (Switch|[A-Z0-9]{6})? ([0-9]+)')
 
 
 def switch_info(ip: str = None, community: str = None, device: SwitchSNMP = None, silent=True) -> Optional[Switch]:
