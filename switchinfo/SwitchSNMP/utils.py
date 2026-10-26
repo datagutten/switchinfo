@@ -1,8 +1,10 @@
 import datetime
 import re
 
+from snmp_compat import SNMPResponse
 
-def parse_port_list(string, limit=None, zero_count=False):
+
+def parse_port_list(string: bytes, limit=None, zero_count=False):
     """
     Parse a binary port list
     :param string:
@@ -12,7 +14,7 @@ def parse_port_list(string, limit=None, zero_count=False):
     """
     ports = dict()
     for pos, byte in enumerate(string):
-        binary = format(ord(byte), '08b')
+        binary = format(byte, '08b')
         offset = 8 * pos
         for binpos, binbyte in enumerate(binary):
             if not zero_count:
@@ -70,9 +72,7 @@ def validate_ip(ip: str):
         return False
 
 
-
-
-def translate_status(status: str) -> int:
+def translate_status(status: SNMPResponse) -> int:
     try:
         return int(status)
     except ValueError:
@@ -89,4 +89,4 @@ def translate_status(status: str) -> int:
         if status not in status_names:
             return 5
         else:
-            return status_names[status]
+            return status_names[str(status)]

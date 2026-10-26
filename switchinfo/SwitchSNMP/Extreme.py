@@ -46,7 +46,7 @@ class Extreme(SwitchSNMP):
             index = re.sub(r'.+\.(\d+)\.\d+', r'\1', item.oid)
             if not index:
                 index = item.oid_index
-            indexes[int(index)] = item.value
+            indexes[int(index)] = bytes(item)
 
         return indexes
 

@@ -126,7 +126,7 @@ class SwitchSNMP:
             if not index:
                 index = item.oid_index
             if value_translator:
-                value = value_translator(item.value)
+                value = value_translator(item)
             elif typed_value:
                 value = item.typed_value()
             else:
@@ -141,8 +141,7 @@ class SwitchSNMP:
         session = self.get_session(ip, vlan)
         values = []
         for item in session.walk(oid):
-            value = item.value
-            values.append(value)
+            values.append(item.typed_value())
 
         return values
 
@@ -152,11 +151,11 @@ class SwitchSNMP:
         info = dict()
 
         # SNMPv2-MIB::sysName
-        info['name'] = session.get('.1.3.6.1.2.1.1.5.0').value
+        info['name'] = str(session.get('.1.3.6.1.2.1.1.5.0'))
         # SNMPv2-MIB::sysDescr
-        info['descr'] = session.get('.1.3.6.1.2.1.1.1.0').value
+        info['descr'] = str(session.get('.1.3.6.1.2.1.1.1.0'))
         # SNMPv2-MIB::sysObjectID
-        info['objectID'] = session.get('.1.3.6.1.2.1.1.2.0').value
+        info['objectID'] = str(session.get('.1.3.6.1.2.1.1.2.0'))
 
         try:
             # ENTITY-MIB::entPhysicalModelName
@@ -170,8 +169,7 @@ class SwitchSNMP:
         except snmp_exceptions.SNMPNoData:
             info['model'] = ''
         try:
-            location = session.get('1.3.6.1.2.1.1.6.0').value
-            info['location'] = location.encode('iso-8859-1').decode('utf8')
+            info['location'] = str(session.get('1.3.6.1.2.1.1.6.0'))
         except snmp_exceptions.SNMPNoData:
             info['location'] = ''
 
@@ -241,7 +239,7 @@ class SwitchSNMP:
             if not len(mac) == 12:
                 print('Invalid MAC %s' % mac)
                 continue
-            port[mac] = entry.value
+            port[mac] = int(entry)
         return port
 
     def bridgePort_to_ifIndex(self, vlan=None):
@@ -249,12 +247,12 @@ class SwitchSNMP:
         info = dict()
         if vlan == 'all':
             for vlan in self.vlans():
-                info_temp = self.create_dict(vlan=vlan, oid=oid, typed_value=False)
+                info_temp = self.create_dict(vlan=vlan, oid=oid, int_index=True)
                 info.update(info_temp)
             return info
         else:
             try:
-                return self.create_dict(vlan=vlan, oid=oid, typed_value=False)
+                return self.create_dict(vlan=vlan, oid=oid, int_index=True)
             except snmp_exceptions.SNMPError as e:
                 if not vlan:
                     vlan = 0
@@ -304,20 +302,20 @@ class SwitchSNMP:
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentEgressPorts
         if not self.static_vlan:
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.4', int_index=True, value_translator=bytes)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticEgressPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.2', int_index=True, value_translator=bytes)
         return values
 
     def untagged_ports(self):
         values = None
         # Q-BRIDGE-MIB::dot1qVlanCurrentUntaggedPorts
         if not self.static_vlan:
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.2.1.5', int_index=True, value_translator=bytes)
         if not values:
             # Q-BRIDGE-MIB::dot1qVlanStaticUntaggedPorts
-            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.4', int_index=True, typed_value=False)
+            values = self.create_dict(oid='.1.3.6.1.2.1.17.7.1.4.3.1.4', int_index=True, value_translator=bytes)
         return values
 
     # Return vlan number or None if the interface is trunk
