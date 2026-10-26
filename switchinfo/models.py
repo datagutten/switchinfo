@@ -151,9 +151,7 @@ class Interface(models.Model):
         Switch, on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='neighbor')
-    neighbor_string = models.CharField(
-        max_length=500,
-        blank=True, null=True)
+    neighbor_string = models.TextField(blank=True, null=True)
     neighbor_set_by = models.ForeignKey(
         Switch,
         on_delete=models.SET_NULL,
@@ -286,7 +284,7 @@ class Arp(models.Model):
 
 class Oui(models.Model):
     prefix = models.CharField(max_length=6)
-    vendor = models.CharField(max_length=100)
+    vendor = models.TextField()
 
     def __str__(self):
         return self.prefix + ' ' + self.vendor
