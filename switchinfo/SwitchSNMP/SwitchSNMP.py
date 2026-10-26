@@ -1,10 +1,10 @@
 import datetime
 import os
 import re
-import warnings
 
 import snmp_compat.compat as snmp_compat
 from snmp_compat import snmp_exceptions
+
 from . import mibs, utils
 
 
@@ -173,7 +173,6 @@ class SwitchSNMP:
         info = dict()
         # IF-MIB::ifName
         info['name'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.1')
-        keys = list(info['name'].keys())
         # IF-MIB::ifAlias
         info['alias'] = self.create_dict(oid='.1.3.6.1.2.1.31.1.1.1.18')
         # RFC1213-MIB::ifdescr
