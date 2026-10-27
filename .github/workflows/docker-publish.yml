@@ -68,3 +68,14 @@ jobs:
             datagutten/switchinfo_apache_gitlist:latest
             ghcr.io/datagutten/switchinfo_apache_gitlist:latest
           labels: ${{ steps.meta_frontend.outputs.labels }}
+
+      - name: Build and push nginx Docker image
+        id: push_nginx
+        uses: docker/build-push-action@v7
+        with:
+          context: nginx
+          push: true
+          tags: |
+            datagutten/switchinfo_nginx:latest
+            ghcr.io/datagutten/switchinfo_nginx:latest
+          labels: ${{ steps.meta_frontend.outputs.labels }}
