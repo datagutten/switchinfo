@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.12 AS builder
+FROM python:3.15 AS builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -28,7 +28,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels gunicorn
 # FINAL #
 #########
 
-FROM python:3.12-slim
+FROM python:3.15-slim
 
 # create the appropriate directories
 ENV APP_HOME=/home/switch_info
