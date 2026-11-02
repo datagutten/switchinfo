@@ -34,7 +34,7 @@ jobs:
 
       - name: Extract metadata for backend
         id: meta_backend
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: | 
             datagutten/switchinfo
@@ -42,7 +42,7 @@ jobs:
 
       - name: Extract metadata for frontend
         id: meta_frontend
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: | 
             datagutten/switchinfo_apache_gitlist
